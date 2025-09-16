@@ -62,7 +62,7 @@ export default async function AboutPage() {
               「和泉短大前」下車 徒歩約2分
             </p>
             <p className="text-slate-700 leading-relaxed">神奈川県相模原市中央区緑が丘 2-40-1</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3246.187882960041!2d139.3847238765194!3d35.54906177263025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018fdc1b3b62e33%3A0x3f424d57616b8510!2z44CSMjUyLTAyMjUg56We5aWI5bed55yM55u45qih5Y6f5biC5Lit5aSu5Yy657eR44GM5LiY77yS5LiB55uu77yU77yQ4oiS77yRIOmdkuWxseWtpumZouWkp-Wtpue3keOBjOS4mOOCsOODqeOCpuODs-ODiQ!5e0!3m2!1sja!2sjp!4v1757638543796!5m2!1sja!2sjp"
                 allowFullScreen
@@ -86,7 +86,7 @@ export default async function AboutPage() {
               「運動場前」から＜大宮駅西口 行き＞に乗車し、「大宮駅西口（終点）」で下車（本数が少ない・運動場から近い）
             </p>
             <p className="text-slate-700 leading-relaxed">埼玉県さいたま市西区二ツ宮113-1</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3232.364526894742!2d139.56588307653163!3d35.88908687252093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018c377dea2856f%3A0x6eee8ac669eeee64!2z44CSMzMxLTAwNjUg5Z-8546J55yM44GV44GE44Gf44G-5biC6KW_5Yy65LqM44OE5a6u77yR77yR77yT4oiS77yR!5e0!3m2!1sja!2sjp!4v1757638310486!5m2!1sja!2sjp"
                 allowFullScreen
@@ -104,7 +104,7 @@ export default async function AboutPage() {
               駐車料金：最初の30分は無料。以降30分ごとに100円
             </p>
             <p className="text-slate-700 leading-relaxed">東京都葛飾区新宿6-3-20 運動場多目的広場</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6474.200183015551!2d139.85480169357905!3d35.77291760000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601885656f95621b%3A0x51062f1eb0c57aee!2z6JGb6aO-44Gr44GE44GY44KF44GP44G_44KJ44GE5YWs5ZyS6YGL5YuV5aC0!5e0!3m2!1sja!2sjp!4v1757638725626!5m2!1sja!2sjp"
                 allowFullScreen
@@ -119,7 +119,7 @@ export default async function AboutPage() {
             <h3 className="text-xl font-bold mt-6 mb-2">品川南ふ頭公園</h3>
             <p className="text-slate-700 leading-relaxed">りんかい線・東京モノレール「天王洲アイル」駅 徒歩7分</p>
             <p className="text-slate-700 leading-relaxed">東京都品川区東品川5-8-4</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3243.232079118113!2d139.75228117652193!3d35.62200477260639!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188a1480c26443%3A0x4265dce0080401c8!2z44CSMTQwLTAwMDIg5p2x5Lqs6YO95ZOB5bed5Yy65p2x5ZOB5bed77yV5LiB55uu77yY4oiS77yU!5e0!3m2!1sja!2sjp!4v1757638759686!5m2!1sja!2sjp"
                 allowFullScreen
@@ -137,7 +137,7 @@ export default async function AboutPage() {
               土日祝のみ駐車場使用可能 100円/30分
             </p>
             <p className="text-slate-700 leading-relaxed">東京都世田谷区玉堤1-5-1</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3244.3930565676037!2d139.65267057652113!3d35.59336977261565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f508d5a3df5b%3A0x5afcd635b32143dd!2z44CSMTU4LTAwODcg5p2x5Lqs6YO95LiW55Sw6LC35Yy6546J5aCk77yR5LiB55uu77yV4oiS77yR!5e0!3m2!1sja!2sjp!4v1757638787095!5m2!1sja!2sjp"
                 allowFullScreen
@@ -155,7 +155,7 @@ export default async function AboutPage() {
               土日祝のみ駐車場使用可能 100円/30分
             </p>
             <p className="text-slate-700 leading-relaxed">東京都世田谷区玉堤1-5-1</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3244.3930565676037!2d139.65267057652113!3d35.59336977261565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f508d5a3df5b%3A0x5afcd635b32143dd!2z44CSMTU4LTAwODcg5p2x5Lqs6YO95LiW55Sw6LC35Yy6546J5aCk77yR5LiB55uu77yV4oiS77yR!5e0!3m2!1sja!2sjp!4v1757673737575!5m2!1sja!2sjp"
                 allowFullScreen
@@ -175,7 +175,7 @@ export default async function AboutPage() {
               （金54）金町駅（南口）～リハビリ病院～市役所～新三郷駅（※一部 三郷中央駅・みさと団地）… 高須または桜土手 下車10分
             </p>
             <p className="text-slate-700 leading-relaxed">東京都葛飾区東金町8-27-1</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3236.770243197703!2d139.8850398765276!3d35.781019772555176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018851ad0ea8b9d%3A0x3a834e27d073ef78!2z44CSMTI1LTAwNDEg5p2x5Lqs6YO96JGb6aO-5Yy65p2x6YeR55S677yY5LiB55uu77yS77yX4oiS77yR!5e0!3m2!1sja!2sjp!4v1757673787654!5m2!1sja!2sjp"
                 allowFullScreen
@@ -207,7 +207,7 @@ export default async function AboutPage() {
               調布駅北口14番「境91 武蔵境駅南口行」「鷹51 三鷹駅行」「鷹51 武蔵境営業所行」「調40 調布飛行場前行」… 大沢コミュニティセンター 下車 徒歩7分
             </p>
             <p className="text-slate-700 leading-relaxed">東京都三鷹市大沢5-7-1</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3241.303116927604!2d139.53027037652362!3d35.66953767259106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018effea895c745%3A0x43fb3af7e12c25cd!2z44CSMTgxLTAwMTUg5p2x5Lqs6YO95LiJ6be55biC5aSn5rKi77yV5LiB55uu77yX4oiS77yRIOeuoeeQhuajnw!5e0!3m2!1sja!2sjp!4v1757673829127!5m2!1sja!2sjp"
                 allowFullScreen
@@ -224,7 +224,7 @@ export default async function AboutPage() {
               JR横須賀線「東戸塚」駅 徒歩約20分／無料駐車場あり
             </p>
             <p className="text-slate-700 leading-relaxed">神奈川県横浜市戸塚区品濃町1527</p>
-            <div className="w-full h-[450px] rounded-md overflow-hidden mt-4">
+            <div className="relative w-full aspect-square md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-4">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2388.4465925260656!2d139.55167611272506!3d35.44021006925785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60185a3bfaa5aa31%3A0xddc9a27cd09c9d22!2z5qiq5rWcRkPmnbHmiLjloZrjg5Xjg4Pjg4jjg5zjg7zjg6vjg5Hjg7zjgq8!5e0!3m2!1sja!2sjp!4v1757687117131!5m2!1sja!2sjp"
                 allowFullScreen
@@ -361,15 +361,18 @@ export default async function AboutPage() {
                 {faqs.map((item, i) => (
                   <details
                     key={i}
-                    className="faq__item overflow-hidden rounded-lg border border-slate-200 bg-white"
+                    className="faq__item group overflow-hidden rounded-lg border border-slate-200 bg-white"
                   >
                     {/* 質問行 */}
                     <summary className="faq__q flex items-center gap-3 px-5 py-5 cursor-pointer bg-slate-50">
                       <span className="faq__q-mark text-green-700 font-bold">Q.</span>
-                      <span className="faq__q-text grow text-slate-900 font-semibold">
+                      <span className="faq__q-text grow pr-3 text-slate-900 font-semibold break-words leading-snug">
                         {item.q}
                       </span>
-                      <span aria-hidden className="faq__icon w-6 h-[2px] bg-green-700 inline-block rounded" />
+                      <span aria-hidden className="ml-auto inline-flex items-center justify-center shrink-0 w-6 h-6 relative">
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-0.5 w-4 bg-green-700 rounded" />
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-4 bg-green-700 rounded transition-opacity duration-200 group-open:opacity-0" />
+                      </span>
                     </summary>
 
                     {/* 回答行 */}
