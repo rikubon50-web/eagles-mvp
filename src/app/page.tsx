@@ -23,7 +23,7 @@ export default async function Home() {
     fetchPlayers(),
   ]);
   // --- build items for news ticker (use News shape expected by NewsTicker) ---
-  const tickerItems = news.slice(0, 8).map((n: any) => ({
+  const tickerItems = news.slice(0, 20).map((n: any) => ({
     id: String(n.id),
     title: String(n.title ?? ""),
     excerpt: n.excerpt ?? "",

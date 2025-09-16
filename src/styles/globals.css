@@ -298,9 +298,9 @@
 
 @keyframes ticker {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(-500%); }
 }
-.animate-ticker { animation: ticker 5s linear infinite; }
+.animate-ticker { animation: ticker 30s linear infinite; }
 
 @font-face {
   font-family: "AbashiriMincho";
