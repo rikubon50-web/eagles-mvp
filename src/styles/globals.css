@@ -1,0 +1,351 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== base ===== */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-slate-50 text-slate-900; }
+  h1,h2,h3 { @apply text-navy; }
+}
+
+/* ===== components (統合) ===== */
+@layer components {
+  /* container & common */
+  .container { @apply mx-auto max-w-6xl px-4; }
+  .section-title { @apply text-xl font-bold mb-4 relative pb-2; display: inline-block; width: fit-content; }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background: #0f6536;
+    border-radius: 9999px;
+  }
+  .card { @apply rounded-xl border bg-white p-4 shadow-card; transition: box-shadow .2s ease; }
+  .pill { @apply inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium; }
+
+  /* Header */
+  .header      { @apply h-[85px] sticky top-0 z-50 bg-white/90 backdrop-blur border-b; }
+  .header__row { @apply container flex items-center justify-between py-3; }
+
+  /* 左：ロゴ（サイズはImageのwidth/heightで調整） */
+  .header__logo { @apply flex items-center; }
+
+  /* 中央：ナビ */
+  .header__nav  { @apply hidden md:flex items-center gap-8 flex-1 justify-center; }
+  .header__nav--mobile { @apply md:hidden absolute top-[85px] left-0 w-full bg-white border-t flex flex-col items-center gap-6 py-6; }
+
+  /* ハンバーガーボタン */
+  .header__toggle { @apply md:hidden flex items-center justify-center w-10 h-10; }
+  .header__toggle-line { @apply block w-6 h-0.5 bg-slate-800 my-1 transition-all; }
+
+  /* 右：SNS */
+  .header__sns      { @apply hidden md:flex items-center gap-4 text-xs; }
+  .header__snslink  { @apply text-brand-600 hover:underline; }
+
+  /* --- ナビのホバー演出（.header__link と .nav-link を同等に） --- */
+  .nav-link,
+  .header__link {
+    @apply px-3 font-bold tracking-wide text-transparent;
+    font-size: 20px; /* ここでサイズ調整（例: 24pxにしてもOK） */
+    overflow: hidden;
+    /* 影2段 */
+    text-shadow: 0 -1.5em 0 #000, 0 0 0 #000;
+    /* 下半分を黒→上へアニメーション */
+    background: linear-gradient(to bottom, #0f6536 50%, transparent 50%) 0 100%;
+    background-size: 100% 200%;
+    transition: text-shadow 0.3s, background-position 0.3s;
+  }
+  .nav-link:hover,
+  .header__link:hover {
+    text-shadow: 0 0 0 #fff, 0 1.5em 0 #0f6536;
+    background-position: 0 0;
+  }
+
+  /* ===== Footer ===== */
+  .footer { @apply mt-20 border-t border-slate-200 bg-white text-slate-900; }
+
+  /* 上段の濃紺帯 */
+  .footer__bar { @apply bg-[#0f6536] py-6; }
+  .footer__nav { @apply container flex flex-wrap justify-center gap-6 md:gap-10 py-4 text-center; }
+  .footer__link {
+    @apply relative text-white/90 hover:text-white uppercase tracking-widest text-lg font-bold; 
+  }
+  .footer__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 100%;
+    height: 2px;
+    background: #ffffff;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+  }
+  .footer__link:hover::after {
+    bottom: -2px;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* 下段のセンターエリア */
+  .footer__mid { @apply container text-center py-6 md:py-10; }
+  .footer__policy { @apply text-sm text-slate-600 hover:underline; }
+  .footer__brand { @apply my-6 flex justify-center; }
+  .footer__logoImg { @apply opacity-90; }
+  .footer__hr { @apply mx-auto my-4 w-24 border-t border-slate-200; }
+  .footer__copy { @apply text-xs text-slate-500; }
+
+  /* ===== Custom Button Style ===== */
+  .button-32 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 250px;
+    margin: 0 auto;
+    padding: .9em 2.75em .9em 2em;
+    overflow: hidden;
+    border: 1px solid #0f6536;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #0f6536;
+    font-size: 1em;
+    white-space: nowrap;
+    isolation: isolate;
+    z-index: 0;
+    transition: color .3s ease, background-color .3s ease, box-shadow .3s ease;
+  }
+
+  .button-32:hover {
+    background-color: transparent;
+    color: #fff;
+  }
+
+  .button-32::before {
+    position: absolute;
+    z-index: -1;
+    transform: rotate(-30deg);
+    width: 100%;
+    height: 0;
+    border-radius: 5px;
+    background-color: #0f6536;
+    content: '';
+    transition: height .3s ease;
+  }
+
+  .button-32:hover::before {
+    height: 350%;
+  }
+
+  .button-32::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    transform: translateY(-50%) rotate(45deg);
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+    pointer-events: none;
+  }
+
+  .button-32:hover::after {
+    border-color: #fff;
+  }
+
+  /* ===== Side Navigation (About page) ===== */
+  .sideNav { @apply hidden lg:block sticky top-24; }
+  .sideNav__card { @apply relative bg-white rounded-2xl shadow-card border border-slate-200 p-6; }
+  .sideNav__list { @apply space-y-6; }
+  .sideNav__item { @apply list-none; }
+  .sideNav__link {
+    @apply relative block pl-6 text-2xl font-bold leading-tight text-slate-400 hover:text-slate-900 transition-colors;
+  }
+  /* 左側の薄いガイドライン */
+  .sideNav__card::before {
+    content: '';
+    position: absolute;
+    left: 1.5rem; /* 24px */
+    top: 1rem;
+    bottom: 1rem;
+    width: 2px;
+    background: #e5e7eb; /* slate-200 */
+  }
+  /* アクティブ行の強調（左の太いライン + 文字色） */
+  .sideNav__link.is-active {
+    @apply text-slate-900;
+  }
+  .sideNav__link.is-active::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem; /* shifted farther left, away from the text */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: calc(100% + 8px);
+    background: #0f6536; /* brand green */
+    border-radius: 9999px;
+  }
+
+  /* ===== FAQ Accordion ===== */
+  .faq {
+    display: grid;
+    gap: 16px;
+  }
+
+  .faq__item {
+    border: 1px solid #e5e7eb; /* slate-200 */
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow .2s ease;
+  }
+  .faq__item:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+
+  /* summary 行 */
+  .faq__q {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 48px 18px 18px;
+    cursor: pointer;
+    list-style: none;
+  }
+  /* デフォの三角隠す */
+  .faq__item > summary::-webkit-details-marker { display: none; }
+
+  .faq__q-mark {
+    color: #0f6536; /* blue-700 */
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+  .faq__q-text {
+    font-weight: 600;
+    color: #0f172a; /* slate-900 */
+  }
+
+  /* 右側の＋／−アイコン */
+  .faq__icon {
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+  }
+  .faq__icon::before,
+  .faq__icon::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    background: #0f6536; /* blue-700 */
+    transform: translate(-50%, -50%);
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  /* 縦棒で＋にする */
+  .faq__icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  /* 開いたら縦棒を消して「−」に */
+  details[open] .faq__icon::after {
+    opacity: 0;
+  }
+
+  /* 回答部 */
+  .faq__a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px 18px 18px;
+    color: #334155; /* slate-700 */
+    line-height: 1.8;
+    border-top: 1px dashed #e5e7eb;
+    animation: faq-reveal .18s ease-out both;
+  }
+  .faq__a-mark {
+    color: #00ff46; /* red-600 */
+    font-weight: 700;
+    flex: 0 0 auto;
+    line-height: 1;
+  }
+  .faq__a-text {
+    flex: 1;
+  }
+  @keyframes faq-reveal {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (min-width: 768px) {
+    .faq__q { padding: 22px 56px 22px 22px; }
+    .faq__a { padding: 0 22px 22px 22px; }
+  }
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker { animation: ticker 15s linear infinite; }
+
+@font-face {
+  font-family: "AbashiriMincho";
+  src:  url("/fonts/AbashiriMincho.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --font-abashiri: "AbashiriMincho", sans-serif;
+}
+
+.font-abashiri {
+  font-family: var(--font-abashiri);
+}
+
+@keyframes shine {
+  0% { left: -75%; }
+  100% { left: 125%; }
+}
+.animate-shine {
+  animation: shine 1.2s ease-out forwards;
+}
+
+/* 一部だけ線の色を変える */
+.cstm-box-corner-accent {
+   margin: 0 auto 2em; /* 外側の余白（上下と中央配置） */
+   padding: 2em; /* 内側余白 */
+   border: 3px solid #eee; /* 線の太さ（3px）、種類（実線）、色（#eee） */
+   position: relative; /* 配置（基準となる位置） */
+   z-index: 0; /* 他の要素との重なり順（0は通常の順番） */
+}
+
+.cstm-box-corner-accent:before {
+   border-top: 3px solid #0f6536; /* 上辺の線の色（#8293AA） */
+   border-left: 3px solid #0f6536; /* 左辺の線の色（#8293AA） */
+   content: ''; /* 擬似要素にコンテンツなし */
+   display: block; /* 擬似要素をブロック表示 */
+   position: absolute; /* 配置（親要素から絶対的に位置を指定） */
+   top: -3px; /* 上から-3pxずらす */
+   left: -3px; /* 左から-3pxずらす */
+   width: 20px; /* 幅20px */
+   height: 20px; /* 高さ20px */
+   z-index: 1; /* 重なり順（前面に表示） */
+}
+
+/* pタグの余白 */
+.cstm-box-corner-accent p { margin:0; }

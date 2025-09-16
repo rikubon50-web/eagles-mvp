@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/revalidate/route.ts", "schedule": "*/5 * * * *" }
+  ]
+}
