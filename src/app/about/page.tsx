@@ -286,22 +286,6 @@ export default async function AboutPage() {
               </p>
             </div>
           </div>
-
-          {/* 行動導線 */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <a
-              href="/recruit"
-              className="button-32 mt-4"
-            >
-              体験練習に参加する
-            </a>
-            <a
-              href="/support"
-              className="button-32 mt-4"
-            >
-              応援・寄付はこちら
-            </a>
-          </div>
         </section>
 
         <section id="faq" className="scroll-mt-[100px]">
