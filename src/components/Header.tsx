@@ -66,6 +66,14 @@ export default function Header() {
           <Link href="/games" className="header__link" onClick={() => setOpen(false)}>GAME</Link>
           <Link href="/blog" className="header__link" onClick={() => setOpen(false)}>BLOG</Link>
           <Link href="/support" className="header__link" onClick={() => setOpen(false)}>SUPPORT</Link>
+          <div className="header__sns--mobile flex gap-4 mt-4">
+            <Link href="https://www.instagram.com/eagles_agulax" target="_blank" aria-label="Instagram">
+              <Instagram className="w-7 h-7 text-brand-600 hover:text-brand-700" />
+            </Link>
+            <Link href="/contact" aria-label="Contact">
+              <Mail className="w-7 h-7 text-brand-600 hover:text-brand-700" />
+            </Link>
+          </div>
         </nav>
       )}
       <style jsx>{`
