@@ -15,7 +15,7 @@ export default function Attraction({ backgroundImgUrl, slogan, body }: Attractio
   return (
     <section>
       {hasAny ? (
-        <div className="relative w-screen h-[100vh] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+        <div className="relative w-screen min-h-[100vh] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
           {/* 背景画像（画面いっぱい） */}
           {backgroundImgUrl && (
             <div className="absolute inset-0">
@@ -35,20 +35,20 @@ export default function Attraction({ backgroundImgUrl, slogan, body }: Attractio
           />
 
           {/* コンテンツ */}
-          <div className="relative w-full px-6 py-10 md:w-1/2 md:px-8 md:py-20">
-            <h3 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 leading-none whitespace-pre-line">
+          <div className="relative w-full px-6 pt-10 pb-16 md:w-1/2 md:px-8 md:pt-20 md:pb-20">
+            <h3 className="text-[clamp(1.75rem,6vw,4.5rem)] font-extrabold tracking-tight text-slate-900 leading-[1.1] whitespace-pre-line break-words [text-wrap:balance]">
               {displaySlogan}
             </h3>
             <p
-              className="mt-6 md:mt-8 text-slate-800 text-base md:text-lg leading-8 whitespace-pre-line break-words hyphens-auto max-w-2xl pr-4 md:pr-8 font-abashiri"
+              className="mt-6 md:mt-8 text-slate-800 text-[clamp(0.95rem,1.6vw,1.125rem)] leading-[clamp(1.6,2vw,1.9)] whitespace-pre-line break-words hyphens-auto max-w-full md:max-w-2xl pr-2 md:pr-8 font-abashiri"
               dangerouslySetInnerHTML={{ __html: displayBody }}
             />
             <div className="mt-8">
               <Link
                 href="/about"
-                className="inline-flex items-center gap-3 rounded-md border border-slate-400 px-5 py-3 text-sm font-medium text-slate-700 hover:bg-white/70"
+                className="inline-flex flex-wrap items-center gap-[clamp(0.375rem,1vw,0.5rem)] rounded-md border border-slate-400 px-[clamp(0.75rem,1.5vw,1rem)] py-[clamp(0.5rem,1vw,0.75rem)] text-[clamp(0.9rem,1.2vw,0.95rem)] font-medium text-slate-700 hover:bg-white/70 max-w-full whitespace-normal break-words [text-wrap:pretty] leading-[1.2]"
               >
-                <span className="inline-block w-10 h-px bg-slate-400" />
+                <span className="inline-block w-[clamp(1.25rem,4vw,2rem)] h-px bg-slate-400 shrink-0" />
                 部について詳しく見る
               </Link>
             </div>
