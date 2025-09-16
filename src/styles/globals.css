@@ -300,7 +300,7 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.animate-ticker { animation: ticker 15s linear infinite; }
+.animate-ticker { animation: ticker 5s linear infinite; }
 
 @font-face {
   font-family: "AbashiriMincho";
