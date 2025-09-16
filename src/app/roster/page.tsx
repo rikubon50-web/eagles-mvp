@@ -33,7 +33,7 @@ export default async function RosterPage() {
     <div className="scroll-smooth">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Year Tabs (このページ内で完結するアンカーリンク) */}
-        <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 py-3">
+        <nav className="relative z-10 bg-white py-3">
           <ul className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[4,3,2,1].filter((y) => years.some((yy) => yy === y)).map((y) => (
               <li key={`tab-${y}`}>
@@ -48,13 +48,6 @@ export default async function RosterPage() {
           </ul>
         </nav>
 
-        {/* Big year banner */}
-        {years.length > 0 && (
-          <div className="mt-6 w-full bg-[#0f6536] text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
-            {toOrdinal(Number(years[0]))}
-          </div>
-        )}
-
         {players.length === 0 && (
           <p className="text-center text-slate-500">選手データが取得できませんでした。</p>
         )}
@@ -64,8 +57,11 @@ export default async function RosterPage() {
             a.name.localeCompare(b.name, "ja")
           );
           return (
-            <section id={`year-${year}`} key={year} className="space-y-0 scroll-mt-28">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <section id={`year-${year}`} key={year} className="space-y-6">
+              <div className="w-full bg-[#0f6536] text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
+                {toOrdinal(year)}
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {list.map((p) => (
                   <PlayerCard key={p.id} player={p} />
                 ))}
