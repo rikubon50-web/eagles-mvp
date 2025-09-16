@@ -57,14 +57,14 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
                   className={`grid grid-cols-[200px,1fr] md:grid-cols-[320px,1fr]`}
                 >
                   <div
-                    className={`bg-[#0f6536] text-white font-extrabold text-base md:text-lg flex items-center justify-center py-3 md:py-4 ${
+                    className={`bg-[#0f6536] text-white font-extrabold text-base md:text-lg flex items-center justify-center py-3 md:py-4 px-3 md:px-5 text-center ${
                       !isLast ? "border-b-2 border-slate-300" : ""
                     }`}
                   >
                     {row.label}
                   </div>
                   <div
-                    className={`bg-white text-gray-800 text-base md:text-lg font-extrabold flex items-center px-4 md:px-6 ${
+                    className={`bg-white text-gray-800 text-base md:text-lg font-extrabold flex items-center px-4 md:px-6 py-3 md:py-4 ${
                       !isLast ? "border-b-2 border-slate-300" : ""
                     }`}
                   >
