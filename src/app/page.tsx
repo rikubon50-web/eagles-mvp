@@ -172,7 +172,7 @@ export default async function Home() {
       <section>
         <h2 className="section-title text-3xl md:text-4xl font-bold mb-6">Roster</h2>
         {players && players.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-flow-col auto-cols-[minmax(50%,_1fr)] md:auto-cols-[minmax(33.333%,_1fr)] lg:auto-cols-[minmax(25%,_1fr)] gap-4 overflow-x-auto">
             {players.slice(0, 6).map((p) => (
               <PlayerCard key={p.id} player={p} />
             ))}
