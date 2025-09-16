@@ -89,7 +89,7 @@ export default function Header() {
             display: none;
           }
         }
-        .header { position: relative; }
+        .header { position: sticky; top: 0; z-index: 1000; background: #fff; }
         /* Mobile dropdown base */
         @media (max-width: 899px) {
           .header__nav--mobile {
@@ -103,7 +103,7 @@ export default function Header() {
             padding: 12px 16px;
             border-top: 1px solid #e5e7eb; /* slate-200 */
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            z-index: 999;
+            z-index: 1001; /* raised for sticky header */
           }
           .header__nav--mobile .header__link {
             padding: 12px 8px;
