@@ -31,7 +31,7 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
 
   return (
     <article className="container py-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* 写真 */}
         <div className="relative overflow-hidden rounded-2xl shadow-card">
           <Image
@@ -39,7 +39,7 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
             alt={player.name}
             width={player.photo.width}
             height={player.photo.height}
-            className="w-full h-auto object-cover"
+            className="w-full h-auto object-cover max-w-[510px] mx-auto"
             priority
           />
         </div>
