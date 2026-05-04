@@ -130,7 +130,7 @@ export async function fetchNewsList() {
 }
 
 // News詳細
-export async function fetchNewsById(id: string) {
+export async function fetchNewsById(id: string): Promise<News | null> {
   const { contents } = await client.getList<News>({
     endpoint: "news",
     queries: { filters: `id[equals]${id}`, limit: 1 },
@@ -182,7 +182,7 @@ export async function fetchBlogList() {
   return contents;
 }
 
-export async function fetchBlogById(id: string) {
+export async function fetchBlogById(id: string): Promise<Blog | null> {
   const { contents } = await client.getList<Blog>({
     endpoint: "blog",
     queries: { filters: `id[equals]${id}`, limit: 1 },

@@ -1,15 +1,6 @@
-type Row = {
-  block?: string;  // "A" | "B"
-  rank: string;
-  university: string;
-  points: string;
-  games: string;
-  gf: string;
-  ga: string;
-  diff: string;
-};
+import { type StandingRow } from "@/lib/sheets";
 
-function BlockTable({ title, rows }: { title: string; rows: Row[] }) {
+function BlockTable({ title, rows }: { title: string; rows: StandingRow[] }) {
   return (
     <div>
       {/* ブロック見出し帯 */}
@@ -56,7 +47,7 @@ function BlockTable({ title, rows }: { title: string; rows: Row[] }) {
   );
 }
 
-export default function StandingsBoard({ rows, updatedAt }: { rows: Row[]; updatedAt?: string }) {
+export default function StandingsBoard({ rows, updatedAt }: { rows: StandingRow[]; updatedAt?: string }) {
   const A = rows.filter((r) => (r.block ?? "").toUpperCase() === "A");
   const B = rows.filter((r) => (r.block ?? "").toUpperCase() === "B");
 

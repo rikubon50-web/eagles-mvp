@@ -65,6 +65,10 @@ async function fallbackSingleLine(url: string): Promise<AboutSheet | null> {
   }
 }
 
+export type StandingRow = {
+  [key: string]: string;
+};
+
 export type AboutSheet = {
   slogan: string;
   allBoxMemberImgUrl?: string;
@@ -77,7 +81,7 @@ export async function fetchAboutFromCsv(url = process.env.ABOUT_CSV): Promise<Ab
   if (!url) return null;
   const rows = await fetchCsv(url);
   if (rows.length === 0) return null;
-  const row: Record<string, string> = rows[0] as any;
+  const row: Record<string, string> = rows[0];
 
   // helper: first non-empty match
   const pick = (keys: string[]) => {

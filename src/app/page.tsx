@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { fetchNewsList, fetchGamesUpcoming, fetchBlogList, fetchPlayers } from "@/lib/microcms";
 import { fetchAboutFromCsv, fetchStandingsFromCsv } from "@/lib/sheets";
+import { normalizeText, normalizeUrl } from "@/lib/format";
 import NewsCard from "@/components/NewsCard";
 import GameCard from "@/components/GameCard";
 import StandingsBoard from "@/components/StandingsBoard"; 
@@ -22,45 +23,13 @@ export default async function Home() {
     fetchAboutFromCsv(),
     fetchPlayers(),
   ]);
-  // --- build items for news ticker (use News shape expected by NewsTicker) ---
-  const tickerItems = news.slice(0, 20).map((n: any) => ({
-    id: String(n.id),
-    title: String(n.title ?? ""),
-    excerpt: n.excerpt ?? "",
-    body: String(n.body ?? ""),
-    // category could be string or object/array from CMS – normalize to string
-    category: typeof n.category === "string"
-      ? n.category
-      : Array.isArray(n.category)
-      ? String(n.category[0] ?? "")
-      : typeof n.category?.name === "string"
-      ? n.category.name
-      : "",
-    publishedAt: String(n.publishedAt ?? ""),
-  }));
-  // --- normalize helpers (process raw strings from CSV here) ---
-  const normalizeText = (s?: string) =>
-    (s ?? "")
-      // strip outer quotes if any
-      .replace(/^"+|"+$/g, "")
-      // convert <br> to newline
-      .replace(/<br\s*\/?\>/gi, "\n")
-      // normalize CRLF to LF
-      .replace(/\r/g, "");
-
-  const normalizeUrl = (u?: string) => {
-    const v = (u ?? "").trim().replace(/^"+|"+$/g, "");
-    if (!v) return undefined;
-    // accept only absolute http(s)
-    if (/^https?:\/\//i.test(v)) return v;
-    return undefined;
-  };
-
+  // --- build items for news ticker ---
+  const tickerItems = news.slice(0, 20);
   const aboutNorm = about
     ? {
         slogan: normalizeText(about.slogan),
         body: normalizeText(about.body),
-        backgroundImgUrl: normalizeUrl((about as any).backgroundImgUrl),
+        backgroundImgUrl: normalizeUrl(about?.backgroundImgUrl),
       }
     : null;
 
@@ -118,7 +87,7 @@ export default async function Home() {
 
       {/* Standings（追加） */}
       <section>
-        <StandingsBoard rows={standingsData.rows as any[]} updatedAt={standingsData.updatedAt ?? undefined} />
+        <StandingsBoard rows={standingsData.rows} updatedAt={standingsData.updatedAt ?? undefined} />
       </section>
 
       {/* 最新ニュース */}
