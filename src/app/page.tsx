@@ -64,6 +64,18 @@ export default async function Home() {
       }
     : null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsTeam",
+    "name": "EAGLES Lacrosse",
+    "sport": "Lacrosse",
+    "url": process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-lacrosse.vercel.app",
+    "memberOf": {
+      "@type": "SportsOrganization",
+      "name": "関東学生ラクロス連盟"
+    }
+  };
+
   return (
     <div className="space-y-16">
       <div className="space-y-0">
@@ -136,14 +148,14 @@ export default async function Home() {
         backgroundImgUrl="/img/IMG_8307.JPG"
         slogan={"ALL\nBOX\nMEMBER"}
         body={`EAGLESに関わるすべての人が同じゴールを目指すための合言葉。
-              
+
               グラウンドで戦うプレーヤー、戦術を支えるスタッフ、声援を送り続けるサポーター、
               そして伝統を築き上げてきたOBの方々――。
-          
+
               誰一人欠けることなく、全員が「チームの一員」としてつながっている。
-        
+
               私たちは、その結束を力に変え、互いを信じ、互いを高め合いながら挑戦を続ける。
-             
+
               勝利の喜びも、敗北の悔しさも、すべてを共有するからこそ、一瞬一瞬が大きな意味を持つ。
 
               EAGLESは「ALL BOX MEMBER」の理念のもと、
@@ -185,6 +197,10 @@ export default async function Home() {
         </div>
       </section>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </div>
   );
 }

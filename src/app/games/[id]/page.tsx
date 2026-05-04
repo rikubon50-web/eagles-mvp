@@ -40,11 +40,36 @@ export default async function GameTextPage({
       return notFound();
     }
 
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "SportsEvent",
+      "name": game.title,
+      "startDate": game.startAt,
+      "location": {
+        "@type": "Place",
+        "name": game.venue ?? ""
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": game.homeTeamName
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": game.awayTeamName
+      }
+    };
+
     return (
-      <article className="prose-mcms max-w-3xl mx-auto px-4 py-10">
-        {/* microCMS リッチエディタのHTMLをそのまま描画 */}
-        <div dangerouslySetInnerHTML={{ __html: game.text }} />
-      </article>
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <article className="prose-mcms max-w-3xl mx-auto px-4 py-10">
+          {/* microCMS リッチエディタのHTMLをそのまま描画 */}
+          <div dangerouslySetInnerHTML={{ __html: game.text }} />
+        </article>
+      </>
     );
   } catch {
     return notFound();
