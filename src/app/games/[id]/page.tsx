@@ -1,23 +1,27 @@
 // src/app/games/[id]/page.tsx
 import type { Metadata } from "next";
-import { client, type Game, fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
+import { client, type Game } from "@/lib/microcms";
 import { notFound } from "next/navigation";
 
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const [upcoming, archive] = await Promise.all([fetchGamesUpcoming(), fetchGamesArchive()]);
-  const game = [...upcoming, ...archive].find((g) => g.id === params.id);
-  if (!game) return {};
-  return {
-    title: game.title,
-    description: `${game.startAt ? new Date(game.startAt).toLocaleDateString("ja-JP") : ""} ${game.venue ?? ""}`.trim(),
-    openGraph: {
+  try {
+    const game = await client.getListDetail<Game>({ endpoint: "games", contentId: params.id });
+    if (!game) return {};
+    const description = `${game.startAt ? new Date(game.startAt).toLocaleDateString("ja-JP") : ""} ${game.venue ?? ""}`.trim();
+    return {
       title: game.title,
-      description: `${game.startAt ? new Date(game.startAt).toLocaleDateString("ja-JP") : ""} ${game.venue ?? ""}`.trim(),
-      images: game.homeTeamLogo ? [{ url: game.homeTeamLogo.url, width: game.homeTeamLogo.width, height: game.homeTeamLogo.height }] : undefined,
-    },
-  };
+      description,
+      openGraph: {
+        title: game.title,
+        description,
+        images: game.homeTeamLogo ? [{ url: game.homeTeamLogo.url, width: game.homeTeamLogo.width, height: game.homeTeamLogo.height }] : undefined,
+      },
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function GameTextPage({
