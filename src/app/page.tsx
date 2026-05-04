@@ -10,7 +10,7 @@ import NewsSection from "@/components/sections/NewsSection";
 import BlogSection from "@/components/sections/BlogSection";
 import RosterSection from "@/components/sections/RosterSection";
 
-export const revalidate = 300; // ISR: 5分ごとに再生成
+export const revalidate = 300;
 
 export default async function Home() {
   const jsonLd = {
@@ -25,11 +25,14 @@ export default async function Home() {
     }
   };
 
+  const innerCls = "max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem] mx-auto px-6";
+  const fullWidth = "relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]";
+
   return (
-    <div className="space-y-16">
+    <div>
+      {/* Hero + NewsTicker */}
       <div className="space-y-0">
-        {/* Hero */}
-        <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-[#0f6536]" style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}>
+        <div className={`${fullWidth} bg-[#0f6536]`} style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}>
           <Image
             src="/img/hero.png"
             alt="EAGLES Lacrosse"
@@ -38,26 +41,41 @@ export default async function Home() {
             priority
           />
         </div>
-        {/* NewsTicker */}
-        <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-slate-900/90 text-white">
+        <div className={`${fullWidth} bg-slate-900/90 text-white`}>
           <Suspense fallback={<div className="h-10 bg-slate-900/90" />}>
             <NewsTickerSection />
           </Suspense>
         </div>
       </div>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <UpcomingSection />
-      </Suspense>
+      {/* UpcomingSection — white */}
+      <div className={`${fullWidth} bg-white py-16`}>
+        <div className={innerCls}>
+          <Suspense fallback={<SectionSkeleton />}>
+            <UpcomingSection />
+          </Suspense>
+        </div>
+      </div>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <StandingsSection />
-      </Suspense>
+      {/* StandingsSection — slate-100 */}
+      <div className={`${fullWidth} bg-slate-100 py-16`}>
+        <div className={innerCls}>
+          <Suspense fallback={<SectionSkeleton />}>
+            <StandingsSection />
+          </Suspense>
+        </div>
+      </div>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <NewsSection />
-      </Suspense>
+      {/* NewsSection — slate-900 (dark) */}
+      <div className={`${fullWidth} bg-slate-900 py-16`}>
+        <div className={innerCls}>
+          <Suspense fallback={<SectionSkeleton />}>
+            <NewsSection dark />
+          </Suspense>
+        </div>
+      </div>
 
+      {/* Attraction — full-width image, handles its own breakout */}
       <Attraction
         backgroundImgUrl="/img/IMG_8307.JPG"
         slogan={"ALL\nBOX\nMEMBER"}
@@ -76,13 +94,23 @@ export default async function Home() {
               関わるすべての人と喜びを分かち合い、共に未来を切り拓く。`}
       />
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <BlogSection />
-      </Suspense>
+      {/* BlogSection — white */}
+      <div className={`${fullWidth} bg-white py-16`}>
+        <div className={innerCls}>
+          <Suspense fallback={<SectionSkeleton />}>
+            <BlogSection />
+          </Suspense>
+        </div>
+      </div>
 
-      <Suspense fallback={<SectionSkeleton />}>
-        <RosterSection />
-      </Suspense>
+      {/* RosterSection — slate-900 (dark) */}
+      <div className={`${fullWidth} bg-slate-900 py-16`}>
+        <div className={innerCls}>
+          <Suspense fallback={<SectionSkeleton />}>
+            <RosterSection dark />
+          </Suspense>
+        </div>
+      </div>
 
       <script
         type="application/ld+json"
