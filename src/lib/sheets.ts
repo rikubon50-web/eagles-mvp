@@ -39,7 +39,7 @@ function toGDriveDirectLink(url: string | undefined): string {
 
 async function fallbackSingleLine(url: string): Promise<AboutSheet | null> {
   try {
-    const res = await fetch(url, { next: { revalidate: 10 } });
+    const res = await fetch(url, { next: { revalidate: 300 } });
     if (!res.ok) return null;
     const text = await res.text();
     const firstLine = text
