@@ -19,3 +19,7 @@ out
 .env.*.local
 
 *.DS_Store
+
+# Git worktrees
+.worktrees/
+.superpowers/
