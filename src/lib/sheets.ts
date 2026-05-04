@@ -141,7 +141,7 @@ export type StandingsData = {
   updatedAt?: string;
 };
 
-function pickFrom(obj: Record<string, any>, keys: string[]): string | undefined {
+function pickFrom(obj: Record<string, string>, keys: string[]): string | undefined {
   for (const k of keys) {
     const v = obj[k];
     if (typeof v === "string" && v.trim() !== "") return v;
@@ -155,7 +155,7 @@ export async function fetchStandingsFromCsv(url = process.env.STANDINGS_CSV): Pr
 
   let updatedAt: string | undefined;
   if (rows.length > 0) {
-    const r0 = rows[0] as Record<string, any>;
+    const r0 = rows[0];
     // fetchCsv はヘッダーを小文字化する実装なので、小文字キーで探す
     updatedAt = pickFrom(r0, [
       "updatedat",
