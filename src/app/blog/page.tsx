@@ -2,7 +2,7 @@
 import { fetchBlogList } from "@/lib/microcms";
 import BlogCard from "@/components/BlogCard";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export default async function BlogListPage() {
   const posts = await fetchBlogList();

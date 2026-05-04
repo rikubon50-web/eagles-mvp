@@ -2,7 +2,7 @@
 import { fetchNewsById } from "@/lib/microcms";
 import { notFound } from "next/navigation";
 
-export const revalidate = 60; // ISR: 60秒ごとに再生成
+export const revalidate = 300; // ISR: 5分ごとに再生成
 
 export default async function NewsDetailPage({
   params,

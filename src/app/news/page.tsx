@@ -2,7 +2,7 @@
 import { fetchNewsList } from "@/lib/microcms";
 import NewsCard from "@/components/NewsCard";
 
-export const revalidate = 60; // ISR: 60秒ごとに再生成
+export const revalidate = 300; // ISR: 5分ごとに再生成
 
 export default async function NewsListPage() {
   const news = await fetchNewsList();

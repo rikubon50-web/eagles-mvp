@@ -2,7 +2,7 @@
 import { fetchBlogById } from "@/lib/microcms";
 import { notFound } from "next/navigation";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export default async function BlogDetailPage({ params }: { params: { id: string } }) {
   const item = await fetchBlogById(params.id);

@@ -1,4 +1,4 @@
-export async function fetchCsv(url: string, revalidateSec = 10) {
+export async function fetchCsv(url: string, revalidateSec = 300) {
   const res = await fetch(url, { next: { revalidate: revalidateSec } });
   if (!res.ok) throw new Error(`CSV fetch failed: ${res.status}`);
   const text = await res.text();

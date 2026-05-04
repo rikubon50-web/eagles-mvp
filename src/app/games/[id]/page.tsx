@@ -2,7 +2,7 @@
 import { client, type Game } from "@/lib/microcms";
 import { notFound } from "next/navigation";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export default async function GameTextPage({
   params,

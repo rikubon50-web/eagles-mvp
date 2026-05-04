@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { fetchPlayers } from "@/lib/microcms";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export default async function PlayerDetailPage({ params }: { params: { id: string } }) {
   const list = await fetchPlayers().catch(() => [] as any[]);

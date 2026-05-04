@@ -11,7 +11,7 @@ import NewsTicker from "@/components/NewsTicker";
 import Attraction from "@/components/Attraction";
 import PlayerCard from "@/components/PlayerCard";
 
-export const revalidate = 0; // ISR
+export const revalidate = 300; // ISR: 5分ごとに再生成
 
 export default async function Home() {
   const [news, games, standingsData, blogs, about, players] = await Promise.all([

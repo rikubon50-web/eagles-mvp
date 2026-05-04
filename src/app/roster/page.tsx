@@ -8,7 +8,7 @@ const toOrdinal = (y: number) => {
   return map[y] ?? `${y}TH`;
 };
 
-export const revalidate = 60; // ISR
+export const revalidate = 300; // ISR: 5分ごとに再生成
 
 export default async function RosterPage() {
   const players = await fetchPlayers();

@@ -2,7 +2,7 @@
 import { fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
 import GameCard from "@/components/GameCard";
 
-export const revalidate = 60; // ISR: 60秒ごとに再生成
+export const revalidate = 300; // ISR: 5分ごとに再生成
 
 export default async function GamesListPage() {
   const [upcoming, archive] = await Promise.all([

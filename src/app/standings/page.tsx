@@ -1,4 +1,4 @@
-export const revalidate = 0;
+export const revalidate = 300; // ISR: 5分ごとに再生成
 import { fetchStandingsFromCsv } from "@/lib/sheets";
 
 export default async function StandingsPage() {
