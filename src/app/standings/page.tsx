@@ -5,12 +5,9 @@ export default async function StandingsPage() {
   const url = process.env.STANDINGS_CSV!;
   const { rows, updatedAt } = await fetchStandingsFromCsv(url);
 
-  console.log(updatedAt);
-
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Standings</h1>
-      <p className="text-xs text-slate-500">debug updatedAt: {updatedAt ?? "(none)"}</p>
 
       <div className="overflow-x-auto rounded-xl border bg-white">
         <table className="w-full text-left border-collapse">
