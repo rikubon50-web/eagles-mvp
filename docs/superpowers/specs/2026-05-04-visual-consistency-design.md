@@ -7,11 +7,14 @@
 
 Improve visual consistency across the homepage by introducing alternating dark/light section backgrounds (White ↔ slate-900), giving the site a sporty, bold Pro-sports feel while keeping the existing card components intact.
 
+The goal is not to redesign the site from scratch. The goal is to improve the visual rhythm of the existing homepage while preserving the current data flow, existing components, and CMS/CSV-driven content.
+
 ## Design Decisions
 
 - **Style direction:** Sporty/Bold (B) — strong contrast, pro sports aesthetic
 - **Background pattern:** White ↔ slate-900 (B) — clean alternation
 - **Card components:** No changes — GameCard, BlogCard, PlayerCard, NewsCard each retain their individual design language
+- **Implementation approach:** Minimal safe changes around the existing architecture
 
 ## Section Background Map
 
@@ -78,6 +81,10 @@ Only `NewsSection` and `RosterSection` need this prop. `BlogSection` and `Upcomi
 - Heading: conditionally `text-white` or `text-slate-900`
 - Empty state: conditionally `text-slate-400` or `text-slate-700`
 - No changes to `PlayerCard` (green gradient overlay already works on dark)
+
+### Attraction Placement
+
+`Attraction` already uses `relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]` and `min-h-[100vh]` internally, so it is placed directly in `page.tsx` without any additional wrapper. It sits between the NewsSection wrapper (dark) and the BlogSection wrapper (white) with no extra margin needed.
 
 ## Out of Scope
 
