@@ -16,9 +16,31 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "EAGLES Lacrosse",
+  title: { default: "EAGLES Lacrosse", template: "%s | EAGLES Lacrosse" },
   description: "青山学院大学男子ラクロス部 公式サイト",
   icons: { icon: "/favicon.ico" },
+  openGraph: {
+    type: "website",
+    locale: "ja_JP",
+    url: process.env.NEXT_PUBLIC_SITE_URL,
+    siteName: "EAGLES Lacrosse",
+    title: "EAGLES Lacrosse",
+    description: "青山学院大学男子ラクロス部 公式サイト",
+    images: [
+      {
+        url: "/img/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "EAGLES Lacrosse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EAGLES Lacrosse",
+    description: "青山学院大学男子ラクロス部 公式サイト",
+    images: ["/img/og-default.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
