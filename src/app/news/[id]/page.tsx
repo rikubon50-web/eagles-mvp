@@ -1,8 +1,24 @@
 // src/app/news/[id]/page.tsx
+import type { Metadata } from "next";
 import { fetchNewsById } from "@/lib/microcms";
 import { notFound } from "next/navigation";
 
 export const revalidate = 300; // ISR: 5分ごとに再生成
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const item = await fetchNewsById(params.id);
+  if (!item) return {};
+  return {
+    title: item.title,
+    description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+    openGraph: {
+      title: item.title,
+      description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+      type: "article",
+      publishedTime: item.publishedAt,
+    },
+  };
+}
 
 export default async function NewsDetailPage({
   params,

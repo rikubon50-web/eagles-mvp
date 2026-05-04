@@ -1,9 +1,25 @@
 // src/app/roster/[id]/page.tsx
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { fetchPlayers } from "@/lib/microcms";
 
 export const revalidate = 300;
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const players = await fetchPlayers();
+  const player = players.find((p) => p.id === params.id);
+  if (!player) return {};
+  return {
+    title: player.name,
+    description: `${player.name}選手のプロフィール`,
+    openGraph: {
+      title: `${player.name} | EAGLES Lacrosse`,
+      description: `${player.name}選手のプロフィール`,
+      images: player.photo ? [{ url: player.photo.url, width: player.photo.width, height: player.photo.height }] : undefined,
+    },
+  };
+}
 
 export default async function PlayerDetailPage({ params }: { params: { id: string } }) {
   const list = await fetchPlayers().catch(() => [] as any[]);
