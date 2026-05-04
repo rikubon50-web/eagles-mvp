@@ -2,15 +2,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchNewsById } from "@/lib/microcms";
+import { newsCategoryColor } from "@/lib/category";
 import { notFound } from "next/navigation";
 
 export const revalidate = 300;
-
-const CATEGORY_COLOR: Record<string, string> = {
-  "お知らせ": "bg-sky-600",
-  "新歓":     "bg-emerald-600",
-  "試合情報": "bg-amber-600",
-};
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const item = await fetchNewsById(params.id);
@@ -33,7 +28,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
 
   const fullWidth = "relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]";
   const innerCls = "max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem] mx-auto px-6";
-  const badgeColor = CATEGORY_COLOR[item.category] ?? "bg-slate-600";
+  const badgeColor = newsCategoryColor(item.category);
 
   return (
     <>

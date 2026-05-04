@@ -1,6 +1,7 @@
 // src/components/NewsCard.tsx
 import Link from "next/link";
 import type { News } from "@/lib/microcms";
+import { newsCategoryColor } from "@/lib/category";
 
 type Props = {
   item: News;
@@ -31,7 +32,7 @@ export default function NewsCard({ item, className = "", dark = false }: Props) 
 
           {/* カテゴリ */}
           {item.category && (
-            <span className={`inline-block border text-xs px-2 py-0.5 ${dark ? "border-white/40 text-white/80" : "border-slate-900 text-slate-900"}`}>
+            <span className={`${newsCategoryColor(item.category)} text-white text-xs font-bold px-3 py-0.5 rounded-full tracking-wider`}>
               {item.category}
             </span>
           )}
