@@ -16,7 +16,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-lacrosse.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-mvp-c8m4.vercel.app"),
   title: { default: "EAGLES Lacrosse", template: "%s | EAGLES Lacrosse" },
   description: "青山学院大学男子ラクロス部 公式サイト",
   icons: { icon: "/favicon.ico" },

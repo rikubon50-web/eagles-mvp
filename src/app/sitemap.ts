@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { fetchNewsList, fetchBlogList, fetchPlayers, fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-lacrosse.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-mvp-c8m4.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [news, blogs, players, upcoming, archive] = await Promise.all([
