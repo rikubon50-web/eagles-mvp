@@ -31,8 +31,8 @@ export default async function Home() {
         {/* Hero */}
         <div className="relative w-screen h-[calc(100vh-85px)] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
           <Image
-            src="/img/28FDFC22-09FD-44DE-9E74-E939FA035794.PNG"
-            alt="About EAGLES"
+            src="/img/hero.png"
+            alt="EAGLES Lacrosse"
             fill
             className="object-cover"
             priority
