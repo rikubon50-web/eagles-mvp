@@ -29,12 +29,12 @@ export default async function Home() {
     <div className="space-y-16">
       <div className="space-y-0">
         {/* Hero */}
-        <div className="relative w-screen h-[calc(100vh-85px)] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+        <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-[#0f6536]" style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}>
           <Image
             src="/img/hero.png"
             alt="EAGLES Lacrosse"
             fill
-            className="object-cover"
+            className="object-contain"
             priority
           />
         </div>
