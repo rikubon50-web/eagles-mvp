@@ -14,7 +14,6 @@ import "../styles/globals.css";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PageTransition from "@/components/motion/PageTransition";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-mvp-c8m4.vercel.app"),
@@ -52,9 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
 
         <main className="pt-0 px-6 pb-6 mx-auto w-full max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem]">
-          <PageTransition>
-            {children}
-          </PageTransition>
+          {children}
         </main>
 
         <Footer />

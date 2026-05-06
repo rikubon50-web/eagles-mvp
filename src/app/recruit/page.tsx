@@ -1,4 +1,4 @@
-// src/app/shinkan/page.tsx
+// src/app/recruit/page.tsx
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
