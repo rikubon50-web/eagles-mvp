@@ -164,22 +164,22 @@ export default async function ShinkanPage() {
       <div className={`${fullWidth} bg-white py-16`}>
         <FadeIn className={innerCls}>
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-10">入部の流れ</h2>
-          <div className="flex flex-col md:flex-row items-stretch gap-6 md:gap-0">
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-0">
             {STEPS.map(({ num, title, desc }, idx) => (
-              <div key={num} className="flex md:flex-col items-center md:flex-1 gap-4 md:gap-0 md:text-center">
-                <div className="flex flex-col md:items-center gap-3 flex-1">
+              <>
+                <div key={num} className="flex flex-col items-center flex-1 text-center">
                   <div className="w-12 h-12 rounded-full bg-[#0f6536] text-white flex items-center justify-center font-extrabold text-lg shrink-0">
                     {num}
                   </div>
-                  <div className="md:mt-3">
+                  <div className="mt-3">
                     <h3 className="font-bold text-lg text-slate-900 mb-1">{title}</h3>
                     <p className="text-slate-600 text-sm">{desc}</p>
                   </div>
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className="hidden md:block text-slate-300 text-3xl px-2 self-start mt-3">→</div>
+                  <div key={`arrow-${idx}`} className="hidden md:block text-slate-300 text-3xl shrink-0">→</div>
                 )}
-              </div>
+              </>
             ))}
           </div>
         </FadeIn>
