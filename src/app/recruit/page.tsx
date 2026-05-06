@@ -2,7 +2,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchNewsList, fetchPlayers, Player } from "@/lib/microcms";
+import { fetchNewsList, fetchPlayersByIds, Player } from "@/lib/microcms";
+
+// ★ 先輩の声に表示する選手のIDを3件指定（microCMSのコンテンツIDをここに入れる）
+const TESTIMONIAL_IDS = [
+  "your-player-id-1",
+  "your-player-id-2",
+  "your-player-id-3",
+];
 import NewsCard from "@/components/NewsCard";
 import FadeIn from "@/components/motion/FadeIn";
 
@@ -60,13 +67,11 @@ export default async function ShinkanPage() {
   const fullWidth = "relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]";
   const innerCls = "max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem] mx-auto px-6";
 
-  const [allNews, players] = await Promise.all([
+  const [allNews, testimonials] = await Promise.all([
     fetchNewsList().catch(() => []),
-    fetchPlayers().catch(() => []),
+    fetchPlayersByIds(TESTIMONIAL_IDS).catch(() => []),
   ]);
   const shinkanNews = allNews.filter((n) => JSON.stringify(n.category ?? "").includes("新歓")).slice(0, 6);
-
-  const testimonials = players.filter((p: Player) => p.comment).slice(0, 3);
 
   return (
     <>

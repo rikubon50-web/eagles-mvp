@@ -181,6 +181,15 @@ export async function fetchPlayers() {
   return contents;
 }
 
+export async function fetchPlayersByIds(ids: string[]): Promise<Player[]> {
+  if (ids.length === 0) return [];
+  const { contents } = await client.getList<Player>({
+    endpoint: "players",
+    queries: { filters: ids.map((id) => `id[equals]${id}`).join("[or]"), limit: ids.length },
+  });
+  return ids.map((id) => contents.find((p) => p.id === id)).filter(Boolean) as Player[];
+}
+
 
 // Blog一覧
 export async function fetchBlogList() {
