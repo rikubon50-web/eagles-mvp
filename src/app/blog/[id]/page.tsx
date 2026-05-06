@@ -61,9 +61,9 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
 
       {/* サムネイル */}
       {item.thumbnail && (
-        <div className={`${fullWidth} bg-slate-100`}>
-          <div className="max-w-3xl mx-auto">
-            <div className="relative w-full aspect-[16/9]">
+        <div className={`${fullWidth} bg-slate-100 py-8`}>
+          <div className="max-w-3xl mx-auto px-6">
+            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl shadow-lg">
               <Image
                 src={item.thumbnail.url}
                 alt={item.title}
@@ -77,7 +77,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
       )}
 
       {/* 本文エリア */}
-      <div className="py-12 md:py-16">
+      <div className="pt-16 pb-16 md:pt-20 md:pb-20">
         <div className="max-w-3xl mx-auto">
           {item.excerpt && (
             <p className="text-slate-600 text-lg leading-relaxed mb-8 pb-8 border-b border-slate-200">
@@ -86,7 +86,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           )}
 
           <article
-            className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline"
+            className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
             dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
           />
 
