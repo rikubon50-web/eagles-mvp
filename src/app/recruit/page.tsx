@@ -194,7 +194,7 @@ export default async function ShinkanPage() {
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
               {testimonials.map((p: Player) => (
-                <div key={p.id} className="bg-slate-800 rounded-2xl p-6 flex flex-col items-center text-center">
+                <Link key={p.id} href={`/roster/${p.id}`} className="bg-slate-800 rounded-2xl p-6 flex flex-col items-center text-center hover:bg-slate-700 transition-colors">
                   {p.photo && (
                     <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0">
                       <Image
@@ -209,7 +209,7 @@ export default async function ShinkanPage() {
                   <p className="font-bold text-white mb-0.5">{p.name}</p>
                   <p className="text-slate-400 text-xs mb-4">{p.year}年生</p>
                   <p className="text-slate-300 text-sm leading-relaxed">「{p.comment}」</p>
-                </div>
+                </Link>
               ))}
             </div>
           </FadeIn>
