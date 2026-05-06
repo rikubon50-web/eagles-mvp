@@ -138,6 +138,15 @@ export async function fetchNewsById(id: string): Promise<News | null> {
   return contents[0] ?? null;
 }
 
+// 新歓ニュース（category フィルタ）
+export async function fetchNewsByCategory(category: string, limit = 6) {
+  const { contents } = await client.getList<News>({
+    endpoint: "news",
+    queries: { filters: `category[equals]${category}`, orders: "-publishedAt", limit },
+  });
+  return contents;
+}
+
 // これからの試合
 export async function fetchGamesUpcoming() {
   const now = new Date().toISOString();
