@@ -78,6 +78,7 @@ export type Blog = {
   body: string;
   thumbnail?: { url: string; width: number; height: number };
   publishedAt: string;
+  tags?: string[];
 };
 
 // ゲーム一覧で使うフィールドを明示（status / ourScore / oppScore を忘れずに）
@@ -204,7 +205,7 @@ export async function fetchPlayersByIds(ids: string[]): Promise<Player[]> {
 export async function fetchBlogList() {
   const { contents } = await client.getList<Blog>({
     endpoint: "blog",
-    queries: { orders: "-publishedAt", limit: 24 },
+    queries: { orders: "-publishedAt", limit: 100 },
   });
   return contents;
 }
