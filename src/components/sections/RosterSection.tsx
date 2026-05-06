@@ -17,7 +17,7 @@ export default async function RosterSection({ dark = false }: { dark?: boolean }
         <p className={dark ? "text-slate-400" : "text-slate-700"}>選手データはまだありません。</p>
       )}
       <div className="mt-6">
-        <Link href="/roster" className="button-32">選手一覧を見る</Link>
+        <Link href="/roster" className={`button-32 ${dark ? "button-32-dark" : ""}`}>選手一覧を見る</Link>
       </div>
     </section>
   );

@@ -17,7 +17,7 @@ export default async function NewsSection({ dark = false }: { dark?: boolean }) 
         <p className={dark ? "text-slate-400" : "text-slate-500"}>ニュース記事はまだありません。</p>
       )}
       <div className="mt-4 mb-8">
-        <Link href="/news" className="button-32 mt-4">すべてのニュースを見る</Link>
+        <Link href="/news" className={`button-32 mt-4 ${dark ? "button-32-dark" : ""}`}>すべてのニュースを見る</Link>
       </div>
     </section>
   );

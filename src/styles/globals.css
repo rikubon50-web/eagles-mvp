@@ -160,6 +160,23 @@
     border-color: #fff;
   }
 
+  /* button-32 の dark 背景バリアント（白ベース→ホバーで緑） */
+  .button-32-dark {
+    border-color: #fff;
+    background-color: transparent;
+    color: #fff;
+  }
+  .button-32-dark:hover {
+    background-color: transparent;
+    color: #0f6536;
+  }
+  .button-32-dark::before {
+    background-color: #fff;
+  }
+  .button-32-dark:hover::after {
+    border-color: #0f6536;
+  }
+
   /* ===== Side Navigation (About page) ===== */
   .sideNav { @apply hidden lg:block sticky top-24; }
   .sideNav__card { @apply relative bg-white rounded-2xl shadow-card border border-slate-200 p-6; }
