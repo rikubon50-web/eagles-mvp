@@ -67,6 +67,7 @@ export type Player = {
   alternativePath?: string;  // もしラクロスやってなかったら何してた？
   favoriteWord?: string;     // 好きな言葉／口癖
   alphabet?: string;        // 名前のアルファベット表記
+  isTestimonial?: boolean;  // 先輩の声に表示
 };
 
 // ★ Blog（ブログ）
@@ -177,6 +178,14 @@ export async function fetchPlayers() {
   const { contents } = await client.getList<Player>({
     endpoint: "players",
     queries: { orders: "year,name", limit: 100, fields: PLAYER_LIST_FIELDS },
+  });
+  return contents;
+}
+
+export async function fetchTestimonialPlayers(): Promise<Player[]> {
+  const { contents } = await client.getList<Player>({
+    endpoint: "players",
+    queries: { filters: "isTestimonial[equals]true", limit: 10 },
   });
   return contents;
 }
