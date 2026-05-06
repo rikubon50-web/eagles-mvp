@@ -51,7 +51,7 @@
   .nav-link,
   .header__link {
     @apply px-2 font-bold tracking-wide text-transparent;
-    font-size: 13px;
+    font-size: 15px;
     overflow: hidden;
     /* 影2段 */
     text-shadow: 0 -1.5em 0 #000, 0 0 0 #000;
