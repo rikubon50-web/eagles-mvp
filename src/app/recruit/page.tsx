@@ -83,7 +83,7 @@ export default async function ShinkanPage() {
           <p className="text-[#4ade80] font-bold tracking-widest mb-4 text-sm md:text-base uppercase">
             青山学院大学男子ラクロス部 EAGLES
           </p>
-          <h1 className="text-4xl md:text-6xl font-extrabold leading-[1.15] mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-[1.15] mb-6 text-white">
             一緒に<br />グラウンドに<br />立とう
           </h1>
           <p className="text-slate-200 text-lg mb-10 max-w-xl leading-relaxed">
