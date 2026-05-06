@@ -63,11 +63,11 @@ export default function Header() {
         <nav className="header__nav--mobile">
           <Link href="/" className="header__link" onClick={() => setOpen(false)}>TOP</Link>
           <Link href="/about" className="header__link" onClick={() => setOpen(false)}>ABOUT</Link>
-          <Link href="/roster" className="header__link" onClick={() => setOpen(false)}>ROSTER</Link>
-          <Link href="/news" className="header__link" onClick={() => setOpen(false)}>NEWS</Link>
           <Link href="/games" className="header__link" onClick={() => setOpen(false)}>GAME</Link>
+          <Link href="/news" className="header__link" onClick={() => setOpen(false)}>NEWS</Link>
           <Link href="/blog" className="header__link" onClick={() => setOpen(false)}>BLOG</Link>
           <Link href="/shinkan" className="header__link" onClick={() => setOpen(false)}>新歓</Link>
+          <Link href="/roster" className="header__link" onClick={() => setOpen(false)}>ROSTER</Link>
           <Link href="/support" className="header__link" onClick={() => setOpen(false)}>SUPPORT</Link>
           <div className="header__sns--mobile flex gap-4 mt-4">
             <Link href="https://www.instagram.com/eagles_agulax" target="_blank" aria-label="Instagram">
