@@ -1,7 +1,8 @@
 // src/app/page.tsx
 import { Suspense } from "react";
-import Image from "next/image";
 import Attraction from "@/components/Attraction";
+import HeroImage from "@/components/HeroImage";
+import FadeIn from "@/components/motion/FadeIn";
 import { SectionSkeleton } from "@/components/Skeleton";
 import NewsTickerSection from "@/components/sections/NewsTickerSection";
 import UpcomingSection from "@/components/sections/UpcomingSection";
@@ -30,16 +31,13 @@ export default async function Home() {
 
   return (
     <div>
-      {/* Hero + NewsTicker */}
+      {/* Hero — animated zoom-in entrance */}
       <div className="space-y-0">
-        <div className={`${fullWidth} bg-[#0f6536]`} style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}>
-          <Image
-            src="/img/hero.png"
-            alt="EAGLES Lacrosse"
-            fill
-            className="object-contain"
-            priority
-          />
+        <div
+          className={`${fullWidth} bg-[#0f6536]`}
+          style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}
+        >
+          <HeroImage />
         </div>
         <div className={`${fullWidth} bg-slate-900/90 text-white`}>
           <Suspense fallback={<div className="h-10 bg-slate-900/90" />}>
@@ -50,32 +48,32 @@ export default async function Home() {
 
       {/* UpcomingSection — white */}
       <div className={`${fullWidth} bg-white py-16`}>
-        <div className={innerCls}>
+        <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <UpcomingSection />
           </Suspense>
-        </div>
+        </FadeIn>
       </div>
 
       {/* StandingsSection — slate-100 */}
       <div className={`${fullWidth} bg-slate-100 py-16`}>
-        <div className={innerCls}>
+        <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <StandingsSection />
           </Suspense>
-        </div>
+        </FadeIn>
       </div>
 
       {/* NewsSection — slate-900 (dark) */}
       <div className={`${fullWidth} bg-slate-900 py-16`}>
-        <div className={innerCls}>
+        <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <NewsSection dark />
           </Suspense>
-        </div>
+        </FadeIn>
       </div>
 
-      {/* Attraction — full-width image, handles its own breakout */}
+      {/* Attraction — parallax + text slide-in */}
       <Attraction
         backgroundImgUrl="/img/IMG_8307.JPG"
         slogan={"ALL\nBOX\nMEMBER"}
@@ -96,20 +94,20 @@ export default async function Home() {
 
       {/* BlogSection — white */}
       <div className={`${fullWidth} bg-white py-16`}>
-        <div className={innerCls}>
+        <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <BlogSection />
           </Suspense>
-        </div>
+        </FadeIn>
       </div>
 
       {/* RosterSection — slate-900 (dark) */}
       <div className={`${fullWidth} bg-slate-900 py-16`}>
-        <div className={innerCls}>
+        <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <RosterSection dark />
           </Suspense>
-        </div>
+        </FadeIn>
       </div>
 
       <script
