@@ -80,8 +80,8 @@ export default function Header() {
         </nav>
       )}
       <style jsx>{`
-        /* For widths under 900px, hide nav and sns, show hamburger */
-        @media (max-width: 899px) {
+        /* For widths under 1024px, hide nav and sns, show hamburger */
+        @media (max-width: 1023px) {
           .header__nav,
           .header__sns {
             display: none;
@@ -90,8 +90,8 @@ export default function Header() {
             display: block;
           }
         }
-        /* For widths 900px and above, show nav and sns, hide hamburger */
-        @media (min-width: 900px) {
+        /* For widths 1024px and above, show nav and sns, hide hamburger */
+        @media (min-width: 1024px) {
           .header__nav,
           .header__sns {
             display: flex;
@@ -121,7 +121,7 @@ export default function Header() {
           }
         }
         /* Hide mobile nav on desktop just in case */
-        @media (min-width: 900px) {
+        @media (min-width: 1024px) {
           .header__nav--mobile { display: none !important; }
         }
       `}</style>

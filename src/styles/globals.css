@@ -36,22 +36,22 @@
   .header__logo { @apply flex items-center; }
 
   /* 中央：ナビ */
-  .header__nav  { @apply hidden md:flex items-center gap-8 flex-1 justify-center; }
-  .header__nav--mobile { @apply md:hidden absolute top-[85px] left-0 w-full bg-white border-t flex flex-col items-center gap-6 py-6; }
+  .header__nav  { @apply hidden lg:flex items-center gap-4 flex-1 justify-center; }
+  .header__nav--mobile { @apply lg:hidden absolute top-[85px] left-0 w-full bg-white border-t flex flex-col items-center gap-6 py-6; }
 
   /* ハンバーガーボタン */
-  .header__toggle { @apply md:hidden flex items-center justify-center w-10 h-10; }
+  .header__toggle { @apply lg:hidden flex items-center justify-center w-10 h-10; }
   .header__toggle-line { @apply block w-6 h-0.5 bg-slate-800 my-1 transition-all; }
 
   /* 右：SNS */
-  .header__sns      { @apply hidden md:flex items-center gap-4 text-xs; }
+  .header__sns      { @apply hidden lg:flex items-center gap-4 text-xs; }
   .header__snslink  { @apply text-brand-600 hover:underline; }
 
   /* --- ナビのホバー演出（.header__link と .nav-link を同等に） --- */
   .nav-link,
   .header__link {
-    @apply px-3 font-bold tracking-wide text-transparent;
-    font-size: 20px; /* ここでサイズ調整（例: 24pxにしてもOK） */
+    @apply px-2 font-bold tracking-wide text-transparent;
+    font-size: 13px;
     overflow: hidden;
     /* 影2段 */
     text-shadow: 0 -1.5em 0 #000, 0 0 0 #000;
