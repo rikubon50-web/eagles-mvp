@@ -61,10 +61,10 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
       </div>
 
       {/* 本文エリア */}
-      <div className="py-12 md:py-16">
+      <div className="pt-16 pb-16 md:pt-20 md:pb-20">
         <div className="max-w-3xl mx-auto">
           <article
-            className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline"
+            className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
             dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
           />
 
