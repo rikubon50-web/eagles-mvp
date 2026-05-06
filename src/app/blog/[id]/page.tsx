@@ -12,10 +12,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   if (!item) return {};
   return {
     title: item.title,
-    description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+    description: item.body.replace(/<[^>]+>/g, "").slice(0, 120),
     openGraph: {
       title: item.title,
-      description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+      description: item.body.replace(/<[^>]+>/g, "").slice(0, 120),
       type: "article",
       publishedTime: item.publishedAt,
       images: item.thumbnail
@@ -79,12 +79,6 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
       {/* 本文エリア */}
       <div className="pt-16 pb-16 md:pt-20 md:pb-20">
         <div className="max-w-3xl mx-auto">
-          {item.excerpt && (
-            <p className="text-slate-600 text-lg leading-relaxed mb-8 pb-8 border-b border-slate-200">
-              {item.excerpt}
-            </p>
-          )}
-
           <article
             className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
             dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
