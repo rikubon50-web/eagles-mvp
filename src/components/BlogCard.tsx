@@ -10,14 +10,14 @@ export default function BlogCard({ item }: { item: Blog }) {
       className="group card rounded-xl bg-gradient-to-b from-white to-slate-50 hover:shadow-2xl hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col p-4 md:p-6"
       aria-label={item.title}
     >
-      <div className="mb-3 overflow-hidden rounded-lg aspect-[16/9] bg-slate-100">
+      <div className="relative mb-3 overflow-hidden rounded-lg aspect-[16/9] bg-slate-100">
         {item.thumbnail ? (
           <Image
             src={item.thumbnail.url}
             alt={item.title}
-            width={item.thumbnail.width}
-            height={item.thumbnail.height}
-            className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-contain transition-transform group-hover:scale-[1.02]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
