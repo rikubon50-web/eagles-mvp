@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { fetchAbout } from "@/lib/microcms";
+import AboutSideNav from "@/components/AboutSideNav";
 
 export const revalidate = 300;
 
@@ -10,17 +11,8 @@ export default async function AboutPage() {
   // console.log("about(normalized)", about);
   return (
     <div className="relative lg:flex lg:gap-8">
-      {/* Left Side Navigation (card) */}
-      <aside className="sideNav hidden lg:block lg:fixed lg:top-24 lg:left-8 lg:w-64" aria-label="このページの目次">
-        <nav className="sideNav__card">
-          <ul className="sideNav__list" role="tablist">
-            <li className="sideNav__item"><a href="#captain" className="sideNav__link is-active" data-target="#captain">主将挨拶</a></li>
-            <li className="sideNav__item"><a href="#venues" className="sideNav__link" data-target="#venues">活動場所</a></li>
-            <li className="sideNav__item"><a href="#appeal" className="sideNav__link" data-target="#appeal">ラクロスの魅力</a></li>
-            <li className="sideNav__item"><a href="#faq" className="sideNav__link" data-target="#faq">よくある質問</a></li>
-          </ul>
-        </nav>
-      </aside>
+      {/* Left Side Navigation (client component — scroll-driven) */}
+      <AboutSideNav />
       <main className="space-y-8 lg:ml-72 max-w-6xl w-full px-6">
         <h1 className="sr-only">About EAGLES</h1>
 
@@ -388,45 +380,6 @@ export default async function AboutPage() {
           })()}
         </section>
 
-        {/* Scrollspy Script (no framework hooks) */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(() => {
-            const headerH = (document.querySelector('.header')?.offsetHeight || 88) + 8;
-            const links = Array.from(document.querySelectorAll('.sideNav__link'));
-            if (!links.length) return;
-            const map = new Map();
-            links.forEach(l => {
-              const sel = l.getAttribute('data-target');
-              const sec = sel ? document.querySelector(sel) : null;
-              if (sec) map.set(sec, l);
-            });
-            const activate = (el) => {
-              links.forEach(x => x.classList.remove('is-active'));
-              el.classList.add('is-active');
-            };
-            const obs = new IntersectionObserver((entries) => {
-              entries.forEach(e => {
-                const link = map.get(e.target);
-                if (!link) return;
-                if (e.isIntersecting) activate(link);
-              });
-            }, { rootMargin: \`-\${headerH}px 0px -60% 0px\`, threshold: 0 });
-            map.forEach((_, sec) => obs.observe(sec));
-            // smooth scroll
-            links.forEach(l => l.addEventListener('click', (ev) => {
-              const sel = l.getAttribute('data-target');
-              const tgt = sel ? document.querySelector(sel) : null;
-              if (!tgt) return;
-              ev.preventDefault();
-              const rect = tgt.getBoundingClientRect();
-              const top = rect.top + window.scrollY - headerH;
-              window.scrollTo({ top, behavior: 'smooth' });
-              activate(l);
-            }));
-          })();`
-          }}
-        />
       </main>
     </div>
   );
