@@ -51,6 +51,7 @@ export default function Header() {
           className="header__toggle"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
+          aria-expanded={open}
         >
           {open ? <X className="w-7 h-7 text-slate-800" /> : <Menu className="w-7 h-7 text-slate-800" />}
         </button>

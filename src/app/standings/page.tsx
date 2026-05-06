@@ -1,5 +1,16 @@
-export const revalidate = 300; // ISR: 5分ごとに再生成
+export const revalidate = 300;
+import type { Metadata } from "next";
 import { fetchStandingsFromCsv } from "@/lib/sheets";
+
+export const metadata: Metadata = {
+  title: "Standings | EAGLES Lacrosse",
+  description: "青山学院大学男子ラクロス部 EAGLES の順位表です。",
+  openGraph: {
+    title: "Standings | EAGLES Lacrosse",
+    description: "青山学院大学男子ラクロス部 EAGLES の順位表です。",
+    type: "website",
+  },
+};
 
 export default async function StandingsPage() {
   const url = process.env.STANDINGS_CSV!;
@@ -7,10 +18,11 @@ export default async function StandingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Standings</h1>
+      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">Standings</h1>
 
       <div className="overflow-x-auto rounded-xl border bg-white">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse" aria-label="リーグ順位表">
+          <caption className="sr-only">リーグ順位表</caption>
           <thead className="bg-slate-50">
             <tr>
               {["順位","大学名","勝点","試合数","総得点","失点","得失点差"].map((h, i) => (

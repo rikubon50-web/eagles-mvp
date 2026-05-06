@@ -109,6 +109,7 @@ export default function ContactPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="山田 花子"
+              autoComplete="name"
               className={`w-full rounded-md border bg-slate-50 px-4 py-4 text-lg outline-none transition
                 ${errors.name ? "border-red-500" : "border-slate-300 focus:border-[#0f6536]"}
               `}
@@ -132,6 +133,7 @@ export default function ContactPage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="000-0000-0000"
+              autoComplete="tel"
               className="w-full rounded-md border border-slate-300 bg-slate-50 px-4 py-4 text-lg outline-none focus:border-[#0f6536]"
             />
           </div>
@@ -147,6 +149,7 @@ export default function ContactPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@example.com"
+              autoComplete="email"
               className={`w-full rounded-md border bg-slate-50 px-4 py-4 text-lg outline-none transition
                 ${errors.email ? "border-red-500" : "border-slate-300 focus:border-[#0f6536]"}
               `}

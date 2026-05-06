@@ -1,11 +1,22 @@
 // src/app/blog/page.tsx
+import type { Metadata } from "next";
 import { fetchBlogList } from "@/lib/microcms";
 import BlogCard from "@/components/BlogCard";
 
 export const revalidate = 300;
 
+export const metadata: Metadata = {
+  title: "Blog | EAGLES Lacrosse",
+  description: "青山学院大学男子ラクロス部 EAGLES のブログ一覧です。",
+  openGraph: {
+    title: "Blog | EAGLES Lacrosse",
+    description: "青山学院大学男子ラクロス部 EAGLES のブログ一覧です。",
+    type: "website",
+  },
+};
+
 export default async function BlogListPage() {
-  const posts = await fetchBlogList();
+  const posts = await fetchBlogList().catch(() => []);
 
   return (
     <div className="space-y-8">

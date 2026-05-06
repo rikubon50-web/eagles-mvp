@@ -1,11 +1,22 @@
 // src/app/news/page.tsx
+import type { Metadata } from "next";
 import { fetchNewsList } from "@/lib/microcms";
 import NewsCard from "@/components/NewsCard";
 
-export const revalidate = 300; // ISR: 5分ごとに再生成
+export const revalidate = 300;
+
+export const metadata: Metadata = {
+  title: "News | EAGLES Lacrosse",
+  description: "青山学院大学男子ラクロス部 EAGLES のお知らせ・ニュース一覧です。",
+  openGraph: {
+    title: "News | EAGLES Lacrosse",
+    description: "青山学院大学男子ラクロス部 EAGLES のお知らせ・ニュース一覧です。",
+    type: "website",
+  },
+};
 
 export default async function NewsListPage() {
-  const news = await fetchNewsList();
+  const news = await fetchNewsList().catch(() => []);
 
   return (
     <div className="space-y-8">
