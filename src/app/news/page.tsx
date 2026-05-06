@@ -1,7 +1,7 @@
 // src/app/news/page.tsx
 import type { Metadata } from "next";
 import { fetchNewsList } from "@/lib/microcms";
-import NewsCard from "@/components/NewsCard";
+import NewsFilterList from "@/components/NewsFilterList";
 
 export const revalidate = 300;
 
@@ -23,11 +23,7 @@ export default async function NewsListPage() {
       <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">News</h1>
 
       {news.length > 0 ? (
-        <div className="space-y-6">
-          {news.map((n) => (
-            <NewsCard key={n.id} item={n} />
-          ))}
-        </div>
+        <NewsFilterList news={news} />
       ) : (
         <p className="text-slate-500">ニュース記事はまだありません。</p>
       )}
