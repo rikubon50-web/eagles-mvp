@@ -19,15 +19,16 @@ export default async function AboutPage() {
         {/* 主将挨拶 */}
         <section id="captain" className="scroll-mt-[100px]">
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">主将挨拶</h2>
-          <div className="grid md:grid-cols-2 gap-6 items-start">
+          <div className="overflow-hidden">
             {about?.visual && (
-              <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
+              <div className="float-left mr-6 mb-4 w-[45%] md:w-[38%] rounded-lg overflow-hidden shadow-md">
                 <Image
                   src={about.visual.url}
                   alt="主将の写真"
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 768px) 50vw, 100vw"
+                  width={about.visual.width}
+                  height={about.visual.height}
+                  className="w-full h-auto object-cover"
+                  sizes="(min-width: 768px) 38vw, 45vw"
                   priority
                 />
               </div>
