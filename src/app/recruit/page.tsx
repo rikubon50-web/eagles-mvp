@@ -64,7 +64,7 @@ export default async function ShinkanPage() {
     fetchNewsList().catch(() => []),
     fetchPlayers().catch(() => []),
   ]);
-  const shinkanNews = allNews.filter((n) => n.category === "新歓").slice(0, 6);
+  const shinkanNews = allNews.filter((n) => JSON.stringify(n.category ?? "").includes("新歓")).slice(0, 6);
 
   const testimonials = players.filter((p: Player) => p.comment).slice(0, 3);
 
