@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchNewsByCategory, fetchPlayers } from "@/lib/microcms";
+import { fetchNewsByCategory, fetchPlayers, Player } from "@/lib/microcms";
 import NewsCard from "@/components/NewsCard";
 import FadeIn from "@/components/motion/FadeIn";
 
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: "新歓 | EAGLES Lacrosse",
     description: "青山学院大学男子ラクロス部 EAGLES の新入部員募集ページ。初心者大歓迎です。",
     type: "website",
+    images: [{ url: "/img/og-default.png", width: 1200, height: 630, alt: "新歓 | EAGLES Lacrosse" }],
   },
 };
 
@@ -64,7 +65,7 @@ export default async function ShinkanPage() {
     fetchPlayers().catch(() => []),
   ]);
 
-  const testimonials = players.filter((p: any) => p.comment).slice(0, 3);
+  const testimonials = players.filter((p: Player) => p.comment).slice(0, 3);
 
   return (
     <>
@@ -191,7 +192,7 @@ export default async function ShinkanPage() {
               先輩の声
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
-              {testimonials.map((p: any) => (
+              {testimonials.map((p: Player) => (
                 <div key={p.id} className="bg-slate-800 rounded-2xl p-6 flex flex-col items-center text-center">
                   {p.photo && (
                     <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0">
