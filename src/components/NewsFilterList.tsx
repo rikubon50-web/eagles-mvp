@@ -10,7 +10,10 @@ type Filter = (typeof CATEGORIES)[number];
 export default function NewsFilterList({ news }: { news: News[] }) {
   const [active, setActive] = useState<Filter>("すべて");
 
-  const filtered = active === "すべて" ? news : news.filter((n) => n.category === active);
+  const filtered =
+    active === "すべて"
+      ? news
+      : news.filter((n) => JSON.stringify(n.category ?? "").includes(active));
 
   return (
     <>
