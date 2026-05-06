@@ -26,9 +26,6 @@ export default function BlogCard({ item }: { item: Blog }) {
         )}
       </div>
       <h3 className="mb-2 line-clamp-2 font-bold leading-snug text-lg md:text-xl">{item.title}</h3>
-      {item.excerpt && (
-        <p className="mt-2 text-sm text-slate-700">{item.excerpt}</p>
-      )}
       <time
         dateTime={item.publishedAt}
         className="block mt-2 mb-2 text-xs text-slate-500"
