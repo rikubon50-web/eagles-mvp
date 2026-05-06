@@ -203,9 +203,9 @@ export async function fetchPlayersByIds(ids: string[]): Promise<Player[]> {
 
 // Blog一覧
 export async function fetchBlogList() {
-  const { contents } = await client.getList<Blog>({
+  const contents = await client.getAllContents<Blog>({
     endpoint: "blog",
-    queries: { orders: "-publishedAt", limit: 100 },
+    queries: { orders: "-publishedAt" },
   });
   return contents;
 }
