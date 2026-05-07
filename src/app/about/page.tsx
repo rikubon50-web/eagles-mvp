@@ -21,7 +21,7 @@ export default async function AboutPage() {
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">主将挨拶</h2>
           <div className="overflow-hidden">
             {about?.visual && (
-              <div className="w-full mb-6 md:float-left md:mr-6 md:mb-4 md:w-[38%] rounded-lg overflow-hidden shadow-md">
+              <div className="w-full mb-6 md:float-left md:mr-6 md:mb-4 md:w-[48%] rounded-lg overflow-hidden shadow-md">
                 <Image
                   src={about.visual.url}
                   alt="主将の写真"
