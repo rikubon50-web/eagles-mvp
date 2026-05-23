@@ -25,7 +25,7 @@ export default async function StandingsPage() {
           <caption className="sr-only">リーグ順位表</caption>
           <thead className="bg-slate-50">
             <tr>
-              {["順位","大学名","勝点","試合数","総得点","失点","得失点差"].map((h, i) => (
+              {["順位","大学名","勝点","試合数","総得点","得失点差"].map((h, i) => (
                 <th key={i} className="px-3 py-2 text-sm font-semibold text-slate-600 border-b">
                   {h}
                 </th>

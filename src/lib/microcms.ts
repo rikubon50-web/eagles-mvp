@@ -94,9 +94,6 @@ const GAME_LIST_FIELDS = [
   "status",
   "ourScore",
   "oppScore",
-  "ctaText",
-  "ctaUrl",
-  "season",
 ].join(",");
 
 const PLAYER_LIST_FIELDS = [
@@ -140,15 +137,6 @@ export async function fetchNewsById(id: string): Promise<News | null> {
   return contents[0] ?? null;
 }
 
-// 新歓ニュース（category フィルタ）
-export async function fetchNewsByCategory(category: string, limit = 6) {
-  const { contents } = await client.getList<News>({
-    endpoint: "news",
-    queries: { filters: `category[equals]${category}`, orders: "-publishedAt", limit },
-  });
-  return contents;
-}
-
 // これからの試合
 export async function fetchGamesUpcoming() {
   const now = new Date().toISOString();
@@ -190,16 +178,6 @@ export async function fetchTestimonialPlayers(): Promise<Player[]> {
   });
   return contents;
 }
-
-export async function fetchPlayersByIds(ids: string[]): Promise<Player[]> {
-  if (ids.length === 0) return [];
-  const { contents } = await client.getList<Player>({
-    endpoint: "players",
-    queries: { filters: ids.map((id) => `id[equals]${id}`).join("[or]"), limit: ids.length },
-  });
-  return ids.map((id) => contents.find((p) => p.id === id)).filter(Boolean) as Player[];
-}
-
 
 // Blog一覧
 export async function fetchBlogList() {

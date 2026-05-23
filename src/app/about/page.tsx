@@ -8,7 +8,6 @@ export default async function AboutPage() {
   const res = await fetchAbout();
   // microCMS: about could be an object or a list response with { contents: [...] }
   const about = (res as any)?.contents?.[0] ?? (res as any) ?? null;
-  // console.log("about(normalized)", about);
   return (
     <div className="relative lg:flex lg:gap-8">
       {/* Left Side Navigation (client component — scroll-driven) */}
