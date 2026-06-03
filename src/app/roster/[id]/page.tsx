@@ -41,10 +41,6 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
   }
 
   if (player.hobby)            rows.push({ label: "オフの過ごし方",           value: player.hobby });
-  if (player.rolemodel)        rows.push({ label: "憧れの人",                 value: player.rolemodel });
-  if (player.animal)           rows.push({ label: "生き物に例えると",         value: player.animal });
-  if (player.islandItem)       rows.push({ label: "無人島に1つ持っていくなら", value: player.islandItem });
-  if (player.alternativePath)  rows.push({ label: "ラクロスやってなかったら", value: player.alternativePath });
 
   return (
     <>
