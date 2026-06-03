@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchPlayers } from "@/lib/microcms";
-import { cohortLabel, cohortOf, fiscalYear } from "@/lib/cohort";
+import { cohortLabel, cohortOf } from "@/lib/cohort";
 
 export const revalidate = 300;
 
@@ -60,7 +60,7 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
           <div className="flex items-end gap-4">
             <div>
               {(() => {
-                const c = cohortOf(player, fiscalYear(new Date()));
+                const c = cohortOf(player);
                 return c !== null ? (
                   <p className="text-slate-400 text-sm mb-1">{cohortLabel(c)}</p>
                 ) : null;

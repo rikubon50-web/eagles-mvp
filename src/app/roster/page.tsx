@@ -12,7 +12,7 @@ export default async function RosterPage() {
   // 期ごとにグルーピング（cohort未入力は学年から逆算するフォールバックあり）
   const groups = new Map<number, typeof players>();
   for (const p of players) {
-    const cohort = cohortOf(p, fy);
+    const cohort = cohortOf(p);
     if (cohort === null || !isActiveCohort(cohort, fy)) continue; // 卒業期・不明は非表示
     if (!groups.has(cohort)) groups.set(cohort, []);
     groups.get(cohort)!.push(p);

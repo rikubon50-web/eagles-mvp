@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchNewsList, fetchTestimonialPlayers, Player } from "@/lib/microcms";
-import { cohortLabel, cohortOf, fiscalYear } from "@/lib/cohort";
+import { cohortLabel, cohortOf } from "@/lib/cohort";
 import NewsCard from "@/components/NewsCard";
 import FadeIn from "@/components/motion/FadeIn";
 
@@ -207,7 +207,7 @@ export default async function ShinkanPage() {
                   )}
                   <p className="font-bold text-white mb-0.5">{p.name}</p>
                   {(() => {
-                    const c = cohortOf(p, fiscalYear(new Date()));
+                    const c = cohortOf(p);
                     return c !== null ? (
                       <p className="text-slate-400 text-xs mb-4">{cohortLabel(c)}</p>
                     ) : null;

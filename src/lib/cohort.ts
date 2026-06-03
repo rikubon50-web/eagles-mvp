@@ -47,21 +47,9 @@ export function toInt(value: unknown): number | null {
 }
 
 /**
- * 部員の期を取り出す。cohort未入力の場合は、その年度の学年(year)から逆算する
- * フォールバック。※フォールバックは「入力時点の年度」でしか正しくないため、
- * 毎年の更新を不要にするには cohort の入力が必須。
- * year / cohort が配列や文字列で返ってきても扱えるよう正規化する。
+ * 部員の期(cohort)を取り出す。cohortはmicroCMSで必須のため常に存在する想定。
+ * 数値・文字列・配列のいずれで返ってきても数値化する。取り出せなければ null。
  */
-export function cohortOf(
-  player: { cohort?: unknown; year?: unknown },
-  fy: number
-): number | null {
-  const c = toInt(player.cohort);
-  if (c !== null) return c;
-  const y = toInt(player.year);
-  if (y !== null) {
-    // gradeOf の逆算: cohort = fy - ANCHOR_FY + (ANCHOR_4TH + 4) - year
-    return fy - ANCHOR_FY + (ANCHOR_4TH + 4) - y;
-  }
-  return null;
+export function cohortOf(player: { cohort?: unknown }): number | null {
+  return toInt(player.cohort);
 }
