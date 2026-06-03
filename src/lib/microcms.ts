@@ -54,7 +54,8 @@ export type Game = {
 export type Player = {
   id: string;
   name: string;    // 名前
-  year: number; // 学年（1,2,3,4）
+  year: number; // 学年（1,2,3,4）※フォールバック用に残す
+  cohort?: number; // 期（37,38,...）不変値。表示・現役判定の主データ
   photo: { url: string; width: number; height: number }; // 写真
   highschool?: string;       // 出身高校
   sports?: string;           // 出身スポーツ
@@ -100,6 +101,7 @@ const PLAYER_LIST_FIELDS = [
   "id",
   "name",
   "year",
+  "cohort",
   "alphabet",
   "classYear",
   "photo",
