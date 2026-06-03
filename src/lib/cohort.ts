@@ -33,20 +33,35 @@ export function cohortLabel(cohort: number): string {
 }
 
 /**
+ * microCMSの値から整数を取り出す。フィールドが数値・文字列・配列(["2"]等)
+ * のいずれで返ってきても数値化できるようにする。取り出せない場合は null。
+ */
+export function toInt(value: unknown): number | null {
+  const first = Array.isArray(value) ? value[0] : value;
+  if (first === null || first === undefined) return null;
+  const n =
+    typeof first === "string"
+      ? Number(first.replace(/[^0-9]/g, ""))
+      : Number(first);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
  * 部員の期を取り出す。cohort未入力の場合は、その年度の学年(year)から逆算する
  * フォールバック。※フォールバックは「入力時点の年度」でしか正しくないため、
  * 毎年の更新を不要にするには cohort の入力が必須。
+ * year / cohort が配列や文字列で返ってきても扱えるよう正規化する。
  */
 export function cohortOf(
-  player: { cohort?: number; year?: number },
+  player: { cohort?: unknown; year?: unknown },
   fy: number
 ): number | null {
-  if (typeof player.cohort === "number" && Number.isFinite(player.cohort)) {
-    return player.cohort;
-  }
-  if (typeof player.year === "number" && Number.isFinite(player.year)) {
+  const c = toInt(player.cohort);
+  if (c !== null) return c;
+  const y = toInt(player.year);
+  if (y !== null) {
     // gradeOf の逆算: cohort = fy - ANCHOR_FY + (ANCHOR_4TH + 4) - year
-    return fy - ANCHOR_FY + (ANCHOR_4TH + 4) - player.year;
+    return fy - ANCHOR_FY + (ANCHOR_4TH + 4) - y;
   }
   return null;
 }

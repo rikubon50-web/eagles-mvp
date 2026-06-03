@@ -97,26 +97,6 @@ const GAME_LIST_FIELDS = [
   "oppScore",
 ].join(",");
 
-const PLAYER_LIST_FIELDS = [
-  "id",
-  "name",
-  "year",
-  "cohort",
-  "alphabet",
-  "classYear",
-  "photo",
-  "highschool",
-  "sports",
-  "faculty",
-  "comment",
-  "rolemodel",
-  "hobby",
-  "animal",
-  "islandItem",
-  "alternativePath",
-  "favoriteWord",
-].join(",");
-
 // ==========================
 // データ取得関数
 // ==========================
@@ -165,10 +145,14 @@ export async function fetchAbout() {
 }
 
 // Rosters一覧
+// 注意: fields でフィールドを限定すると、microCMS スキーマに存在しない
+// フィールド名（移行途中の cohort 等）を要求した瞬間に 400 で全件失敗する。
+// スキーマ変更に強くするため fields は指定せず全フィールドを取得し、
+// 並び順も常に存在する name にする（学年/期の並びはページ側で行う）。
 export async function fetchPlayers() {
   const { contents } = await client.getList<Player>({
     endpoint: "players",
-    queries: { orders: "year,name", limit: 100, fields: PLAYER_LIST_FIELDS },
+    queries: { orders: "name", limit: 100 },
   });
   return contents;
 }
