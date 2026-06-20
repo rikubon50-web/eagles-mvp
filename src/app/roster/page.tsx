@@ -9,17 +9,24 @@ export default async function RosterPage() {
   const players = await fetchPlayers();
   const fy = fiscalYear(new Date());
 
-  // 期ごとにグルーピング（cohort未入力は学年から逆算するフォールバックあり）
-  const groups = new Map<number, typeof players>();
-  for (const p of players) {
+  // ロールで学生（PL/STF）とコーチ（C）に分割
+  const coaches = players.filter((p) => p.role === "C");
+  const students = players.filter((p) => p.role !== "C");
+
+  // 期ごとにグルーピング（学生のみ・現役期のみ）
+  const groups = new Map<number, typeof students>();
+  for (const p of students) {
     const cohort = cohortOf(p);
-    if (cohort === null || !isActiveCohort(cohort, fy)) continue; // 卒業期・不明は非表示
+    if (cohort === null || !isActiveCohort(cohort, fy)) continue; // 卒業期・不明・コーチは非表示
     if (!groups.has(cohort)) groups.set(cohort, []);
     groups.get(cohort)!.push(p);
   }
 
   // 現役の期を上級生先頭（＝期の小さい順）で表示
   const cohorts = Array.from(groups.keys()).sort((a, b) => a - b);
+
+  // 期内は PL → STF の順、同ロール内は名前順
+  const roleRank = (p: { role?: string }) => (p.role === "PL" ? 0 : 1);
 
   return (
     <div className="scroll-smooth">
@@ -45,8 +52,8 @@ export default async function RosterPage() {
         )}
 
         {cohorts.map((cohort) => {
-          const list = (groups.get(cohort) ?? []).sort((a, b) =>
-            a.name.localeCompare(b.name, "ja")
+          const list = (groups.get(cohort) ?? []).sort(
+            (a, b) => roleRank(a) - roleRank(b) || a.name.localeCompare(b.name, "ja")
           );
           return (
             <section id={`cohort-${cohort}`} key={cohort} className="space-y-6">
@@ -61,6 +68,22 @@ export default async function RosterPage() {
             </section>
           );
         })}
+
+        {coaches.length > 0 && (
+          <section id="coach" className="space-y-6">
+            <div className="w-full bg-slate-900 text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
+              COACH
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {coaches
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name, "ja"))
+                .map((p) => (
+                  <PlayerCard key={p.id} player={p} />
+                ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

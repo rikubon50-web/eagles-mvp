@@ -32,6 +32,30 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   const figureContents = (
     <>
+      {(() => {
+        const role = p?.role;
+        if (!role) return null;
+        const label = role === "C" ? (p?.position || "COACH") : role; // PL / STF / 役職
+        return (
+          <div
+            style={{
+              position: "absolute",
+              top: "0.6rem",
+              left: "0.6rem",
+              zIndex: 4,
+              background: "#0f6536",
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: "0.72rem",
+              letterSpacing: "0.06em",
+              padding: "0.18rem 0.55rem",
+              borderRadius: "999px",
+            }}
+          >
+            {label}
+          </div>
+        );
+      })()}
       {_photoUrl ? (
         <img
           src={_photoUrl}

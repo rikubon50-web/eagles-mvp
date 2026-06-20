@@ -28,20 +28,31 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
   const player = list.find((p: any) => p.id === params.id) ?? null;
   if (!player) return notFound();
 
+  const isCoach = player.role === "C";
   const rows: { label: string; value: string }[] = [];
-  if (player.faculty)    rows.push({ label: "学部・学科",           value: player.faculty });
-  if (player.highschool) rows.push({ label: "出身高校",             value: player.highschool });
-  if (player.sports)     rows.push({ label: "経験スポーツ",         value: player.sports });
-
   let usedCommentForFavorite = false;
-  if (player.favoriteWord) {
-    rows.push({ label: "EAGLESの好きなところ", value: player.favoriteWord });
-  } else if (player.comment) {
-    rows.push({ label: "EAGLESの好きなところ", value: player.comment });
-    usedCommentForFavorite = true;
-  }
 
-  if (player.hobby)            rows.push({ label: "オフの過ごし方",           value: player.hobby });
+  if (isCoach) {
+    if (player.position)     rows.push({ label: "役職",       value: player.position });
+    if (player.univ)         rows.push({ label: "出身大学",   value: player.univ });
+    if (player.career)       rows.push({ label: "コーチ歴",   value: player.career });
+    if (player.achievement)  rows.push({ label: "実績",       value: player.achievement });
+    if (player.organization) rows.push({ label: "組織運営",   value: player.organization });
+  } else {
+    if (player.position)   rows.push({ label: "役職",                 value: player.position });
+    if (player.faculty)    rows.push({ label: "学部・学科",           value: player.faculty });
+    if (player.highschool) rows.push({ label: "出身高校",             value: player.highschool });
+    if (player.sports)     rows.push({ label: "経験スポーツ",         value: player.sports });
+
+    if (player.favoriteWord) {
+      rows.push({ label: "EAGLESの好きなところ", value: player.favoriteWord });
+    } else if (player.comment) {
+      rows.push({ label: "EAGLESの好きなところ", value: player.comment });
+      usedCommentForFavorite = true;
+    }
+
+    if (player.hobby)      rows.push({ label: "オフの過ごし方",       value: player.hobby });
+  }
 
   return (
     <>
@@ -60,6 +71,9 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
           <div className="flex items-end gap-4">
             <div>
               {(() => {
+                if (player.role === "C") {
+                  return <p className="text-slate-400 text-sm mb-1">COACH</p>;
+                }
                 const c = cohortOf(player);
                 return c !== null ? (
                   <p className="text-slate-400 text-sm mb-1">{cohortLabel(c)}</p>
