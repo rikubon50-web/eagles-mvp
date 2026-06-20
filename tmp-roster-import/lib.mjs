@@ -26,10 +26,13 @@ export function gradeToCohort(gradeStr){
 // 7:favoriteWord(Eaglesの好きなところ) 8:hobby 9:rolemodel 10:animal 11:islandItem 12:alternativePath 13:comment
 export function rowToPlayer(r){
   const t=v=>(v||"").trim();
+  const grade=Number(String(r[3]).replace(/[^0-9]/g,""));
   return {
-    name:t(r[1]), alphabet:t(r[2]), cohort:gradeToCohort(r[3]), grade:Number(String(r[3]).replace(/[^0-9]/g,"")),
+    name:t(r[1]).replace(/[　 ]/g,""), alphabet:t(r[2]),
+    grade: (grade>=1&&grade<=4)?grade:null, cohort: (grade>=1&&grade<=4)?(41-grade):null,
     faculty:t(r[4]), highschool:t(r[5]), sports:t(r[6]), favoriteWord:t(r[7]), hobby:t(r[8]),
-    rolemodel:t(r[9]), animal:t(r[10]), islandItem:t(r[11]), alternativePath:t(r[12]), comment:t(r[13]),
+    comment:t(r[13]),
+    role:t(r[14]), univ:t(r[15]), career:t(r[16]), achievement:t(r[17]), position:t(r[18]), organization:t(r[19]),
   };
 }
 export function loadPlayers(csvPath="tmp-roster-import/data/sheet.csv"){
@@ -94,4 +97,17 @@ export async function downloadDriveImage(id){
   };
   return (await tryFetch(`https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t`))
       || (await tryFetch(`https://drive.google.com/thumbnail?id=${id}&sz=w2000`));
+}
+
+import {execSync} from 'child_process';
+import {writeFileSync as _wf, readFileSync as _rf} from 'fs';
+// HEIC等(JPEG/PNG以外)は sips でJPEG化してからアップロード
+export async function uploadMediaConverted(buf, filename){
+  const jpeg = buf[0]===0xFF&&buf[1]===0xD8;
+  const png  = buf[0]===0x89&&buf[1]===0x50;
+  if(jpeg||png) return await uploadMedia(buf, filename);
+  _wf("/tmp/rconv.in", buf);
+  execSync("sips -s format jpeg /tmp/rconv.in --out /tmp/rconv.out.jpg", {stdio:"ignore"});
+  const out=_rf("/tmp/rconv.out.jpg");
+  return await uploadMedia(out, filename.replace(/\.[^.]+$/,"")+".jpg");
 }
