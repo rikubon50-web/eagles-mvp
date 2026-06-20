@@ -1,5 +1,5 @@
 import {readFileSync, writeFileSync, existsSync} from 'fs';
-import {loadPlayers, downloadDriveImage, uploadMedia, createPlayer, sleep, DOMAIN, KEY} from './lib.mjs';
+import {loadPlayers, downloadDriveImage, uploadMediaConverted, createPlayer, sleep, DOMAIN, KEY} from './lib.mjs';
 
 const CANARY=process.argv.includes("--canary");
 const placeholder=JSON.parse(readFileSync("tmp-roster-import/data/placeholder.json","utf8")).url;
@@ -13,15 +13,19 @@ const save=()=>writeFileSync(RES,JSON.stringify(results,null,1));
 // スキーマ上の必須テキストフィールド(プローブで確定)。空なら "ー" で補完しないと400。
 // rolemodel/animal/islandItem/alternativePath はスキーマに無い(400 "unexpected key")ため除外。
 const REQUIRED_TEXT=["alphabet","faculty","highschool","sports","favoriteWord","hobby","comment"];
+const OPTIONAL_NEW=["role","position","univ","career","achievement","organization"];
 function buildFields(p, photoUrl){
-  const grade = p.grade ?? (41 - p.cohort); // year(必須selectField)用
-  const f={name:p.name, cohort:p.cohort, year:[String(grade)], photo:photoUrl};
+  const isCoach = p.role==="C";
+  const grade = isCoach ? 4 : (p.grade ?? (41 - p.cohort)); // year(必須select 1-4)用
+  const cohort = isCoach ? 99 : p.cohort;                   // コーチはセンチネル
+  const f={name:p.name, cohort, year:[String(grade)], photo:photoUrl};
   for(const k of REQUIRED_TEXT){ f[k] = (p[k] && p[k].trim()) ? p[k] : "ー"; }
+  for(const k of OPTIONAL_NEW){ if(p[k] && p[k].trim()) f[k]=p[k]; }
   return f;
 }
 
 async function photoFor(row){
-  if(row.photoId){ const buf=await downloadDriveImage(row.photoId); if(buf) return await uploadMedia(buf,(row.photoName||"p")+".jpg"); }
+  if(row.photoId){ const buf=await downloadDriveImage(row.photoId); if(buf) return await uploadMediaConverted(buf,(row.photoName||"p")+".jpg"); }
   return placeholder;
 }
 
