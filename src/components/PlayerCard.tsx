@@ -40,15 +40,15 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           <div
             style={{
               position: "absolute",
-              top: "0.6rem",
-              left: "0.6rem",
+              top: "0.7rem",
+              left: "0.7rem",
               zIndex: 4,
               background: "#0f6536",
               color: "#fff",
               fontWeight: 700,
-              fontSize: "0.72rem",
+              fontSize: "0.95rem",
               letterSpacing: "0.06em",
-              padding: "0.18rem 0.55rem",
+              padding: "0.28rem 0.8rem",
               borderRadius: "999px",
             }}
           >
