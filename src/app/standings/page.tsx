@@ -3,10 +3,12 @@ import type { Metadata } from "next";
 import { fetchStandingsFromCsv } from "@/lib/sheets";
 
 export const metadata: Metadata = {
-  title: "Standings | EAGLES Lacrosse",
-  description: "青山学院大学男子ラクロス部 EAGLES の順位表です。",
+  title: "順位表・リーグ戦",
+  description:
+    "青山学院大学男子ラクロス部 EAGLES の所属リーグ順位表。関東学生ラクロスリーグ戦の星取・順位を掲載しています。",
+  alternates: { canonical: "/standings" },
   openGraph: {
-    title: "Standings | EAGLES Lacrosse",
+    title: "順位表・リーグ戦｜青山学院大学男子ラクロス部 EAGLES",
     description: "青山学院大学男子ラクロス部 EAGLES の順位表です。",
     type: "website",
   },

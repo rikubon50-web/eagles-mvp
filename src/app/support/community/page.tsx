@@ -1,5 +1,12 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "個人サポーター募集（NEST）",
+  description:
+    "青山学院大学男子ラクロス部 EAGLESの個人サポーター制度「NEST」のご案内。会員特典・会費・入会方法を掲載しています。",
+  alternates: { canonical: "/support/community" },
+};
+
 export default function NestPage() {
   return (
     <article className="space-y-16">

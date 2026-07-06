@@ -7,16 +7,21 @@ import { notFound } from "next/navigation";
 
 export const revalidate = 300;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
+
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const item = await fetchNewsById(params.id);
   if (!item) return {};
+  const desc = item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120);
   return {
     title: item.title,
-    description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+    description: desc,
+    alternates: { canonical: `/news/${params.id}` },
     openGraph: {
       title: item.title,
-      description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+      description: desc,
       type: "article",
+      url: `${SITE_URL}/news/${params.id}`,
       publishedTime: item.publishedAt,
     },
   };
@@ -26,12 +31,32 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
   const item = await fetchNewsById(params.id);
   if (!item) return notFound();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: item.title,
+    datePublished: item.publishedAt,
+    dateModified: item.publishedAt,
+    description: item.excerpt ?? item.body.replace(/<[^>]+>/g, "").slice(0, 120),
+    mainEntityOfPage: `${SITE_URL}/news/${item.id}`,
+    author: { "@type": "SportsTeam", name: "青山学院大学男子ラクロス部 EAGLES" },
+    publisher: {
+      "@type": "Organization",
+      name: "青山学院大学男子ラクロス部 EAGLES",
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/img/logo.png` },
+    },
+  };
+
   const fullWidth = "relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]";
   const innerCls = "max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem] mx-auto px-6";
   const badgeColor = newsCategoryColor(item.category);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ダーク見出し帯 */}
       <div className={`${fullWidth} bg-slate-900 py-12`}>
         <div className={innerCls}>

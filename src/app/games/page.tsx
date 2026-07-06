@@ -6,10 +6,12 @@ import GameCard from "@/components/GameCard";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Games | EAGLES Lacrosse",
-  description: "青山学院大学男子ラクロス部 EAGLES の試合日程・結果一覧です。",
+  title: "試合日程・結果",
+  description:
+    "青山学院大学男子ラクロス部 EAGLES の試合日程・結果一覧。関東学生リーグ戦などの最新スケジュールとスコアを掲載しています。",
+  alternates: { canonical: "/games" },
   openGraph: {
-    title: "Games | EAGLES Lacrosse",
+    title: "試合日程・結果｜青山学院大学男子ラクロス部 EAGLES",
     description: "青山学院大学男子ラクロス部 EAGLES の試合日程・結果一覧です。",
     type: "website",
   },

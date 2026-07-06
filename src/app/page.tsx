@@ -13,13 +13,23 @@ import RosterSection from "@/components/sections/RosterSection";
 
 export const revalidate = 300;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
+
+export const metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default async function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsTeam",
-    "name": "EAGLES Lacrosse",
+    "name": "青山学院大学男子ラクロス部 EAGLES",
+    "alternateName": ["EAGLES Lacrosse", "青学男子ラクロス部", "AGU EAGLES"],
     "sport": "Lacrosse",
-    "url": process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com",
+    "url": SITE_URL,
+    "logo": `${SITE_URL}/img/logo.png`,
+    "description": "青山学院大学体育会男子ラクロス部「EAGLES」公式サイト。",
+    "sameAs": ["https://www.instagram.com/eagles_agulax"],
     "memberOf": {
       "@type": "SportsOrganization",
       "name": "関東学生ラクロス連盟"

@@ -15,32 +15,61 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+const SITE_DESCRIPTION =
+  "青山学院大学体育会男子ラクロス部「EAGLES」公式サイト。試合日程・結果、選手・スタッフ・コーチ紹介、ニュース、ブログ、スポンサー・サポーター募集などを発信しています。";
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com"),
-  title: { default: "EAGLES Lacrosse", template: "%s | EAGLES Lacrosse" },
-  description: "青山学院大学男子ラクロス部 公式サイト",
-  icons: { icon: "/favicon.ico" },
+  title: {
+    default: "青山学院大学男子ラクロス部 EAGLES｜公式サイト",
+    template: "%s｜青山学院大学男子ラクロス部 EAGLES",
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "青山学院大学",
+    "青学",
+    "男子ラクロス部",
+    "ラクロス",
+    "EAGLES",
+    "イーグルス",
+    "lacrosse",
+    "関東学生ラクロス",
+    "大学ラクロス",
+  ],
+  applicationName: "EAGLES Lacrosse",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     type: "website",
     locale: "ja_JP",
-    url: process.env.NEXT_PUBLIC_SITE_URL,
-    siteName: "EAGLES Lacrosse",
-    title: "EAGLES Lacrosse",
-    description: "青山学院大学男子ラクロス部 公式サイト",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com",
+    siteName: "青山学院大学男子ラクロス部 EAGLES",
+    title: "青山学院大学男子ラクロス部 EAGLES｜公式サイト",
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: "/img/og-default.png",
         width: 1200,
         height: 630,
-        alt: "EAGLES Lacrosse",
+        alt: "青山学院大学男子ラクロス部 EAGLES",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "EAGLES Lacrosse",
-    description: "青山学院大学男子ラクロス部 公式サイト",
+    title: "青山学院大学男子ラクロス部 EAGLES｜公式サイト",
+    description: SITE_DESCRIPTION,
     images: ["/img/og-default.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
 };
 

@@ -6,10 +6,12 @@ import BlogFilterList from "@/components/BlogFilterList";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Blog | EAGLES Lacrosse",
-  description: "青山学院大学男子ラクロス部 EAGLES のブログ一覧です。",
+  title: "ブログ",
+  description:
+    "青山学院大学男子ラクロス部 EAGLES のブログ一覧。部員・スタッフによる日々の活動やチームの様子をお届けします。",
+  alternates: { canonical: "/blog" },
   openGraph: {
-    title: "Blog | EAGLES Lacrosse",
+    title: "ブログ｜青山学院大学男子ラクロス部 EAGLES",
     description: "青山学院大学男子ラクロス部 EAGLES のブログ一覧です。",
     type: "website",
   },

@@ -6,10 +6,12 @@ import NewsFilterList from "@/components/NewsFilterList";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "News | EAGLES Lacrosse",
-  description: "青山学院大学男子ラクロス部 EAGLES のお知らせ・ニュース一覧です。",
+  title: "ニュース・お知らせ",
+  description:
+    "青山学院大学男子ラクロス部 EAGLES のお知らせ・ニュース一覧。試合結果、新歓、活動情報などを発信しています。",
+  alternates: { canonical: "/news" },
   openGraph: {
-    title: "News | EAGLES Lacrosse",
+    title: "ニュース・お知らせ｜青山学院大学男子ラクロス部 EAGLES",
     description: "青山学院大学男子ラクロス部 EAGLES のお知らせ・ニュース一覧です。",
     type: "website",
   },

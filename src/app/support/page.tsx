@@ -1,5 +1,12 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "サポート・ご支援",
+  description:
+    "青山学院大学男子ラクロス部 EAGLESへのご支援について。個人サポーター（NEST）・法人スポンサーの皆さまからのサポートを募集しています。",
+  alternates: { canonical: "/support" },
+};
+
 export default function SupportTop() {
   return (
     <div className="space-y-10">

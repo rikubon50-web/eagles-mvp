@@ -14,8 +14,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     return {
       title: game.title,
       description,
+      alternates: { canonical: `/games/${params.id}` },
       openGraph: {
-        title: game.title,
+        title: `${game.title}｜青山学院大学男子ラクロス部 EAGLES`,
         description,
         images: game.homeTeamLogo ? [{ url: game.homeTeamLogo.url, width: game.homeTeamLogo.width, height: game.homeTeamLogo.height }] : undefined,
       },

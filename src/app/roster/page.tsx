@@ -5,6 +5,13 @@ import { cohortLabel, cohortOf, fiscalYear, isActiveCohort } from "@/lib/cohort"
 
 export const revalidate = 300; // ISR: 5分ごとに再生成
 
+export const metadata = {
+  title: "選手・スタッフ紹介（ロスター）",
+  description:
+    "青山学院大学男子ラクロス部 EAGLESの選手・スタッフ・コーチ一覧。学年（期）別のメンバー紹介ページです。",
+  alternates: { canonical: "/roster" },
+};
+
 export default async function RosterPage() {
   const players = await fetchPlayers();
   const fy = fiscalYear(new Date());

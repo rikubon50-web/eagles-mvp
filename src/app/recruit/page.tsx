@@ -10,13 +10,15 @@ import FadeIn from "@/components/motion/FadeIn";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "新歓 | EAGLES Lacrosse",
-  description: "青山学院大学男子ラクロス部 EAGLES の新入部員募集ページ。初心者大歓迎です。",
+  title: "新歓・入部案内",
+  description:
+    "青山学院大学男子ラクロス部 EAGLES の新入部員募集ページ。約9割が初心者スタート、大学からラクロスを始める仲間を募集中。体験・見学も大歓迎です。",
+  alternates: { canonical: "/recruit" },
   openGraph: {
-    title: "新歓 | EAGLES Lacrosse",
+    title: "新歓・入部案内｜青山学院大学男子ラクロス部 EAGLES",
     description: "青山学院大学男子ラクロス部 EAGLES の新入部員募集ページ。初心者大歓迎です。",
     type: "website",
-    images: [{ url: "/img/og-default.png", width: 1200, height: 630, alt: "新歓 | EAGLES Lacrosse" }],
+    images: [{ url: "/img/og-default.png", width: 1200, height: 630, alt: "青山学院大学男子ラクロス部 EAGLES 新歓" }],
   },
 };
 

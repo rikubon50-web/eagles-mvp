@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
+export const metadata = {
+  title: "法人スポンサー・ご協賛募集",
+  description:
+    "青山学院大学男子ラクロス部 EAGLESの法人向けご協賛のご案内。協賛メニュー、実績・信頼感、お問い合わせについて掲載しています。",
+  alternates: { canonical: "/support/corporate" },
+};
+
 export default function SupportCorporate() {
   return (
     <article className="space-y-16">

@@ -12,12 +12,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const players = await fetchPlayers();
   const player = players.find((p) => p.id === params.id);
   if (!player) return {};
+  const desc = `青山学院大学男子ラクロス部 EAGLES ${player.name}のプロフィール。`;
   return {
     title: player.name,
-    description: `${player.name}選手のプロフィール`,
+    description: desc,
+    alternates: { canonical: `/roster/${params.id}` },
     openGraph: {
-      title: `${player.name} | EAGLES Lacrosse`,
-      description: `${player.name}選手のプロフィール`,
+      title: `${player.name}｜青山学院大学男子ラクロス部 EAGLES`,
+      description: desc,
       images: player.photo ? [{ url: player.photo.url, width: player.photo.width, height: player.photo.height }] : undefined,
     },
   };

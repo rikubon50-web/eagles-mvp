@@ -1,4 +1,13 @@
 import Link from "next/link";
+
+export const metadata = {
+  title: "プライバシーポリシー",
+  description:
+    "青山学院大学男子ラクロス部 EAGLES 公式サイトのプライバシーポリシー（個人情報の取り扱い）についてのページです。",
+  alternates: { canonical: "/privacy" },
+  robots: { index: false, follow: true },
+};
+
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-6 py-12 text-slate-800">

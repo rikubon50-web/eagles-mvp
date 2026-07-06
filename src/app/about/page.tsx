@@ -4,6 +4,13 @@ import AboutSideNav from "@/components/AboutSideNav";
 
 export const revalidate = 300;
 
+export const metadata = {
+  title: "EAGLESについて",
+  description:
+    "青山学院大学男子ラクロス部 EAGLESの紹介。主将挨拶、活動時間・場所（緑ヶ丘グラウンド）、ラクロスの魅力、よくある質問を掲載しています。",
+  alternates: { canonical: "/about" },
+};
+
 export default async function AboutPage() {
   const res = await fetchAbout();
   // microCMS: about could be an object or a list response with { contents: [...] }
