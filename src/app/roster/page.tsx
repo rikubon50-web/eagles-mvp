@@ -9,7 +9,7 @@ export default async function RosterPage() {
   const players = await fetchPlayers();
   const fy = fiscalYear(new Date());
 
-  // ロールで学生（PL/STF）とコーチ（C）に分割
+  // ロールで学生（PL/MG/TR/AS）とコーチ（C）に分割
   const coaches = players.filter((p) => p.role === "C");
   const students = players.filter((p) => p.role !== "C");
 
@@ -25,7 +25,7 @@ export default async function RosterPage() {
   // 現役の期を上級生先頭（＝期の小さい順）で表示
   const cohorts = Array.from(groups.keys()).sort((a, b) => a - b);
 
-  // 期内は PL → STF の順、同ロール内は名前順
+  // 期内は PL → スタッフ(MG/TR/AS) の順、同ロール内は名前順
   const roleRank = (p: { role?: string }) => (p.role === "PL" ? 0 : 1);
 
   return (
@@ -44,6 +44,16 @@ export default async function RosterPage() {
                 </a>
               </li>
             ))}
+            {coaches.length > 0 && (
+              <li key="tab-coach">
+                <a
+                  href="#coach"
+                  className="block text-center border border-slate-900 px-6 py-4 font-extrabold tracking-wider text-slate-900 hover:bg-slate-900 hover:text-white transition-colors"
+                >
+                  COACH
+                </a>
+              </li>
+            )}
           </ul>
         </nav>
 

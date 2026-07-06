@@ -35,7 +35,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
       {(() => {
         const role = p?.role;
         if (!role) return null;
-        const label = role === "C" ? (p?.position || "COACH") : role; // PL / STF / 役職
+        // C → 役職(無ければ"COACH") / それ以外(PL·MG·TR·AS) → ロールをそのまま表示
+        const label = role === "C" ? p?.position || "COACH" : role;
         return (
           <div
             style={{

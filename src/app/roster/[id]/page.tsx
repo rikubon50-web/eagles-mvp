@@ -29,14 +29,24 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
   if (!player) return notFound();
 
   const isCoach = player.role === "C";
-  const rows: { label: string; value: string }[] = [];
+  // 長文(コーチ歴/実績)を「年」「【…】」「実績の区切り」で複数行に分割して見やすくする
+  const splitEntries = (s: string) =>
+    s
+      .replace(/\s*(【[^】]*】)\s*/g, "\n$1\n") // 【選手】【コーチ】等を独立した見出し行に
+      .replace(/\s+(?=\d{4})/g, "\n") // 西暦(4桁)の前で改行
+      .replace(/\)\s+(?=\S)/g, ")\n") // 「(年)」で終わる実績の区切りで改行
+      .split("\n")
+      .map((x) => x.trim())
+      .filter(Boolean);
+
+  const rows: { label: string; value: string; lines?: string[] }[] = [];
   let usedCommentForFavorite = false;
 
   if (isCoach) {
     if (player.position)     rows.push({ label: "役職",       value: player.position });
     if (player.univ)         rows.push({ label: "出身大学",   value: player.univ });
-    if (player.career)       rows.push({ label: "コーチ歴",   value: player.career });
-    if (player.achievement)  rows.push({ label: "実績",       value: player.achievement });
+    if (player.career)       rows.push({ label: "コーチ歴",   value: player.career, lines: splitEntries(player.career) });
+    if (player.achievement)  rows.push({ label: "実績",       value: player.achievement, lines: splitEntries(player.achievement) });
     if (player.organization) rows.push({ label: "組織運営",   value: player.organization });
   } else {
     if (player.position)   rows.push({ label: "役職",                 value: player.position });
@@ -110,19 +120,50 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
           <div className="flex-1 min-w-0">
             {rows.length > 0 && (
               <div className="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
-                {rows.map((row, idx) => (
-                  <div
-                    key={row.label}
-                    className={`flex flex-row${idx < rows.length - 1 ? " border-b border-slate-200" : ""}`}
-                  >
-                    <div className="bg-[#0f6536] text-white font-bold text-sm flex items-center justify-center px-3 py-3 w-[38%] flex-shrink-0 text-center leading-snug">
-                      {row.label}
+                {rows.map((row, idx) => {
+                  const multiline = (row.lines?.length ?? 0) > 1;
+                  return (
+                    <div
+                      key={row.label}
+                      className={`flex flex-row${idx < rows.length - 1 ? " border-b border-slate-200" : ""}`}
+                    >
+                      <div
+                        className={`bg-[#0f6536] text-white font-bold text-sm flex ${
+                          multiline ? "items-start" : "items-center"
+                        } justify-center px-3 py-3 w-[38%] flex-shrink-0 text-center leading-snug`}
+                      >
+                        {row.label}
+                      </div>
+                      <div
+                        className={`bg-white text-gray-800 font-semibold text-sm sm:text-base flex ${
+                          multiline ? "items-start" : "items-center"
+                        } px-4 py-3 flex-1 min-w-0 leading-relaxed`}
+                      >
+                        {multiline ? (
+                          <ul className="w-full space-y-1.5">
+                            {row.lines!.map((line, i) =>
+                              /^【[^】]*】$/.test(line) ? (
+                                <li
+                                  key={i}
+                                  className={`font-bold text-[#0f6536]${i > 0 ? " mt-2.5" : ""}`}
+                                >
+                                  {line}
+                                </li>
+                              ) : (
+                                <li key={i} className="flex gap-2">
+                                  <span className="mt-[0.5em] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#0f6536]" />
+                                  <span className="min-w-0">{line}</span>
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        ) : (
+                          row.value
+                        )}
+                      </div>
                     </div>
-                    <div className="bg-white text-gray-800 font-semibold text-sm sm:text-base flex items-center px-4 py-3 flex-1 min-w-0 leading-snug">
-                      {row.value}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 

@@ -68,8 +68,8 @@ export type Player = {
   favoriteWord?: string;     // 好きな言葉／口癖
   alphabet?: string;        // 名前のアルファベット表記
   isTestimonial?: boolean;  // 先輩の声に表示
-  role?: string;            // "PL" | "STF" | "C"（ロール）
-  position?: string;        // 役職（主将/HC 等）
+  role?: string;            // "PL" | "MG" | "TR" | "AS" | "C"（ロール。旧STFはMG/TR/ASに細分化）
+  position?: string;        // 役職（主将/HC/MGリーダー 等）
   univ?: string;            // 出身大学（コーチ）
   career?: string;          // コーチ歴（コーチ）
   achievement?: string;     // 実績（コーチ）
