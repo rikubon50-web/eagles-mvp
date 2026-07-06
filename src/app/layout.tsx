@@ -71,6 +71,9 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
+  verification: {
+    google: "qA9TGnUtyECOPWxSy8OxToklk4wx5iWvK4UBsqvAi0g",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
