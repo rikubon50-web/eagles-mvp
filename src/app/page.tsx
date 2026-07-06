@@ -19,7 +19,7 @@ export default async function Home() {
     "@type": "SportsTeam",
     "name": "EAGLES Lacrosse",
     "sport": "Lacrosse",
-    "url": process.env.NEXT_PUBLIC_SITE_URL ?? "https://eagles-mvp-c8m4.vercel.app",
+    "url": process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com",
     "memberOf": {
       "@type": "SportsOrganization",
       "name": "関東学生ラクロス連盟"
