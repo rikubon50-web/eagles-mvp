@@ -1,10 +1,10 @@
 // src/app/roster/[id]/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { fetchPlayers } from "@/lib/microcms";
 import { cohortLabel, cohortOf } from "@/lib/cohort";
+import PlayerGallery from "@/components/PlayerGallery";
 
 export const revalidate = 300;
 
@@ -104,18 +104,12 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
       <div className="max-w-4xl mx-auto px-5 py-10 md:py-14">
         <div className="flex flex-col md:flex-row gap-8 md:gap-10 items-start">
 
-          {/* 写真 */}
+          {/* 写真（2枚目があればスライド表示） */}
           <div className="w-full md:w-auto md:flex-shrink-0 md:max-w-[280px]">
-            <div className="overflow-hidden rounded-2xl shadow-lg">
-              <Image
-                src={player.photo.url}
-                alt={player.name}
-                width={player.photo.width}
-                height={player.photo.height}
-                className="w-full h-auto object-cover"
-                priority
-              />
-            </div>
+            <PlayerGallery
+              images={[player.photo, player.photo2].filter(Boolean) as { url: string; width: number; height: number }[]}
+              alt={player.name}
+            />
           </div>
 
           {/* プロフィール */}

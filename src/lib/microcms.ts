@@ -55,7 +55,8 @@ export type Player = {
   id: string;
   name: string;    // 名前
   cohort: number; // 期（37,38,...）不変値。表示・現役判定の主データ（microCMS必須）
-  photo: { url: string; width: number; height: number }; // 写真
+  photo: { url: string; width: number; height: number }; // 写真（1枚目・カード用）
+  photo2?: { url: string; width: number; height: number }; // 写真2枚目（宣材写真・詳細のスライド用）
   highschool?: string;       // 出身高校
   sports?: string;           // 出身スポーツ
   faculty?: string;          // 学科学部
