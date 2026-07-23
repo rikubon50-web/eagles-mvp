@@ -51,8 +51,9 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
     if (player.achievement)  rows.push({ label: "実績",       value: player.achievement, lines: splitEntries(player.achievement) });
     if (player.organization) rows.push({ label: "組織運営",   value: player.organization });
   } else {
-    if (player.position)   rows.push({ label: "役職",                 value: player.position });
-    if (player.faculty)    rows.push({ label: "学部・学科",           value: player.faculty });
+    if (player.position)     rows.push({ label: "役職",               value: player.position });
+    if (player.organization) rows.push({ label: "組織運営",           value: player.organization });
+    if (player.faculty)      rows.push({ label: "学部・学科",         value: player.faculty });
     if (player.highschool) rows.push({ label: "出身高校",             value: player.highschool });
     if (player.sports)     rows.push({ label: "経験スポーツ",         value: player.sports });
 
