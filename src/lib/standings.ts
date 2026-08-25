@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createSupabasePublic } from "@/lib/supabase/public";
 
 export const standingsRowSchema = z.object({
   block: z.enum(["A", "B"]),
@@ -40,4 +41,28 @@ export function formatJstDate(iso: string): string {
   }).formatToParts(d);
   const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
   return `${get("year")}/${get("month")}/${get("day")}`;
+}
+
+export type StandingsData = {
+  rows: Record<string, string>[];
+  updatedAt?: string;
+};
+
+export async function fetchStandings(): Promise<StandingsData> {
+  try {
+    const supabase = createSupabasePublic();
+    const [rowsRes, metaRes] = await Promise.all([
+      supabase.from("standings_rows").select("*"),
+      supabase.from("standings_meta").select("updated_at").eq("id", 1).single(),
+    ]);
+    if (rowsRes.error) throw rowsRes.error;
+    const rows = toBoardRows(rowsRes.data ?? []);
+    const updatedAt = metaRes.data?.updated_at
+      ? formatJstDate(metaRes.data.updated_at)
+      : undefined;
+    return { rows, updatedAt };
+  } catch (e) {
+    console.error("fetchStandings failed:", e);
+    return { rows: [], updatedAt: undefined };
+  }
 }
