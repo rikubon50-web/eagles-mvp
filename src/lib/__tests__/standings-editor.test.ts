@@ -39,6 +39,18 @@ describe("moveRow", () => {
     const rows = [r("a1", "A", 0), r("a2", "A", 1)];
     expect(moveRow(rows, "a1", -1)).toEqual(rows);
   });
+  it("同一ブロック内で下に移動する", () => {
+    const rows = [r("a1", "A", 0), r("a2", "A", 1)];
+    const out = moveRow(rows, "a1", 1);
+    const a = out.filter((x) => x.block === "A").sort((x, y) => x.sort_order - y.sort_order);
+    expect(a.map((x) => x.key)).toEqual(["a2", "a1"]);
+    expect(out.find((x) => x.key === "a1")!.sort_order).toBe(1);
+    expect(out.find((x) => x.key === "a2")!.sort_order).toBe(0);
+  });
+  it("末尾をさらに下へは動かさない", () => {
+    const rows = [r("a1", "A", 0), r("a2", "A", 1)];
+    expect(moveRow(rows, "a2", 1)).toEqual(rows);
+  });
 });
 
 describe("normalizeSortOrder", () => {
