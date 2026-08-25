@@ -1,9 +1,7 @@
 "use client";
-import { useId, useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition } from "react";
 import type { StandingsRowInput } from "@/lib/standings";
-import {
-  addRow, removeRow, moveRow, normalizeSortOrder, type EditorRow,
-} from "@/lib/standings-editor";
+import { addRow, removeRow, moveRow, normalizeSortOrder } from "@/lib/standings-editor";
 import { saveStandings } from "./actions";
 
 const NUM_COLS = [
@@ -14,38 +12,69 @@ const NUM_COLS = [
   ["diff", "得失点差"],
 ] as const;
 
+type NumField = (typeof NUM_COLS)[number][0];
+
+// 数値セルは文字列で状態保持する（"-" だけを入力した途中状態などを
+// Number() で丸めてしまわず、そのまま画面に残すため。得失点差は負値が頻出）。
+type EditorRowVM = {
+  key: string;
+  block: "A" | "B";
+  university: string;
+  rank: string;
+  points: string;
+  games: string;
+  gf: string;
+  diff: string;
+  sort_order: number;
+};
+
 export default function StandingsEditor({
   initialRows,
 }: {
   initialRows: StandingsRowInput[];
 }) {
   const idPrefix = useId();
-  const [seq, setSeq] = useState(0);
-  const [rows, setRows] = useState<EditorRow[]>(() =>
-    initialRows.map((r, i) => ({ ...r, key: `init-${i}` }))
+  // useState の seq だと同一イベントループ内の連続呼び出しで古い値を
+  // 参照し key が重複しうるため、useRef のカウンタで採番する。
+  const seqRef = useRef(0);
+  const [rows, setRows] = useState<EditorRowVM[]>(() =>
+    initialRows.map((r, i) => ({
+      key: `init-${i}`,
+      block: r.block,
+      university: r.university,
+      rank: String(r.rank),
+      points: String(r.points),
+      games: String(r.games),
+      gf: String(r.gf),
+      diff: String(r.diff),
+      sort_order: r.sort_order,
+    }))
   );
   const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const newKey = () => {
-    setSeq((s) => s + 1);
-    return `${idPrefix}-${seq}`;
-  };
+  const newKey = () => `${idPrefix}-${seqRef.current++}`;
 
-  const update = (key: string, field: keyof StandingsRowInput, value: string) => {
-    setRows((rs) =>
-      rs.map((r) =>
-        r.key === key
-          ? { ...r, [field]: field === "university" || field === "block" ? value : Number(value) }
-          : r
-      )
-    );
+  const update = (key: string, field: "university" | NumField, value: string) => {
+    setRows((rs) => rs.map((r) => (r.key === key ? { ...r, [field]: value } : r)));
   };
 
   const handleSave = () => {
     setMessage(null);
     startTransition(async () => {
-      const payload = normalizeSortOrder(rows).map(({ key, ...rest }) => rest);
+      // 空文字は NaN にして zod のバリデーションに委ね、エラーバナーで知らせる。
+      const n = (s: string) => (s.trim() === "" ? NaN : Number(s));
+      const normalized = normalizeSortOrder(rows);
+      const payload: StandingsRowInput[] = normalized.map((r) => ({
+        block: r.block,
+        university: r.university,
+        rank: n(r.rank),
+        points: n(r.points),
+        games: n(r.games),
+        gf: n(r.gf),
+        diff: n(r.diff),
+        sort_order: r.sort_order,
+      }));
       const result = await saveStandings(payload);
       setMessage(
         result.ok
@@ -86,12 +115,21 @@ export default function StandingsEditor({
                   </td>
                   {NUM_COLS.map(([field]) => (
                     <td key={field} className="px-1 py-1">
+                      {/*
+                        マイナス入力を可能にするため type="text" を使う。
+                        type="number" では "-" 単体が Number("") = 0 に丸められ
+                        コントロール入力によってマイナス記号を打てなくなる。
+                        inputMode="numeric" + pattern でモバイルでは
+                        できるだけ数字キーパッドを出す（iOS は "-" を出すため
+                        通常キーボードにフォールバックすることがある点は許容）。
+                      */}
                       <input
-                        type="number"
+                        type="text"
                         inputMode="numeric"
-                        value={Number.isNaN(r[field]) ? "" : r[field]}
+                        pattern="-?[0-9]*"
+                        value={r[field]}
                         onChange={(e) => update(r.key, field, e.target.value)}
-                        className="w-full rounded border border-slate-300 px-2 py-1.5 text-center"
+                        className="w-full min-w-12 rounded border border-slate-300 px-2 py-1.5 text-center"
                       />
                     </td>
                   ))}
@@ -113,7 +151,18 @@ export default function StandingsEditor({
         </div>
         <div className="px-3 py-2 border-t border-slate-200">
           <button type="button"
-            onClick={() => setRows((rs) => addRow(rs, block, newKey()))}
+            onClick={() =>
+              setRows((rs) =>
+                addRow(rs, block, newKey(), (rank) => ({
+                  university: "",
+                  rank: String(rank),
+                  points: "0",
+                  games: "0",
+                  gf: "0",
+                  diff: "0",
+                }))
+              )
+            }
             className="text-sm text-emerald-700 font-semibold">
             ＋ 行を追加
           </button>

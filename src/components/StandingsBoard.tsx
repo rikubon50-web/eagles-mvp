@@ -69,7 +69,7 @@ export default function StandingsBoard({ rows, updatedAt }: { rows: StandingRow[
         </div>
 
       </div>
-        {/* 更新日（スプレッドシートから供給） */}
+        {/* 更新日（管理画面の保存時に自動更新） */}
         {updatedAt && updatedAt.trim() && (
           <div className="text-right px-4 py-3 text-sm text-slate-600">
             更新日：{updatedAt}
