@@ -19,7 +19,13 @@ export type StandingsRowInput = z.infer<typeof standingsRowSchema>;
 // StandingsBoard は文字列値の Record を期待する（既存CSV互換）
 export function toBoardRows(rows: StandingsRowInput[]): Record<string, string>[] {
   return [...rows]
-    .sort((a, b) => a.sort_order - b.sort_order)
+    .sort((a, b) =>
+      a.block === b.block
+        ? a.sort_order - b.sort_order
+        : a.block < b.block
+          ? -1
+          : 1
+    )
     .map((r) => ({
       block: r.block,
       rank: String(r.rank),

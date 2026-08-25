@@ -44,6 +44,16 @@ describe("toBoardRows", () => {
     expect(out[1].university).toBe("二番目");
     expect(out[0].block).toBe("A");
   });
+  it("ブロック順を優先 (A が B より前、同じ sort_order 内)", () => {
+    const out = toBoardRows([
+      row({ university: "B1", sort_order: 0, block: "B" }),
+      row({ university: "A1", sort_order: 0, block: "A" }),
+    ]);
+    expect(out[0].university).toBe("A1");
+    expect(out[0].block).toBe("A");
+    expect(out[1].university).toBe("B1");
+    expect(out[1].block).toBe("B");
+  });
 });
 
 describe("formatJstDate", () => {
