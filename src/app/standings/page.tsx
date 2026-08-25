@@ -1,6 +1,6 @@
 export const revalidate = 300;
 import type { Metadata } from "next";
-import { fetchStandingsFromCsv } from "@/lib/sheets";
+import { fetchStandings } from "@/lib/standings";
 
 export const metadata: Metadata = {
   title: "順位表・リーグ戦",
@@ -15,8 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function StandingsPage() {
-  const url = process.env.STANDINGS_CSV!;
-  const { rows, updatedAt } = await fetchStandingsFromCsv(url);
+  const { rows, updatedAt } = await fetchStandings();
 
   return (
     <div className="space-y-6">
