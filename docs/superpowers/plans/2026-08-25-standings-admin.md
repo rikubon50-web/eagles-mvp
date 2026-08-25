@@ -98,7 +98,7 @@ git commit -m "chore: Supabase/zod依存とvitestを追加"
 
 **注意: このタスクは Supabase アカウント作成などユーザー本人の操作が必要。エージェントは schema.sql の作成とコミットまでを行い、残りはユーザーに手順を案内して完了を待つこと。**
 
-- [ ] **Step 1: スキーマ SQL をリポジトリに作成**
+- [x] **Step 1: スキーマ SQL をリポジトリに作成**
 
 ```sql
 -- supabase/schema.sql
@@ -166,14 +166,14 @@ create policy "profiles_own_update" on public.profiles
   with check (auth.uid() = user_id and role = (select role from public.profiles where user_id = auth.uid()));
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add supabase/schema.sql
 git commit -m "feat(standings): Supabaseスキーマ定義を追加"
 ```
 
-- [ ] **Step 3: ユーザーにセットアップ手順を案内し、完了を待つ**
+- [x] **Step 3: ユーザーにセットアップ手順を案内し、完了を待つ**
 
 案内する内容（このまま提示する）:
 
@@ -190,7 +190,7 @@ SUPABASE_SERVICE_ROLE_KEY=（service_role キー・秘匿）
 ADMIN_INVITE_CODE=（部内で共有する合言葉を決めて記入）
 ```
 
-- [ ] **Step 4: 環境変数が入ったことを確認**
+- [x] **Step 4: 環境変数が入ったことを確認**
 
 Run: `grep -c "SUPABASE_URL\|SUPABASE_ANON\|SERVICE_ROLE\|INVITE_CODE" .env.local`
 Expected: 4
