@@ -54,22 +54,19 @@ export type StandingsData = {
   updatedAt?: string;
 };
 
+// 取得失敗時はthrowし、ISRが前回成功時のページを維持する。
+// （meta（更新日）のみの取得失敗はthrowしない。表示上は更新日なしとして扱う）
 export async function fetchStandings(): Promise<StandingsData> {
-  try {
-    const supabase = createSupabasePublic();
-    const [rowsRes, metaRes] = await Promise.all([
-      supabase.from("standings_rows").select("*"),
-      supabase.from("standings_meta").select("updated_at").eq("id", 1).single(),
-    ]);
-    if (rowsRes.error) throw rowsRes.error;
-    if (metaRes.error) console.error("fetchStandings meta failed:", metaRes.error);
-    const rows = toBoardRows(rowsRes.data ?? []);
-    const updatedAt = metaRes.data?.updated_at
-      ? formatJstDate(metaRes.data.updated_at)
-      : undefined;
-    return { rows, updatedAt };
-  } catch (e) {
-    console.error("fetchStandings failed:", e);
-    return { rows: [], updatedAt: undefined };
-  }
+  const supabase = createSupabasePublic();
+  const [rowsRes, metaRes] = await Promise.all([
+    supabase.from("standings_rows").select("*"),
+    supabase.from("standings_meta").select("updated_at").eq("id", 1).single(),
+  ]);
+  if (rowsRes.error) throw rowsRes.error;
+  if (metaRes.error) console.error("fetchStandings meta failed:", metaRes.error);
+  const rows = toBoardRows(rowsRes.data ?? []);
+  const updatedAt = metaRes.data?.updated_at
+    ? formatJstDate(metaRes.data.updated_at)
+    : undefined;
+  return { rows, updatedAt };
 }
