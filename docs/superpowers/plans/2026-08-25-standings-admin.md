@@ -1321,9 +1321,10 @@ git commit -m "chore(standings): スプレッドシート連携(CSV)を廃止"
 
 - [ ] **Step 1: ユーザーに Vercel 環境変数の追加を案内**
 
-Vercel ダッシュボード > eagles-mvp > Settings > Environment Variables に以下4つを追加（Production / Preview 両方）:
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_INVITE_CODE`
-（`STANDINGS_CSV` は削除してよい）
+Vercel ダッシュボード > eagles-mvp > Settings > Environment Variables に以下3つを追加（Production / Preview 両方）:
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `ADMIN_INVITE_CODE`
+（`STANDINGS_CSV` は削除してよい。`SUPABASE_SERVICE_ROLE_KEY` はローカルの初期投入スクリプト専用のため
+Vercel には設定しない — 最終レビューの最小権限勧告による）
 
 - [ ] **Step 2: ユーザー承認のうえ push**
 
