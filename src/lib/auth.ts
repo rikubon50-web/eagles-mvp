@@ -11,6 +11,27 @@ export async function getProfile(): Promise<Profile | null> {
     .select("name, role")
     .eq("user_id", user.id)
     .single();
-  if (!data) return null;
-  return { userId: user.id, name: data.name, role: data.role };
+  if (data) return { userId: user.id, name: data.name, role: data.role };
+
+  // profiles にレコードがない（signup 時の insert 失敗などで孤立した auth アカウント）。
+  // 自己修復として profiles 行を作成し、再取得する。
+  const name =
+    (user.user_metadata?.name as string | undefined)?.trim() ||
+    user.email?.split("@")[0] ||
+    "部員";
+  const { error: insertError } = await supabase
+    .from("profiles")
+    .insert({ user_id: user.id, name });
+  if (insertError) {
+    console.error("getProfile: self-heal insert failed", insertError);
+    return null;
+  }
+
+  const { data: healed } = await supabase
+    .from("profiles")
+    .select("name, role")
+    .eq("user_id", user.id)
+    .single();
+  if (!healed) return null;
+  return { userId: user.id, name: healed.name, role: healed.role };
 }

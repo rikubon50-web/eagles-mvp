@@ -26,13 +26,23 @@ export async function signup(formData: FormData) {
   if (password.length < 8) fail("パスワードは8文字以上にしてください");
 
   const supabase = createSupabaseServer();
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error || !data.user) fail("登録に失敗しました: " + (error?.message ?? ""));
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { name } },
+  });
+  if (error || !data.user) {
+    console.error("signup: auth.signUp failed", error);
+    fail("登録に失敗しました。入力内容を確認するか、時間をおいて再度お試しください。");
+  }
 
   const { error: profileError } = await supabase
     .from("profiles")
     .insert({ user_id: data.user!.id, name });
-  if (profileError) fail("プロフィール作成に失敗しました: " + profileError.message);
+  if (profileError) {
+    console.error("signup: profiles.insert failed", profileError);
+    fail("登録に失敗しました。入力内容を確認するか、時間をおいて再度お試しください。");
+  }
 
   redirect("/admin/standings");
 }
