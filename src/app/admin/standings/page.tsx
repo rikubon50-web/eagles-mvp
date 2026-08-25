@@ -25,10 +25,14 @@ export default async function AdminStandingsPage() {
   }
 
   const supabase = createSupabaseServer();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("standings_rows")
     .select("block, rank, university, points, games, gf, diff, sort_order")
     .order("sort_order");
+
+  if (error) {
+    console.error("AdminStandingsPage: standings_rows fetch failed", error);
+  }
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
@@ -38,7 +42,13 @@ export default async function AdminStandingsPage() {
           <button className="text-sm text-slate-500 underline">ログアウト</button>
         </form>
       </div>
-      <StandingsEditor initialRows={data ?? []} />
+      {error ? (
+        <p className="rounded bg-red-50 border border-red-200 text-red-700 px-3 py-2 text-sm">
+          データの取得に失敗しました。再読み込みしてください。
+        </p>
+      ) : (
+        <StandingsEditor initialRows={data ?? []} />
+      )}
     </div>
   );
 }

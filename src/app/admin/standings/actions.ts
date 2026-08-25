@@ -17,6 +17,10 @@ export async function saveStandings(
     return { ok: false, error: "入力内容に誤りがあります: " + parsed.error.issues[0]?.message };
   }
 
+  if (parsed.data.length === 0) {
+    return { ok: false, error: "行がありません。全行を削除した状態では保存できません。" };
+  }
+
   const supabase = createSupabaseServer();
   // 全置換（担当者は実質1人のため last-write-wins）
   const del = await supabase.from("standings_rows").delete().neq("block", "");
