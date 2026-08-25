@@ -1,4 +1,4 @@
-import { type StandingRow } from "@/lib/sheets";
+type StandingRow = Record<string, string>;
 
 function BlockTable({ title, rows }: { title: string; rows: StandingRow[] }) {
   return (
