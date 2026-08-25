@@ -56,6 +56,7 @@ export async function fetchStandings(): Promise<StandingsData> {
       supabase.from("standings_meta").select("updated_at").eq("id", 1).single(),
     ]);
     if (rowsRes.error) throw rowsRes.error;
+    if (metaRes.error) console.error("fetchStandings meta failed:", metaRes.error);
     const rows = toBoardRows(rowsRes.data ?? []);
     const updatedAt = metaRes.data?.updated_at
       ? formatJstDate(metaRes.data.updated_at)
