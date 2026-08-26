@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sanitizePostBody } from "@/lib/posts-domain";
+import { sanitizePostBody } from "@/lib/sanitize-body";
 
 describe("sanitizePostBody", () => {
   it("Tiptap 風のマークアップはタグ・属性・内容を保ったまま通す（style の空白/img の自己終了は正規化される）", () => {
@@ -7,22 +7,22 @@ describe("sanitizePostBody", () => {
       '<p style="text-align: center">こんにちは<strong>太字</strong><em>斜体</em></p>' +
       '<h2>見出し</h2>' +
       '<ul><li>項目1</li><li>項目2</li></ul>' +
-      '<p><span style="color: rgb(220, 38, 38)">色付き文字</span></p>' +
+      '<p><span style="color:  rgb(220, 38, 38)">色付き文字</span></p>' +
       '<p><a href="https://example.com">リンク</a></p>' +
       '<img src="https://example.com/a.jpg" alt="写真">';
     const expected =
-      '<p style="text-align:center">こんにちは<strong>太字</strong><em>斜体</em></p>' +
+      '<p style="text-align: center">こんにちは<strong>太字</strong><em>斜体</em></p>' +
       '<h2>見出し</h2>' +
       '<ul><li>項目1</li><li>項目2</li></ul>' +
-      '<p><span style="color:rgb(220, 38, 38)">色付き文字</span></p>' +
+      '<p><span style="color: rgb(220, 38, 38)">色付き文字</span></p>' +
       '<p><a href="https://example.com">リンク</a></p>' +
-      '<img src="https://example.com/a.jpg" alt="写真" />';
+      '<img src="https://example.com/a.jpg" alt="写真">';
     expect(sanitizePostBody(html)).toBe(expected);
   });
 
   it("font-size の style は保持する", () => {
     const html = '<span style="font-size: 1.4em">大きい文字</span>';
-    expect(sanitizePostBody(html)).toBe('<span style="font-size:1.4em">大きい文字</span>');
+    expect(sanitizePostBody(html)).toBe('<span style="font-size: 1.4em">大きい文字</span>');
   });
 
   it("<script> タグを除去する", () => {

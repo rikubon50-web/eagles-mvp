@@ -1,5 +1,4 @@
 import { z } from "zod";
-import sanitizeHtml from "sanitize-html";
 
 export const postInputSchema = z.object({
   title: z.string().trim().min(1, "タイトルを入力してください").max(120),
@@ -8,30 +7,6 @@ export const postInputSchema = z.object({
   thumbnailUrl: z.string().url().nullable().optional(),
 });
 export type PostInput = z.infer<typeof postInputSchema>;
-
-// 公開権を持つ全部員アカウントからの任意HTML持ち込みを防ぐ許可リスト浄化。
-export function sanitizePostBody(html: string): string {
-  return sanitizeHtml(html, {
-    allowedTags: [
-      "p", "h2", "ul", "ol", "li", "strong", "em", "u", "s", "b", "i", "a", "img", "br", "span",
-    ],
-    allowedAttributes: {
-      a: ["href"],
-      img: ["src", "alt"],
-      span: ["style"],
-      p: ["style"],
-      h2: ["style"],
-    },
-    allowedStyles: {
-      "*": {
-        "text-align": [/^(center|left|right)$/],
-        color: [/^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/, /^#[0-9a-fA-F]{3,8}$/],
-        "font-size": [/^\d+(\.\d+)?(em|px)$/],
-      },
-    },
-    allowedSchemes: ["http", "https"],
-  });
-}
 
 export function newPostId(): string {
   return crypto.randomUUID().replace(/-/g, "").slice(0, 12);

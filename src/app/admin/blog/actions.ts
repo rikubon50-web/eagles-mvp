@@ -2,7 +2,8 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
-import { postInputSchema, sanitizePostBody } from "@/lib/posts-domain";
+import { postInputSchema } from "@/lib/posts-domain";
+import { sanitizePostBody } from "@/lib/sanitize-body";
 
 type SaveInput = {
   id: string; // 新規もエディタ側で newPostId() 採番済み
