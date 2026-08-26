@@ -1,10 +1,10 @@
 // src/components/GameCard.tsx
 import Image from "next/image";
-import type { Game } from "@/lib/microcms";
+import type { GameView } from "@/lib/games";
 import Link from "next/link";
 
 // 試合カード（ポスター風）
-export default function GameCard({ game }: { game: Game }) {
+export default function GameCard({ game }: { game: GameView }) {
   const date = new Date(game.startAt);
   const d = date
     .toLocaleDateString("ja-JP", {

@@ -1,6 +1,6 @@
 // src/app/games/page.tsx
 import type { Metadata } from "next";
-import { fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
+import { fetchGamesUpcoming, fetchGamesArchive } from "@/lib/games";
 import GameCard from "@/components/GameCard";
 
 export const revalidate = 300;

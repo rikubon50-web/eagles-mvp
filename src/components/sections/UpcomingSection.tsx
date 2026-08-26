@@ -1,4 +1,4 @@
-import { fetchGamesUpcoming } from "@/lib/microcms";
+import { fetchGamesUpcoming } from "@/lib/games";
 import GameCard from "@/components/GameCard";
 import Link from "next/link";
 

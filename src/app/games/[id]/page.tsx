@@ -1,14 +1,14 @@
 // src/app/games/[id]/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
-import { client, type Game } from "@/lib/microcms";
+import { fetchGameById } from "@/lib/games";
 import { notFound } from "next/navigation";
 
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
-    const game = await client.getListDetail<Game>({ endpoint: "games", contentId: params.id });
+    const game = await fetchGameById(params.id);
     if (!game) return {};
     const description = `${game.startAt ? new Date(game.startAt).toLocaleDateString("ja-JP") : ""} ${game.venue ?? ""}`.trim();
     return {
@@ -28,10 +28,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function GameTextPage({ params }: { params: { id: string } }) {
   try {
-    const game = await client.getListDetail<Game>({
-      endpoint: "games",
-      contentId: params.id,
-    });
+    const game = await fetchGameById(params.id);
 
     if (!game || !game.text) {
       return notFound();

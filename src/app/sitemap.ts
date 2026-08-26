@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { fetchNewsList, fetchPlayers, fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
+import { fetchNewsList, fetchPlayers } from "@/lib/microcms";
+import { fetchGamesUpcoming, fetchGamesArchive } from "@/lib/games";
 import { fetchAllPostIds } from "@/lib/posts";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
