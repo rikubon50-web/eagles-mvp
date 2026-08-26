@@ -1,13 +1,12 @@
 import { fetchLatestPosts } from "@/lib/posts";
-import BlogCard from "@/components/BlogCard";
-import type { Blog } from "@/lib/microcms";
+import BlogCard, { type BlogCardItem } from "@/components/BlogCard";
 import Link from "next/link";
 
 const DISPLAY_COUNT = 3;
 
 export default async function BlogSection() {
   const posts = await fetchLatestPosts(DISPLAY_COUNT);
-  const blogs: Blog[] = posts.map((p) => ({
+  const blogs: BlogCardItem[] = posts.map((p) => ({
     id: p.id,
     title: p.title,
     body: p.body,

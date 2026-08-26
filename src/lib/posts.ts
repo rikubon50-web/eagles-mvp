@@ -68,6 +68,27 @@ export async function fetchLatestPosts(limit: number): Promise<Post[]> {
   return (data ?? []).map(toPost);
 }
 
+// sitemap 用: 公開済み全記事の id / updatedAt を取得（1000件ずつページング）
+export async function fetchAllPostIds(): Promise<{ id: string; updatedAt: string }[]> {
+  const supabase = createSupabasePublic();
+  const CHUNK = 1000;
+  const results: { id: string; updatedAt: string }[] = [];
+  let from = 0;
+  for (;;) {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id,updated_at")
+      .eq("status", "published")
+      .range(from, from + CHUNK - 1);
+    if (error) throw error;
+    const rows = data ?? [];
+    results.push(...rows.map((r: any) => ({ id: r.id, updatedAt: r.updated_at })));
+    if (rows.length < CHUNK) break;
+    from += CHUNK;
+  }
+  return results;
+}
+
 export async function collectTags(): Promise<string[]> {
   const supabase = createSupabasePublic();
   const { data, error } = await supabase

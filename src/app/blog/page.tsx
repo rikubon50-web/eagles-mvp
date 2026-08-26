@@ -1,9 +1,8 @@
 // src/app/blog/page.tsx
 import type { Metadata } from "next";
 import { fetchPostsPage, collectTags } from "@/lib/posts";
-import type { Blog } from "@/lib/microcms";
 import BlogFilterList from "@/components/BlogFilterList";
-import BlogCard from "@/components/BlogCard";
+import BlogCard, { type BlogCardItem } from "@/components/BlogCard";
 import Pagination from "@/components/Pagination";
 
 export const revalidate = 300;
@@ -43,7 +42,7 @@ export default async function BlogListPage({
     collectTags().catch(() => [] as string[]),
   ]);
 
-  const blogs: Blog[] = posts.map((p) => ({
+  const blogs: BlogCardItem[] = posts.map((p) => ({
     id: p.id,
     title: p.title,
     body: p.body,

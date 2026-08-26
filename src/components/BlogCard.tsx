@@ -1,9 +1,17 @@
 // src/components/BlogCard.tsx
 import Link from "next/link";
 import Image from "next/image";
-import type { Blog } from "@/lib/microcms";
 
-export default function BlogCard({ item }: { item: Blog }) {
+export type BlogCardItem = {
+  id: string;
+  title: string;
+  body?: string;
+  thumbnail?: { url: string; width?: number; height?: number };
+  publishedAt: string;
+  tags?: string[];
+};
+
+export default function BlogCard({ item }: { item: BlogCardItem }) {
   return (
     <Link
       href={`/blog/${item.id}`}

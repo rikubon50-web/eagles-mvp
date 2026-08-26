@@ -77,17 +77,6 @@ export type Player = {
   organization?: string;    // 組織運営（コーチ）
 };
 
-// ★ Blog（ブログ）
-export type Blog = {
-  id: string;
-  title: string;
-  excerpt?: string;
-  body: string;
-  thumbnail?: { url: string; width: number; height: number };
-  publishedAt: string;
-  tags?: string[];
-};
-
 // ゲーム一覧で使うフィールドを明示（status / ourScore / oppScore を忘れずに）
 const GAME_LIST_FIELDS = [
   "id",
@@ -169,21 +158,4 @@ export async function fetchTestimonialPlayers(): Promise<Player[]> {
     queries: { filters: "isTestimonial[equals]true", limit: 10 },
   });
   return contents;
-}
-
-// Blog一覧
-export async function fetchBlogList() {
-  const contents = await client.getAllContents<Blog>({
-    endpoint: "blog",
-    queries: { orders: "-publishedAt" },
-  });
-  return contents;
-}
-
-export async function fetchBlogById(id: string): Promise<Blog | null> {
-  const { contents } = await client.getList<Blog>({
-    endpoint: "blog",
-    queries: { filters: `id[equals]${id}`, limit: 1 },
-  });
-  return contents[0] ?? null;
 }

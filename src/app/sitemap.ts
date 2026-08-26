@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
-import { fetchNewsList, fetchBlogList, fetchPlayers, fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
+import { fetchNewsList, fetchPlayers, fetchGamesUpcoming, fetchGamesArchive } from "@/lib/microcms";
+import { fetchAllPostIds } from "@/lib/posts";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [news, blogs, players, upcoming, archive] = await Promise.all([
     fetchNewsList(),
-    fetchBlogList(),
+    fetchAllPostIds(),
     fetchPlayers(),
     fetchGamesUpcoming(),
     fetchGamesArchive(),
@@ -37,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const blogPages: MetadataRoute.Sitemap = blogs.map((item) => ({
     url: `${BASE_URL}/blog/${item.id}`,
-    lastModified: item.publishedAt,
+    lastModified: item.updatedAt,
     changeFrequency: "yearly",
     priority: 0.6,
   }));
