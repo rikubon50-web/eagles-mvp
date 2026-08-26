@@ -2,6 +2,7 @@
 // 公開側（games一覧・詳細・ホームUpcoming）のデータ取得。Supabase の games テーブルから読む。
 import { createSupabasePublic } from "@/lib/supabase/public";
 import { deriveResult } from "@/lib/games-domain";
+import { sanitizePostBody } from "@/lib/sanitize-body";
 
 export type GameView = {
   id: string;
@@ -54,7 +55,9 @@ function toGameView(row: GameRow): GameView {
     ourScore: row.our_score ?? undefined,
     oppScore: row.opp_score ?? undefined,
     result: deriveResult(row.status, row.our_score, row.opp_score) ?? undefined,
-    text: row.note || undefined,
+    // note は管理画面のtextareaから部員が自由入力できるため、公開ページの
+    // dangerouslySetInnerHTML に渡す前に許可リストでサニタイズする（stored-XSS対策）。
+    text: row.note ? sanitizePostBody(row.note) : undefined,
   };
 }
 

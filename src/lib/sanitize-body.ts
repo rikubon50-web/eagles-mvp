@@ -1,7 +1,8 @@
 // 公開権を持つ全部員アカウントからの任意HTML持ち込みを防ぐ許可リスト浄化。
-// サーバー専用（savePost からのみ import する）。公開ページの依存チェーンに
-// 入れないこと — 旧実装(sanitize-html)は ESM 依存が Vercel 上で解決できず
-// /blog 系を 500 にしたため、CommonJS の xss へ置換し本ファイルに隔離した。
+// サーバー専用（Node runtime からのみ import する）。savePost（ブログ本文）に加え、
+// src/lib/games.ts（試合の備考=note）の公開ページ描画前サニタイズにも使用する。
+// 旧実装(sanitize-html)は ESM 依存が Vercel 上で解決できず /blog 系を 500 にしたため、
+// CommonJS の xss へ置換し本ファイルに隔離した。
 import { FilterXSS, safeAttrValue, getDefaultWhiteList } from "xss";
 
 const STYLE_RULES: Record<string, RegExp[]> = {
