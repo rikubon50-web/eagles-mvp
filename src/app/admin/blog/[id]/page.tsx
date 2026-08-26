@@ -12,7 +12,7 @@ export default async function AdminBlogEditPage({ params }: { params: { id: stri
   const supabase = createSupabaseServer();
   const { data: post, error } = await supabase
     .from("posts")
-    .select("id, title, body, tags, thumbnail_url, author_id")
+    .select("id, title, body, tags, thumbnail_url, author_id, status")
     .eq("id", params.id)
     .maybeSingle();
 
@@ -34,6 +34,7 @@ export default async function AdminBlogEditPage({ params }: { params: { id: stri
           body: post.body,
           tags: post.tags,
           thumbnailUrl: post.thumbnail_url,
+          status: post.status,
         }}
       />
     </div>

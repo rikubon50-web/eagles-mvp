@@ -16,6 +16,7 @@ type InitialPost = {
   body: string;
   tags: string[];
   thumbnailUrl: string | null;
+  status?: "draft" | "published";
 };
 
 const COLORS = [
@@ -225,15 +226,18 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
       )}
 
       <div className="flex gap-3">
-        <button type="button" disabled={isPending}
-          onClick={() => save(false)}
-          className="rounded border border-slate-400 text-slate-700 px-6 py-3 font-bold disabled:opacity-50">
-          下書き保存
-        </button>
-        <button type="button" disabled={isPending}
+        {/* 公開済み記事には下書きモードが存在しないため下書き保存ボタンは出さない */}
+        {initial?.status !== "published" && (
+          <button type="button" disabled={isPending || uploading}
+            onClick={() => save(false)}
+            className="rounded border border-slate-400 text-slate-700 px-6 py-3 font-bold disabled:opacity-50">
+            下書き保存
+          </button>
+        )}
+        <button type="button" disabled={isPending || uploading}
           onClick={() => save(true)}
           className="rounded bg-slate-900 text-white px-6 py-3 font-bold disabled:opacity-50">
-          {isPending ? "保存中..." : "公開する"}
+          {isPending ? "保存中..." : initial?.status === "published" ? "更新を公開" : "公開する"}
         </button>
       </div>
     </div>
