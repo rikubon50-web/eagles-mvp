@@ -27,29 +27,6 @@ export type News = {
   publishedAt: string;
 };
 
-export type Game = {
-  id: string;
-  title: string;
-  startAt: string;
-  venue: string;
-  homeTeamName: string;
-  homeTeamLogo: { url: string; width: number; height: number };
-  awayTeamName: string;
-  awayTeamLogo?: { url: string; width: number; height: number };
-
-  status: "scheduled" | "finished" | "postponed";
-
-  // スコア
-  ourScore?: number;
-  oppScore?: number;
-
-  // 「勝敗」ラベル（win/lose/draw）
-  result?: "win" | "lose" | "draw";
-
-  // 任意の追加情報
-  text?: string;
-};
-
 // ★ Roster（部員紹介）
 export type Player = {
   id: string;
@@ -77,21 +54,6 @@ export type Player = {
   organization?: string;    // 組織運営（コーチ）
 };
 
-// ゲーム一覧で使うフィールドを明示（status / ourScore / oppScore を忘れずに）
-const GAME_LIST_FIELDS = [
-  "id",
-  "title",
-  "startAt",
-  "venue",
-  "homeTeamName",
-  "homeTeamLogo",
-  "awayTeamName",
-  "awayTeamLogo",
-  "status",
-  "ourScore",
-  "oppScore",
-].join(",");
-
 // ==========================
 // データ取得関数
 // ==========================
@@ -112,26 +74,6 @@ export async function fetchNewsById(id: string): Promise<News | null> {
     queries: { filters: `id[equals]${id}`, limit: 1 },
   });
   return contents[0] ?? null;
-}
-
-// これからの試合
-export async function fetchGamesUpcoming() {
-  const now = new Date().toISOString();
-  const { contents } = await client.getList<Game>({
-    endpoint: "games",
-    queries: { filters: `startAt[greater_than]${now}`, orders: "startAt", limit: 100, fields: GAME_LIST_FIELDS },
-  });
-  return contents;
-}
-
-// 終了した試合
-export async function fetchGamesArchive() {
-  const now = new Date().toISOString();
-  const { contents } = await client.getList<Game>({
-    endpoint: "games",
-    queries: { filters: `startAt[less_than]${now}`, orders: "-startAt", limit: 100, fields: GAME_LIST_FIELDS },
-  });
-  return contents;
 }
 
 // About
