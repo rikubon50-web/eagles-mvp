@@ -17,6 +17,18 @@ export default function BlogFilterList({
   const router = useRouter();
   const [query, setQuery] = useState(q);
   const isFirstRender = useRef(true);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // タグ選択のクリックはデバウンス経由ではなく即時 push されるため、
+  // デバウンス済みタイマーが古い tag を参照して上書きしないよう ref で最新値を保持する
+  const tagRef = useRef(tag);
+  useEffect(() => {
+    tagRef.current = tag;
+  }, [tag]);
+
+  // 外部要因（ブラウザの戻る/進む等）で q が変わったら検索ボックスの表示も同期する
+  useEffect(() => {
+    setQuery(q);
+  }, [q]);
 
   // 入力に応じて検索語を反映（デバウンスしてページを1に戻す）
   useEffect(() => {
@@ -24,11 +36,13 @@ export default function BlogFilterList({
       isFirstRender.current = false;
       return;
     }
-    const timer = setTimeout(() => {
-      pushParams({ q: query || undefined, tag: tag ?? undefined });
+    timerRef.current = setTimeout(() => {
+      pushParams({ q: query || undefined, tag: tagRef.current ?? undefined });
+      timerRef.current = null;
     }, 400);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [query]);
 
   function pushParams(next: { q?: string; tag?: string }) {
@@ -40,6 +54,12 @@ export default function BlogFilterList({
   }
 
   function handleTagClick(nextTag: string | null) {
+    // 保留中の検索デバウンスがあれば先に確定させず破棄し、
+    // 古い tag で上書きされる競合（typing → tag click の順で400ms以内）を防ぐ
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     pushParams({ q: query || undefined, tag: nextTag ?? undefined });
   }
 
