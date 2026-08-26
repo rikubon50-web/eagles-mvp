@@ -79,6 +79,7 @@ export async function fetchAllPostIds(): Promise<{ id: string; updatedAt: string
       .from("posts")
       .select("id,updated_at")
       .eq("status", "published")
+      .order("id", { ascending: true })
       .range(from, from + CHUNK - 1);
     if (error) throw error;
     const rows = data ?? [];
