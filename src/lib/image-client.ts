@@ -11,6 +11,17 @@ function toBlob(canvas: HTMLCanvasElement): Promise<Blob> {
     canvas.toBlob((b) => (b ? res(b) : rej(new Error("画像の変換に失敗しました"))), "image/jpeg", 0.85));
 }
 
+// 相手ロゴ用: 長辺400pxへ縮小したJPEGを1枚だけ返す
+export async function prepareLogoForUpload(file: File): Promise<Blob> {
+  const bmp = await decode(file);
+  const scale = Math.min(1, 400 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(bmp.width * scale);
+  c.height = Math.round(bmp.height * scale);
+  c.getContext("2d")!.drawImage(bmp, 0, 0, c.width, c.height);
+  return toBlob(c);
+}
+
 export async function prepareImageForUpload(file: File): Promise<{ image: Blob; thumb: Blob }> {
   const bmp = await decode(file);
   // 本体: 長辺1600pxへ縮小
