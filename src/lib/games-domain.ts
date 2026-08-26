@@ -12,6 +12,7 @@ export const gameInputSchema = z
     ourScore: score,
     oppScore: score,
     note: z.string().max(2000),
+    opponentLogoUrl: z.string().url().nullable(),
   })
   .superRefine((v, ctx) => {
     if (v.status === "finished" && (v.ourScore == null || v.oppScore == null)) {

@@ -3,7 +3,7 @@ import { gameInputSchema, deriveResult } from "@/lib/games-domain";
 
 const base = {
   title: "リーグ戦", startAt: "2026-09-10T13:00:00+09:00", venue: "大井",
-  opponent: "早稲田大学", status: "scheduled", ourScore: null, oppScore: null, note: "",
+  opponent: "早稲田大学", status: "scheduled", ourScore: null, oppScore: null, note: "", opponentLogoUrl: null,
 };
 
 describe("gameInputSchema", () => {
@@ -25,6 +25,10 @@ describe("gameInputSchema", () => {
   });
   it("相手校空欄は拒否", () => {
     expect(gameInputSchema.safeParse({ ...base, opponent: " " }).success).toBe(false);
+  });
+  it("相手ロゴURLはnullでも有効なURLでも受理、不正文字列は拒否", () => {
+    expect(gameInputSchema.safeParse({ ...base, opponentLogoUrl: "https://example.com/logo.jpg" }).success).toBe(true);
+    expect(gameInputSchema.safeParse({ ...base, opponentLogoUrl: "not-a-url" }).success).toBe(false);
   });
 });
 
