@@ -1,27 +1,47 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import BlogCard from "@/components/BlogCard";
-import type { Blog } from "@/lib/microcms";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function BlogFilterList({ posts }: { posts: Blog[] }) {
-  const [query, setQuery] = useState("");
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+// 検索ボックス・タグボタン。値の変更を /blog?q=&tag= への router.push に変換する薄いクライアント部品。
+// ページングと一覧描画自体はサーバーコンポーネント（src/app/blog/page.tsx）側で行う。
+export default function BlogFilterList({
+  tags,
+  q,
+  tag,
+}: {
+  tags: string[];
+  q: string;
+  tag: string | null;
+}) {
+  const router = useRouter();
+  const [query, setQuery] = useState(q);
+  const isFirstRender = useRef(true);
 
-  // 全投稿からユニークなタグを収集
-  const allTags = useMemo(() => {
-    const set = new Set<string>();
-    posts.forEach((p) => p.tags?.forEach((t) => set.add(t)));
-    return Array.from(set).sort();
-  }, [posts]);
+  // 入力に応じて検索語を反映（デバウンスしてページを1に戻す）
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      pushParams({ q: query || undefined, tag: tag ?? undefined });
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
-  const filtered = useMemo(() => {
-    return posts.filter((p) => {
-      const matchesQuery = query === "" || p.title.includes(query);
-      const matchesTag = activeTag === null || (p.tags ?? []).includes(activeTag);
-      return matchesQuery && matchesTag;
-    });
-  }, [posts, query, activeTag]);
+  function pushParams(next: { q?: string; tag?: string }) {
+    const sp = new URLSearchParams();
+    if (next.q) sp.set("q", next.q);
+    if (next.tag) sp.set("tag", next.tag);
+    const qs = sp.toString();
+    router.push(qs ? `/blog?${qs}` : "/blog");
+  }
+
+  function handleTagClick(nextTag: string | null) {
+    pushParams({ q: query || undefined, tag: nextTag ?? undefined });
+  }
 
   return (
     <>
@@ -43,48 +63,32 @@ export default function BlogFilterList({ posts }: { posts: Blog[] }) {
       </div>
 
       {/* タグフィルター */}
-      {allTags.length > 0 && (
+      {tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-8">
           <button
-            onClick={() => setActiveTag(null)}
+            onClick={() => handleTagClick(null)}
             className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-colors ${
-              activeTag === null
+              tag === null
                 ? "bg-[#0f6536] text-white border-[#0f6536]"
                 : "bg-white text-slate-600 border-slate-300 hover:border-[#0f6536] hover:text-[#0f6536]"
             }`}
           >
             すべて
           </button>
-          {allTags.map((tag) => (
+          {tags.map((t) => (
             <button
-              key={tag}
-              onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+              key={t}
+              onClick={() => handleTagClick(tag === t ? null : t)}
               className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-colors ${
-                activeTag === tag
+                tag === t
                   ? "bg-[#0f6536] text-white border-[#0f6536]"
                   : "bg-white text-slate-600 border-slate-300 hover:border-[#0f6536] hover:text-[#0f6536]"
               }`}
             >
-              {tag}
+              {t}
             </button>
           ))}
         </div>
-      )}
-
-      {/* 件数表示 */}
-      <p className="text-sm text-slate-500 mb-6">
-        {filtered.length}件{(query || activeTag) && " / " + posts.length + "件中"}
-      </p>
-
-      {/* 一覧 */}
-      {filtered.length > 0 ? (
-        <div className="grid md:grid-cols-3 gap-6">
-          {filtered.map((p) => (
-            <BlogCard key={p.id} item={p} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-slate-500">該当する記事が見つかりませんでした。</p>
       )}
     </>
   );
