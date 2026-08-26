@@ -17,6 +17,9 @@ export async function POST(req: NextRequest) {
   if (image.size > 5 * 1024 * 1024) {
     return NextResponse.json({ error: "画像が大きすぎます（5MBまで）" }, { status: 413 });
   }
+  if (thumb.size > 5 * 1024 * 1024) {
+    return NextResponse.json({ error: "画像が大きすぎます（5MBまで）" }, { status: 413 });
+  }
   const ts = Date.now();
   const base = `${user.id}/${postId}/${ts}`;
   const up1 = await supabase.storage.from("blog-images")
