@@ -2,7 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
-import { postInputSchema, newPostId } from "@/lib/posts-domain";
+import { postInputSchema, sanitizePostBody } from "@/lib/posts-domain";
 
 type SaveInput = {
   id: string; // 新規もエディタ側で newPostId() 採番済み
@@ -25,6 +25,8 @@ export async function savePost(input: SaveInput):
   if (!/^[a-z0-9_-]{1,64}$/i.test(input.id)) {
     return { ok: false, error: "不正な記事IDです" };
   }
+  // 公開権を持つ全部員アカウントからの任意HTML持ち込みを防ぐ許可リスト浄化。
+  const sanitizedBody = sanitizePostBody(parsed.data.body);
   const supabase = createSupabaseServer();
   const id = input.id;
 
@@ -39,7 +41,7 @@ export async function savePost(input: SaveInput):
     }
     const { error } = await supabase.from("posts").update({
       title: parsed.data.title,
-      body: parsed.data.body,
+      body: sanitizedBody,
       tags: parsed.data.tags,
       thumbnail_url: parsed.data.thumbnailUrl ?? null,
       ...(input.publish
@@ -51,11 +53,17 @@ export async function savePost(input: SaveInput):
       console.error("savePost update failed:", error);
       return { ok: false, error: "保存に失敗しました。時間をおいて再度お試しください" };
     }
+    // 既に公開済みの記事は下書き保存であってもライブ記事を直接書き換えるため再検証が必要
+    if (input.publish || cur.status === "published") {
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${id}`);
+      revalidatePath("/");
+    }
   } else {
     const { error } = await supabase.from("posts").insert({
       id,
       title: parsed.data.title,
-      body: parsed.data.body,
+      body: sanitizedBody,
       tags: parsed.data.tags,
       thumbnail_url: parsed.data.thumbnailUrl ?? null,
       author_id: profile.userId,
@@ -66,13 +74,13 @@ export async function savePost(input: SaveInput):
       console.error("savePost insert failed:", error);
       return { ok: false, error: "保存に失敗しました。時間をおいて再度お試しください" };
     }
+    if (input.publish) {
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${id}`);
+      revalidatePath("/");
+    }
   }
 
-  if (input.publish) {
-    revalidatePath("/blog");
-    revalidatePath(`/blog/${id}`);
-    revalidatePath("/");
-  }
   return { ok: true, id };
 }
 

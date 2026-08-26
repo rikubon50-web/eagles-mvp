@@ -32,6 +32,11 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
+  experimental: {
+    // sanitize-html の依存 htmlparser2 が ESM-only のため webpack バンドル対象から外し、
+    // サーバーランタイムの native require に委ねる（本文HTML浄化はサーバー専用処理のため安全）
+    serverComponentsExternalPackages: ["sanitize-html"],
+  },
 };
 
 module.exports = nextConfig;
