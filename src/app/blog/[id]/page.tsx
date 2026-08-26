@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchBlogById } from "@/lib/microcms";
+import { fetchPostById } from "@/lib/posts";
 import { notFound } from "next/navigation";
 
 export const revalidate = 300;
@@ -10,7 +10,7 @@ export const revalidate = 300;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const item = await fetchBlogById(params.id);
+  const item = await fetchPostById(params.id);
   if (!item) return {};
   const desc = item.body.replace(/<[^>]+>/g, "").slice(0, 120);
   return {
@@ -23,15 +23,15 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       type: "article",
       url: `${SITE_URL}/blog/${params.id}`,
       publishedTime: item.publishedAt,
-      images: item.thumbnail
-        ? [{ url: item.thumbnail.url, width: item.thumbnail.width, height: item.thumbnail.height }]
+      images: item.thumbnailUrl
+        ? [{ url: item.thumbnailUrl, width: 1280, height: 720 }]
         : undefined,
     },
   };
 }
 
 export default async function BlogDetailPage({ params }: { params: { id: string } }) {
-  const item = await fetchBlogById(params.id);
+  const item = await fetchPostById(params.id);
   if (!item) return notFound();
 
   const jsonLd = {
@@ -41,7 +41,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
     datePublished: item.publishedAt,
     dateModified: item.publishedAt,
     description: item.body.replace(/<[^>]+>/g, "").slice(0, 120),
-    image: item.thumbnail ? [item.thumbnail.url] : undefined,
+    image: item.thumbnailUrl ? [item.thumbnailUrl] : undefined,
     mainEntityOfPage: `${SITE_URL}/blog/${item.id}`,
     author: { "@type": "SportsTeam", name: "青山学院大学男子ラクロス部 EAGLES" },
     publisher: {
@@ -72,10 +72,13 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           </Link>
 
           {/* 日付 */}
-          <div className="mb-4">
+          <div className="mb-4 flex items-center gap-3">
             <time className="text-slate-400 text-sm">
               {new Date(item.publishedAt).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}
             </time>
+            {item.authorName && (
+              <span className="text-slate-400 text-sm">文責: {item.authorName}</span>
+            )}
           </div>
 
           {/* タイトル */}
@@ -86,12 +89,12 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
       </div>
 
       {/* サムネイル */}
-      {item.thumbnail && (
+      {item.thumbnailUrl && (
         <div className={`${fullWidth} bg-slate-100 py-8`}>
           <div className="max-w-3xl mx-auto px-6">
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl shadow-lg">
               <Image
-                src={item.thumbnail.url}
+                src={item.thumbnailUrl}
                 alt={item.title}
                 fill
                 className="object-cover"

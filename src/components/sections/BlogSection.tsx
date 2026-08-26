@@ -1,15 +1,26 @@
-import { fetchBlogList } from "@/lib/microcms";
+import { fetchLatestPosts } from "@/lib/posts";
 import BlogCard from "@/components/BlogCard";
+import type { Blog } from "@/lib/microcms";
 import Link from "next/link";
 
+const DISPLAY_COUNT = 3;
+
 export default async function BlogSection() {
-  const blogs = await fetchBlogList();
+  const posts = await fetchLatestPosts(DISPLAY_COUNT);
+  const blogs: Blog[] = posts.map((p) => ({
+    id: p.id,
+    title: p.title,
+    body: p.body,
+    thumbnail: p.thumbnailUrl ? { url: p.thumbnailUrl, width: 1280, height: 720 } : undefined,
+    publishedAt: p.publishedAt,
+    tags: p.tags,
+  }));
   return (
     <section>
       <h2 className="section-title text-3xl md:text-4xl font-bold mb-6">Blog</h2>
-      {blogs && blogs.length > 0 ? (
+      {blogs.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {blogs.slice(0, 3).map((b) => (
+          {blogs.map((b) => (
             <BlogCard key={b.id} item={b} />
           ))}
         </div>
