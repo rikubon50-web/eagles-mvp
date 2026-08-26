@@ -9,7 +9,6 @@ export default async function BlogSection() {
   const blogs: BlogCardItem[] = posts.map((p) => ({
     id: p.id,
     title: p.title,
-    body: p.body,
     thumbnail: p.thumbnailUrl ? { url: p.thumbnailUrl, width: 1280, height: 720 } : undefined,
     publishedAt: p.publishedAt,
     tags: p.tags,

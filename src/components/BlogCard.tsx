@@ -5,7 +5,6 @@ import Image from "next/image";
 export type BlogCardItem = {
   id: string;
   title: string;
-  body?: string;
   thumbnail?: { url: string; width?: number; height?: number };
   publishedAt: string;
   tags?: string[];
