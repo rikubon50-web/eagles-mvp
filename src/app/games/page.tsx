@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 export default async function GamesListPage() {
   const [upcoming, archive] = await Promise.all([
-    fetchGamesUpcoming().catch(() => []),
-    fetchGamesArchive().catch(() => []),
+    fetchGamesUpcoming(),
+    fetchGamesArchive(),
   ]);
 
   return (
