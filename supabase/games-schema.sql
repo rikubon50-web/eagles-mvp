@@ -11,6 +11,7 @@ create table public.games (
   our_score int,
   opp_score int,
   note text not null default '',
+  opponent_logo_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
