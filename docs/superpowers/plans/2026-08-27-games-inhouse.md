@@ -42,6 +42,7 @@ create table public.games (
   our_score int,
   opp_score int,
   note text not null default '',
+  opponent_logo_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -64,7 +65,7 @@ create policy "games_admin_write" on public.games for all
 **Files:** Create: `src/lib/games-domain.ts` / Test: `src/lib/__tests__/games-domain.test.ts`
 
 **Interfaces:**
-- `gameInputSchema`: zod。`{ title: trim 1..120, startAt: ISO文字列(z.string().min(1)), venue: string(max 120), opponent: trim 1..60, status: enum, ourScore: number|null, oppScore: number|null, note: string(max 2000) }` ＋ `.superRefine`: status='finished' なら両スコア必須(0以上の整数)、それ以外はスコアを null に変換（transform）
+- `gameInputSchema`: zod。`{ title: trim 1..120, startAt: ISO文字列(z.string().min(1)), venue: string(max 120), opponent: trim 1..60, status: enum, ourScore: number|null, oppScore: number|null, note: string(max 2000), opponentLogoUrl: string|null(URL形式またはnull) }` ＋ `.superRefine`: status='finished' なら両スコア必須(0以上の整数)、それ以外はスコアを null に変換（transform）
 - `deriveResult(status: string, ourScore: number | null, oppScore: number | null): "win" | "lose" | "draw" | null` — finished かつ両スコア非null のときのみ導出
 
 - [ ] **Step 1: 失敗するテスト**（TDD）
@@ -155,7 +156,7 @@ export function deriveResult(
 
 **Files:** Create: `tmp-games-migrate/migrate.mjs`
 
-- microCMS games 全件（3件）→ games へ id 保持で投入。マッピング: title/startAt→start_at/venue/awayTeamName→opponent/status[0]（microCMSのselectは配列）/ourScore/oppScore/text→note。再実行安全（既存 id スキップ）。tmp-blog-migrate/migrate.mjs と同構造（.env.local 読み・service role・ドライラン既定・WRITE=1）
+- microCMS games 全件（3件）→ games へ id 保持で投入。マッピング: title/startAt→start_at/venue/awayTeamName→opponent/status[0]（microCMSのselectは配列）/ourScore/oppScore/text→note/awayTeamLogo.url→opponent_logo_url。再実行安全（既存 id スキップ）。tmp-blog-migrate/migrate.mjs と同構造（.env.local 読み・service role・ドライラン既定・WRITE=1）
 - [ ] Step 1: スクリプト作成 → Step 2: ドライラン→WRITE=1 実行（3件） → Step 3: anon で件数・内容照合 → Step 4: Commit（`feat(games): microCMS→Supabaseの試合データ移行スクリプト`）
 
 ### Task 4: 公開側データ層と切替
@@ -163,7 +164,7 @@ export function deriveResult(
 **Files:** Create: `src/lib/games.ts` / Modify: `src/app/games/page.tsx`, `src/app/games/[id]/page.tsx`, `src/components/sections/UpcomingSection.tsx`, `src/app/sitemap.ts`, `src/components/GameCard.tsx`（props型のみ）
 
 **Interfaces（src/lib/games.ts）:**
-- `type GameView` — GameCard 互換: `{ id, title, startAt, venue, homeTeamName: "青山学院大学", homeTeamLogo: { url: "/img/logo.png", width: 977, height: 599 }, awayTeamName, awayTeamLogo: undefined, status, ourScore?, oppScore?, result?, text? }`（現行 microCMS Game 型のフィールド名に合わせ、GameCard 側の変更を props 型差し替えのみに留める）
+- `type GameView` — GameCard 互換: `{ id, title, startAt, venue, homeTeamName: "青山学院大学", homeTeamLogo: { url: "/img/logo.png", width: 977, height: 599 }, awayTeamName, awayTeamLogo: opponent_logo_url ? { url, width: 400, height: 400 } : undefined, status, ourScore?, oppScore?, result?, text? }`（現行 microCMS Game 型のフィールド名に合わせ、GameCard 側の変更を props 型差し替えのみに留める）
 - `fetchGamesUpcoming(): Promise<GameView[]>` — start_at > now、昇順。**失敗時 throw**
 - `fetchGamesArchive(): Promise<GameView[]>` — start_at <= now、降順。失敗時 throw
 - `fetchGameById(id): Promise<GameView | null>`（/games/[id] が使う場合のみ。現状の実装を読んで合わせる）
@@ -178,6 +179,7 @@ export function deriveResult(
 **Interfaces:**
 - `saveGame(input: GameInput & { id: string | null }): Promise<{ok:true;id:string}|{ok:false;error:string}>` — admin チェック → gameInputSchema 検証 → id null なら insert（DB採番: insert 後 select で id 取得 or `.select("id").single()`）/ あれば update。成功時 revalidatePath("/games", `/games/${id}`, "/")
 - `deleteGame(id): Promise<{ok:boolean;error?:string}>` — admin のみ、成功時同様に revalidate
+- 相手ロゴ: GameForm に任意の画像アップロード欄（プレビュー＋削除ボタン）。既存 `/api/admin/upload` を**thumb 任意**に一般化（thumb 無しなら image のみ保存し {url} を返す。既存のブログ経路は thumb 必須のまま互換）。クライアントは `src/lib/image-client.ts` に `prepareLogoForUpload(file): Promise<Blob>`（最大400pxに縮小・JPEG）を追加して使用。アップロード先パスは既存規約どおり {userId}/{gameId or 'new-'+一時id}/{ts}.jpg
 - GameForm: datetime-local 入力（JST変換に注意: `start_at` は timestamptz、フォーム値はローカル時刻文字列 → ISO 変換して送る。編集時は逆変換して初期値に）。status セレクト、finished 選択時のみスコア2欄を表示。エラーは赤バナー（/admin/standings と同型のスタイル）
 - 一覧: 「これからの試合」（昇順）/「終了・延期」（降順）の2セクション、日付・相手・スコア表示、編集/削除
 - 非admin: /admin/standings と同じ「権限がありません」表示
