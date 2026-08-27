@@ -8,10 +8,6 @@ export default async function AdminBlogNewPage() {
   const profile = await getProfile();
   if (!profile) redirect("/admin/login");
 
-  return (
-    <div className="max-w-3xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">新規記事作成</h1>
-      <PostEditor initial={null} />
-    </div>
-  );
+  // note風の全画面キャンバス（レイアウトは PostEditor 側が持つ）
+  return <PostEditor initial={null} />;
 }

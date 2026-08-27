@@ -1,14 +1,23 @@
 "use client";
-import { useMemo, useRef, useState, useTransition } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle, Color, FontSize } from "@tiptap/extension-text-style";
+import { Placeholder } from "@tiptap/extensions";
 import { prepareImageForUpload } from "@/lib/image-client";
 import { newPostId } from "@/lib/posts-domain";
 import { savePost } from "./actions";
-import { useRouter } from "next/navigation";
+import {
+  EditorBubbleMenu,
+  EditorFloatingMenu,
+  MobileToolbar,
+  useIsDesktop,
+} from "./EditorToolbar";
+import PublishSheet from "./PublishSheet";
 
 type InitialPost = {
   id: string;
@@ -19,19 +28,19 @@ type InitialPost = {
   status?: "draft" | "published";
 };
 
-const COLORS = [
-  "#0f172a", "#dc2626", "#ea580c", "#ca8a04",
-  "#16a34a", "#0f6536", "#2563eb", "#7c3aed",
-];
-
-const FONT_SIZES: { label: string; value: string | null }[] = [
-  { label: "小", value: "0.85em" },
-  { label: "標準", value: null },
-  { label: "大", value: "1.4em" },
-];
-
 const PROSE_CLASS =
-  "prose prose-slate prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-4 max-w-none min-h-[16rem] focus:outline-none px-4 py-3";
+  "prose prose-slate prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-4 max-w-none min-h-[50vh] focus:outline-none pt-2 pb-8";
+
+// 上部バーの保存状態表示
+type SaveState =
+  | { kind: "idle" }
+  | { kind: "dirty" }     // 未保存の変更
+  | { kind: "untitled" }  // タイトル空で自動保存できない
+  | { kind: "saving" }
+  | { kind: "saved"; at: string }
+  | { kind: "error"; message: string };
+
+const AUTOSAVE_DELAY_MS = 3000;
 
 // 本文 HTML 先頭の <img src="..."> を抜き出す
 function firstImageSrc(html: string): string | null {
@@ -39,19 +48,130 @@ function firstImageSrc(html: string): string | null {
   return m ? m[1] : null;
 }
 
+function hhmm(d: Date): string {
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
 export default function PostEditor({ initial }: { initial: InitialPost | null }) {
   const router = useRouter();
   // 新規時のみ id を採番し、以後は同じ値を画像アップロードと savePost で使い回す
   const [postId] = useState(() => initial?.id ?? newPostId());
+  const isPublished = initial?.status === "published";
+  // 公開済み記事は自動保存しない（書きかけが本番に出るため）
+  const autosaveEnabled = !isPublished;
 
   const [title, setTitle] = useState(initial?.title ?? "");
   const [tagsText, setTagsText] = useState(initial?.tags?.join(", ") ?? "ブログ");
   // アップロードした画像の url → thumbUrl 対応表
   const [thumbMap, setThumbMap] = useState<Record<string, string>>({});
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [saveState, setSaveState] = useState<SaveState>({ kind: "idle" });
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [isPublishing, startPublish] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isDesktop = useIsDesktop();
+
+  const tags = useMemo(
+    () =>
+      tagsText
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+    [tagsText]
+  );
+
+  // タイマーコールバックから常に最新値を読むための ref 群
+  const editorRef = useRef<Editor | null>(null);
+  const titleRef = useRef(title);
+  titleRef.current = title;
+  const tagsRef = useRef(tags);
+  tagsRef.current = tags;
+  const thumbMapRef = useRef(thumbMap);
+  thumbMapRef.current = thumbMap;
+
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savingRef = useRef(false); // savePost 実行中（自動保存・公開共通の直列化フラグ）
+  const dirtyRef = useRef(false);  // 前回保存以降に変化があったか
+
+  const currentThumbnailUrl = (body: string): string | null => {
+    const firstSrc = firstImageSrc(body);
+    return (firstSrc && thumbMapRef.current[firstSrc]) || initial?.thumbnailUrl || null;
+  };
+
+  // 下書き保存の実体（自動保存と明示「下書き保存」で共用）
+  const runDraftSave = async (manual: boolean) => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    if (savingRef.current) return; // 実行中はスキップ（完了時に dirty なら再スケジュール）
+    if (!titleRef.current.trim()) {
+      // savePost が弾くため自動保存しない。明示保存時のみエラーを見せる
+      setSaveState(
+        manual
+          ? { kind: "error", message: "タイトルを入力してください" }
+          : { kind: "untitled" }
+      );
+      return;
+    }
+    savingRef.current = true;
+    dirtyRef.current = false;
+    setSaveState({ kind: "saving" });
+    const body = editor.getHTML();
+    let result: Awaited<ReturnType<typeof savePost>>;
+    try {
+      result = await savePost({
+        id: postId,
+        title: titleRef.current,
+        body,
+        tags: tagsRef.current,
+        thumbnailUrl: currentThumbnailUrl(body),
+        publish: false,
+      });
+    } catch {
+      result = { ok: false, error: "保存に失敗しました。通信環境をご確認ください" };
+    } finally {
+      savingRef.current = false;
+    }
+    if (!result.ok) {
+      dirtyRef.current = true;
+      setSaveState({ kind: "error", message: result.error });
+      return;
+    }
+    if (dirtyRef.current) {
+      // 保存中に発生した変更を拾って再スケジュール
+      setSaveState({ kind: "dirty" });
+      if (autosaveEnabled) scheduleRef.current();
+    } else {
+      setSaveState({ kind: "saved", at: hhmm(new Date()) });
+    }
+  };
+
+  const runDraftSaveRef = useRef(runDraftSave);
+  runDraftSaveRef.current = runDraftSave;
+
+  const scheduleAutosave = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      void runDraftSaveRef.current(false);
+    }, AUTOSAVE_DELAY_MS);
+  };
+  const scheduleRef = useRef(scheduleAutosave);
+  scheduleRef.current = scheduleAutosave;
+
+  // title / body / tags の変化時に呼ぶ
+  const markDirty = () => {
+    dirtyRef.current = true;
+    if (!savingRef.current) {
+      setSaveState({ kind: titleRef.current.trim() ? "dirty" : "untitled" });
+    }
+    if (autosaveEnabled) scheduleAutosave();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -65,26 +185,19 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
       TextStyle,
       Color,
       FontSize,
+      Placeholder.configure({ placeholder: "本文を書きましょう" }),
     ],
     content: initial?.body ?? "",
     editorProps: {
       attributes: { class: PROSE_CLASS },
     },
+    onUpdate: () => markDirty(),
   });
-
-  const tags = useMemo(
-    () =>
-      tagsText
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-    [tagsText]
-  );
+  editorRef.current = editor;
 
   const insertImage = async (file: File) => {
     if (!editor) return;
     setUploading(true);
-    setError(null);
     try {
       const { image, thumb } = await prepareImageForUpload(file);
       const form = new FormData();
@@ -100,7 +213,10 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
       setThumbMap((m) => ({ ...m, [url]: thumbUrl }));
       editor.chain().focus().setImage({ src: url }).run();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "画像のアップロードに失敗しました");
+      setSaveState({
+        kind: "error",
+        message: e instanceof Error ? e.message : "画像のアップロードに失敗しました",
+      });
     } finally {
       setUploading(false);
     }
@@ -111,6 +227,8 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
     if (file) void insertImage(file);
     e.target.value = "";
   };
+
+  const pickImage = () => fileInputRef.current?.click();
 
   const setLink = () => {
     if (!editor) return;
@@ -124,122 +242,154 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
     editor.chain().focus().setLink({ href: url }).run();
   };
 
-  const save = (publish: boolean) => {
-    if (!editor) return;
-    setError(null);
-    const body = editor.getHTML();
-    const firstSrc = firstImageSrc(body);
-    const thumbnailUrl = (firstSrc && thumbMap[firstSrc]) || initial?.thumbnailUrl || null;
+  const saveDraftNow = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    void runDraftSave(true);
+  };
 
+  const openPublish = () => {
+    setPublishError(null);
+    setPublishOpen(true);
+  };
+
+  const publish = () => {
+    const editor = editorRef.current;
+    if (!editor) return;
     if (!title.trim()) {
-      setError("タイトルを入力してください");
+      setPublishError("タイトルを入力してください");
       return;
     }
-
-    startTransition(async () => {
-      const result = await savePost({ id: postId, title, body, tags, thumbnailUrl, publish });
+    if (timerRef.current) clearTimeout(timerRef.current);
+    startPublish(async () => {
+      // 進行中の自動保存を待って直列化（新規 insert の重複を避ける）
+      while (savingRef.current) {
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      savingRef.current = true;
+      dirtyRef.current = false;
+      const body = editor.getHTML();
+      let result: Awaited<ReturnType<typeof savePost>>;
+      try {
+        result = await savePost({
+          id: postId,
+          title: titleRef.current,
+          body,
+          tags: tagsRef.current,
+          thumbnailUrl: currentThumbnailUrl(body),
+          publish: true,
+        });
+      } catch {
+        result = { ok: false, error: "保存に失敗しました。通信環境をご確認ください" };
+      } finally {
+        savingRef.current = false;
+      }
       if (result.ok) {
         router.push("/admin/blog");
       } else {
-        setError(result.error);
+        setPublishError(result.error);
       }
     });
   };
 
-  if (!editor) return null;
-
-  const btnCls = (active: boolean) =>
-    `px-2.5 py-1.5 rounded text-sm font-semibold ${
-      active ? "bg-emerald-600 text-white" : "bg-white text-slate-700 hover:bg-slate-100"
-    } border border-slate-300`;
+  const statusText =
+    saveState.kind === "saving" ? "保存中…"
+    : saveState.kind === "saved" ? `保存しました ${saveState.at}`
+    : saveState.kind === "dirty" ? "未保存の変更"
+    : saveState.kind === "untitled" ? "未保存"
+    : "";
 
   return (
-    <div className="space-y-4">
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="タイトル"
-        className="w-full rounded border border-slate-300 px-3 py-2 text-lg font-bold"
-      />
-
-      <div className="rounded-xl border border-slate-300 bg-white overflow-hidden">
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2">
-          <button type="button" className={btnCls(editor.isActive("bold"))}
-            onClick={() => editor.chain().focus().toggleBold().run()}>太字</button>
-          <button type="button" className={btnCls(editor.isActive("heading", { level: 2 }))}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>見出し</button>
-          <button type="button" className={btnCls(editor.isActive("bulletList"))}
-            onClick={() => editor.chain().focus().toggleBulletList().run()}>箇条書き</button>
-          <button type="button" className={btnCls(editor.isActive({ textAlign: "center" }))}
-            onClick={() => editor.chain().focus().toggleTextAlign("center").run()}>中央寄せ</button>
-          <button type="button" className={btnCls(editor.isActive("link"))} onClick={setLink}>リンク</button>
-
-          <span className="mx-1 h-5 w-px bg-slate-300" />
-          {FONT_SIZES.map(({ label, value }) => (
-            <button key={label} type="button"
-              className={btnCls(editor.isActive("textStyle", { fontSize: value }))}
-              onClick={() =>
-                value
-                  ? editor.chain().focus().setFontSize(value).run()
-                  : editor.chain().focus().unsetFontSize().run()
-              }>
-              {label}
+    <div className="min-h-screen bg-white">
+      {/* 上部固定バー */}
+      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
+          <Link
+            href="/admin/blog"
+            className="shrink-0 text-sm text-slate-500 hover:text-slate-900"
+          >
+            ← 記事一覧
+          </Link>
+          <div className="flex min-w-0 items-center gap-3">
+            <span
+              role="status"
+              className={`truncate text-xs ${
+                saveState.kind === "error" ? "text-red-600" : "text-slate-400"
+              }`}
+            >
+              {uploading
+                ? "画像をアップロード中…"
+                : saveState.kind === "error"
+                  ? saveState.message
+                  : statusText}
+            </span>
+            {!isPublished && (
+              <button
+                type="button"
+                disabled={uploading || saveState.kind === "saving"}
+                onClick={saveDraftNow}
+                className="shrink-0 text-sm font-semibold text-slate-500 hover:text-slate-900 disabled:opacity-50"
+              >
+                下書き保存
+              </button>
+            )}
+            <button
+              type="button"
+              disabled={uploading || isPublishing}
+              onClick={openPublish}
+              className="shrink-0 rounded-full bg-slate-900 px-5 py-2 text-sm font-bold text-white hover:bg-slate-800 disabled:opacity-50"
+            >
+              {isPublished ? "更新を公開" : "公開する"}
             </button>
-          ))}
-
-          <span className="mx-1 h-5 w-px bg-slate-300" />
-          <div className="flex items-center gap-1">
-            {COLORS.map((c) => (
-              <button key={c} type="button" aria-label={`文字色 ${c}`}
-                className="h-6 w-6 rounded-full border border-slate-300"
-                style={{ backgroundColor: c }}
-                onClick={() => editor.chain().focus().setColor(c).run()} />
-            ))}
           </div>
-
-          <span className="mx-1 h-5 w-px bg-slate-300" />
-          <button type="button" className={btnCls(false)} disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}>
-            {uploading ? "アップロード中..." : "画像挿入"}
-          </button>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
-            onChange={handleFileChange} />
         </div>
+      </header>
 
-        <EditorContent editor={editor} />
-      </div>
-
-      <div>
-        <label className="block text-sm font-semibold text-slate-600 mb-1">タグ（カンマ区切り）</label>
+      {/* 本文キャンバス（スマホは固定ツールバーに隠れないよう下に余白） */}
+      <main className="mx-auto w-full max-w-2xl px-4 pb-28 md:pb-16">
         <input
-          value={tagsText}
-          onChange={(e) => setTagsText(e.target.value)}
-          placeholder="ブログ, 試合"
-          className="w-full rounded border border-slate-300 px-3 py-2"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            titleRef.current = e.target.value;
+            markDirty();
+          }}
+          placeholder="記事タイトル"
+          aria-label="記事タイトル"
+          className="mt-8 w-full border-0 bg-transparent px-0 pb-2 text-3xl font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-0 md:text-4xl"
         />
-      </div>
+        <EditorContent editor={editor} />
+        {editor && isDesktop && (
+          <>
+            <EditorBubbleMenu editor={editor} onSetLink={setLink} />
+            <EditorFloatingMenu editor={editor} onPickImage={pickImage} />
+          </>
+        )}
+      </main>
 
-      {error && (
-        <p role="status" className="rounded bg-red-50 border border-red-200 text-red-700 px-3 py-2 text-sm">
-          {error}
-        </p>
+      {editor && (
+        <MobileToolbar editor={editor} onSetLink={setLink} onPickImage={pickImage} />
       )}
 
-      <div className="flex gap-3">
-        {/* 公開済み記事には下書きモードが存在しないため下書き保存ボタンは出さない */}
-        {initial?.status !== "published" && (
-          <button type="button" disabled={isPending || uploading}
-            onClick={() => save(false)}
-            className="rounded border border-slate-400 text-slate-700 px-6 py-3 font-bold disabled:opacity-50">
-            下書き保存
-          </button>
-        )}
-        <button type="button" disabled={isPending || uploading}
-          onClick={() => save(true)}
-          className="rounded bg-slate-900 text-white px-6 py-3 font-bold disabled:opacity-50">
-          {isPending ? "保存中..." : initial?.status === "published" ? "更新を公開" : "公開する"}
-        </button>
-      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      <PublishSheet
+        open={publishOpen}
+        tagsText={tagsText}
+        onTagsChange={(v) => {
+          setTagsText(v);
+          markDirty();
+        }}
+        publishing={isPublishing}
+        error={publishError}
+        onPublish={publish}
+        onClose={() => setPublishOpen(false)}
+      />
     </div>
   );
 }

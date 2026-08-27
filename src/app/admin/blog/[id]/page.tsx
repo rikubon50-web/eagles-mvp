@@ -24,19 +24,17 @@ export default async function AdminBlogEditPage({ params }: { params: { id: stri
     notFound();
   }
 
+  // note風の全画面キャンバス（レイアウトは PostEditor 側が持つ）
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">記事編集</h1>
-      <PostEditor
-        initial={{
-          id: post.id,
-          title: post.title,
-          body: post.body,
-          tags: post.tags,
-          thumbnailUrl: post.thumbnail_url,
-          status: post.status,
-        }}
-      />
-    </div>
+    <PostEditor
+      initial={{
+        id: post.id,
+        title: post.title,
+        body: post.body,
+        tags: post.tags,
+        thumbnailUrl: post.thumbnail_url,
+        status: post.status,
+      }}
+    />
   );
 }
