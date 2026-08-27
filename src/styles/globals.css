@@ -366,3 +366,12 @@
 
 /* pタグの余白 */
 .cstm-box-corner-accent p { margin:0; }
+
+/* ===== ブログエディタ（Tiptap Placeholder） ===== */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: #cbd5e1; /* slate-300 */
+  pointer-events: none;
+}
