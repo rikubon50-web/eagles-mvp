@@ -1,6 +1,7 @@
 "use client";
 // note風の2段階公開フロー: 「公開する」→ シートでタグ確認 → 「投稿する」。
 // savePost の実行は PostEditor 側（onPublish）に委ねる純表示コンポーネント。
+import { useEffect } from "react";
 
 type PublishSheetProps = {
   open: boolean;
@@ -15,6 +16,16 @@ type PublishSheetProps = {
 export default function PublishSheet({
   open, tagsText, onTagsChange, publishing, error, onPublish, onClose,
 }: PublishSheetProps) {
+  // Escape で閉じる（投稿中は閉じない）
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !publishing) onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, publishing, onClose]);
+
   if (!open) return null;
 
   return (
@@ -23,7 +34,7 @@ export default function PublishSheet({
         className="absolute inset-0 bg-slate-900/40"
         onClick={() => { if (!publishing) onClose(); }}
       />
-      <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-lg rounded-t-2xl bg-white p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-xl">
+      <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-lg animate-[sheet-up_200ms_ease-out] rounded-t-2xl bg-white p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-xl">
         <h2 className="text-lg font-bold text-slate-900">公開設定</h2>
 
         <label className="mt-5 block text-sm font-semibold text-slate-600" htmlFor="publish-tags">
@@ -32,9 +43,10 @@ export default function PublishSheet({
         <input
           id="publish-tags"
           value={tagsText}
+          disabled={publishing}
           onChange={(e) => onTagsChange(e.target.value)}
           placeholder="ブログ, 試合"
-          className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-500 focus:outline-none"
+          className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400"
         />
 
         {error && (

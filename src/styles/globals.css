@@ -375,3 +375,9 @@
   color: #cbd5e1; /* slate-300 */
   pointer-events: none;
 }
+
+/* 公開シートの出現（下からスライド） */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}

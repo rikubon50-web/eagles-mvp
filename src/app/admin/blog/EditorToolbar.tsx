@@ -1,7 +1,7 @@
 "use client";
 // note風エディタの浮遊メニュー（PC）とキーボード上固定ツールバー（スマホ）。
 // 保存や画像アップロードのロジックは持たず、PostEditor からコールバックで受け取る。
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEditorState, type Editor } from "@tiptap/react";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
 import {
@@ -40,9 +40,29 @@ export function useIsDesktop(): boolean {
   return isDesktop;
 }
 
+// iOS Safari 等でソフトキーボード表示中も固定ツールバーをキーボードの上に保つ。
+// fixed bottom-0 はレイアウトビューポート基準なので、visualViewport との差分だけ持ち上げる。
+function useKeyboardInset(): number {
+  const [inset, setInset] = useState(0);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      setInset(Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)));
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+  return inset;
+}
+
 type ToolbarProps = {
   editor: Editor;
-  onSetLink: () => void;
   onPickImage: () => void;
 };
 
@@ -62,6 +82,105 @@ function useFormatState(editor: Editor) {
   });
 }
 
+// ツールバー内の mousedown で編集中の選択とフォーカスを保つ（入力欄だけは許可）
+function keepEditorFocus(e: React.MouseEvent) {
+  if (!(e.target instanceof HTMLInputElement)) e.preventDefault();
+}
+
+/* ===== リンク入力（BubbleMenu / スマホツールバー共用のインラインフォーム） ===== */
+
+const isValidHref = (v: string) => /^https?:\/\/\S+$/i.test(v);
+
+function LinkForm({
+  editor,
+  dark = false,
+  onDone,
+}: {
+  editor: Editor;
+  dark?: boolean;
+  onDone: () => void;
+}) {
+  const [value, setValue] = useState(
+    () => ((editor.getAttributes("link").href as string | undefined) ?? "")
+  );
+  const trimmed = value.trim();
+  const valid = isValidHref(trimmed);
+  const hasLink = editor.isActive("link");
+  // 空欄=リンク解除（既存リンクがある時のみ）、入力あり=有効な http(s) URL のみ適用可
+  const canApply = trimmed ? valid : hasLink;
+
+  const apply = () => {
+    if (!trimmed) {
+      if (!hasLink) return;
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      onDone();
+      return;
+    }
+    if (!valid) return;
+    editor.chain().focus().extendMarkRange("link").setLink({ href: trimmed }).run();
+    onDone();
+  };
+
+  const remove = () => {
+    editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    onDone();
+  };
+
+  return (
+    <div className="flex w-full items-center gap-1.5">
+      <input
+        autoFocus
+        type="url"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            apply();
+          }
+          if (e.key === "Escape") {
+            e.preventDefault();
+            onDone();
+          }
+        }}
+        placeholder="https://example.com"
+        aria-label="リンク先URL"
+        aria-invalid={Boolean(trimmed) && !valid}
+        className={
+          dark
+            ? "w-56 rounded-md border border-slate-600 bg-slate-800 px-2.5 py-1.5 text-xs text-white placeholder:text-slate-500 focus:border-slate-400 focus:outline-none"
+            : "min-w-0 flex-1 rounded-md border border-slate-300 bg-white px-2.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-500 focus:outline-none"
+        }
+      />
+      <button
+        type="button"
+        disabled={!canApply}
+        onClick={apply}
+        className={
+          dark
+            ? "shrink-0 rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-slate-900 disabled:opacity-40"
+            : "shrink-0 rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white disabled:opacity-40"
+        }
+      >
+        適用
+      </button>
+      {hasLink && (
+        <button
+          type="button"
+          onClick={remove}
+          className={
+            dark
+              ? "shrink-0 px-1.5 py-1.5 text-xs text-slate-300 hover:text-white"
+              : "shrink-0 px-1.5 py-2 text-sm text-slate-500 hover:text-slate-800"
+          }
+        >
+          解除
+        </button>
+      )}
+    </div>
+  );
+}
+
 /* ===== PC: 選択範囲上のダークな浮遊バー ===== */
 
 const bubbleBtn = (active: boolean) =>
@@ -69,9 +188,27 @@ const bubbleBtn = (active: boolean) =>
     active ? "bg-slate-700 text-emerald-300" : "text-white hover:bg-slate-700"
   }`;
 
-export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPickImage">) {
+export function EditorBubbleMenu({ editor }: { editor: Editor }) {
   const state = useFormatState(editor);
-  const [panel, setPanel] = useState<"color" | "size" | null>(null);
+  const [panel, setPanel] = useState<"color" | "size" | "link" | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // メニューが隠れる契機（選択変更・エディタ外への blur）でサブパネルの残留を防ぐ。
+  // リンク入力欄へのフォーカス移動（relatedTarget がメニュー内）では閉じない。
+  useEffect(() => {
+    const closeOnSelection = () => setPanel(null);
+    const closeOnBlur = ({ event }: { event: FocusEvent }) => {
+      const related = event?.relatedTarget;
+      if (related instanceof Node && containerRef.current?.contains(related)) return;
+      setPanel(null);
+    };
+    editor.on("selectionUpdate", closeOnSelection);
+    editor.on("blur", closeOnBlur);
+    return () => {
+      editor.off("selectionUpdate", closeOnSelection);
+      editor.off("blur", closeOnBlur);
+    };
+  }, [editor]);
 
   return (
     <BubbleMenu
@@ -81,10 +218,11 @@ export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPi
         e.isEditable && !s.selection.empty && !e.isActive("image")
       }
     >
-      {/* mousedown を止めて選択範囲とフォーカスを保つ */}
+      {/* mousedown を止めて選択範囲とフォーカスを保つ。z-50 で sticky ヘッダー(z-40)より前面に */}
       <div
-        className="relative flex items-center gap-0.5 rounded-lg bg-slate-900 p-1 text-white shadow-lg"
-        onMouseDown={(e) => e.preventDefault()}
+        ref={containerRef}
+        className="relative z-50 flex items-center gap-0.5 rounded-lg bg-slate-900 p-1 text-white shadow-lg"
+        onMouseDown={keepEditorFocus}
       >
         <button type="button" aria-label="太字" className={bubbleBtn(state.bold)}
           onClick={() => { setPanel(null); editor.chain().focus().toggleBold().run(); }}>
@@ -106,8 +244,8 @@ export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPi
           onClick={() => { setPanel(null); editor.chain().focus().toggleTextAlign("center").run(); }}>
           <TextAlignCenter size={16} />
         </button>
-        <button type="button" aria-label="リンク" className={bubbleBtn(state.link)}
-          onClick={() => { setPanel(null); onSetLink(); }}>
+        <button type="button" aria-label="リンク" className={bubbleBtn(state.link || panel === "link")}
+          onClick={() => setPanel(panel === "link" ? null : "link")}>
           <LinkIcon size={16} />
         </button>
         <button type="button" aria-label="箇条書き" className={bubbleBtn(state.bullet)}
@@ -115,8 +253,9 @@ export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPi
           <List size={16} />
         </button>
 
+        {/* サブパネルは選択テキストを覆わないよう上向きに開く */}
         {panel === "color" && (
-          <div className="absolute left-0 top-full mt-2 flex items-center gap-1.5 rounded-lg bg-slate-900 p-2 shadow-lg">
+          <div className="absolute bottom-full left-0 mb-2 flex items-center gap-1.5 rounded-lg bg-slate-900 p-2 shadow-lg">
             {COLORS.map((c) => (
               <button key={c} type="button" aria-label={`文字色 ${c}`}
                 className={`h-6 w-6 rounded-full border-2 ${
@@ -129,7 +268,7 @@ export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPi
         )}
 
         {panel === "size" && (
-          <div className="absolute left-0 top-full mt-2 flex items-center gap-1 rounded-lg bg-slate-900 p-1.5 shadow-lg">
+          <div className="absolute bottom-full left-0 mb-2 flex items-center gap-1 rounded-lg bg-slate-900 p-1.5 shadow-lg">
             {FONT_SIZES.map(({ label, value }) => {
               const active = value === "0.85em" ? state.small
                 : value === "1.4em" ? state.large
@@ -150,6 +289,12 @@ export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPi
             })}
           </div>
         )}
+
+        {panel === "link" && (
+          <div className="absolute bottom-full left-0 mb-2 rounded-lg bg-slate-900 p-2 shadow-lg">
+            <LinkForm editor={editor} dark onDone={() => setPanel(null)} />
+          </div>
+        )}
       </div>
     </BubbleMenu>
   );
@@ -157,12 +302,23 @@ export function EditorBubbleMenu({ editor, onSetLink }: Omit<ToolbarProps, "onPi
 
 /* ===== PC: 空行左の「＋」メニュー ===== */
 
-export function EditorFloatingMenu({ editor, onPickImage }: Omit<ToolbarProps, "onSetLink">) {
+export function EditorFloatingMenu({ editor, onPickImage }: ToolbarProps) {
   const [open, setOpen] = useState(false);
+
+  // 別の行へ移動・エディタ外クリックで「開いたまま」状態が残らないようにする
+  useEffect(() => {
+    const close = () => setOpen(false);
+    editor.on("selectionUpdate", close);
+    editor.on("blur", close);
+    return () => {
+      editor.off("selectionUpdate", close);
+      editor.off("blur", close);
+    };
+  }, [editor]);
 
   return (
     <FloatingMenu editor={editor} options={{ placement: "left", offset: 12 }}>
-      <div className="relative" onMouseDown={(e) => e.preventDefault()}>
+      <div className="relative z-50" onMouseDown={keepEditorFocus}>
         <button type="button" aria-label="ブロックを追加"
           className={`flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-500 shadow-sm transition-transform hover:bg-slate-50 ${
             open ? "rotate-45" : ""
@@ -170,8 +326,9 @@ export function EditorFloatingMenu({ editor, onPickImage }: Omit<ToolbarProps, "
           onClick={() => setOpen((v) => !v)}>
           <Plus size={18} />
         </button>
+        {/* note と同じく、書こうとしている行を覆わないよう下に開く */}
         {open && (
-          <div className="absolute left-10 top-0 z-10 w-44 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
+          <div className="absolute left-0 top-10 z-10 w-44 rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
             <button type="button"
               className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
               onClick={() => { setOpen(false); onPickImage(); }}>
@@ -192,25 +349,38 @@ const mobileBtn = (active: boolean) =>
     active ? "bg-slate-100 text-emerald-700" : "text-slate-600"
   }`;
 
-export function MobileToolbar({ editor, onSetLink, onPickImage }: ToolbarProps) {
+export function MobileToolbar({ editor, onPickImage }: ToolbarProps) {
   const state = useFormatState(editor);
   const [colorOpen, setColorOpen] = useState(false);
+  const [linkOpen, setLinkOpen] = useState(false);
+  const keyboardInset = useKeyboardInset();
 
   return (
     <div
       className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)] md:hidden"
-      onMouseDown={(e) => e.preventDefault()}
+      style={
+        keyboardInset > 0
+          ? { transform: `translateY(-${keyboardInset}px)`, paddingBottom: 0 }
+          : undefined
+      }
+      onMouseDown={keepEditorFocus}
     >
       {colorOpen && (
-        <div className="flex items-center justify-around border-b border-slate-100 px-3 py-2">
+        <div className="flex items-center justify-around border-b border-slate-100 px-2 py-1.5">
           {COLORS.map((c) => (
             <button key={c} type="button" aria-label={`文字色 ${c}`}
-              className={`h-9 w-9 rounded-full border-2 ${
+              className={`h-11 w-11 rounded-full border-2 p-1.5 ${
                 state.color === c ? "border-slate-400" : "border-transparent"
               }`}
-              style={{ backgroundColor: c }}
-              onClick={() => { editor.chain().focus().setColor(c).run(); setColorOpen(false); }} />
+              onClick={() => { editor.chain().focus().setColor(c).run(); setColorOpen(false); }}>
+              <span className="block h-full w-full rounded-full" style={{ backgroundColor: c }} />
+            </button>
           ))}
+        </div>
+      )}
+      {linkOpen && (
+        <div className="border-b border-slate-100 px-3 py-2">
+          <LinkForm editor={editor} onDone={() => setLinkOpen(false)} />
         </div>
       )}
       <div className="flex items-center justify-around px-1 py-1">
@@ -223,7 +393,7 @@ export function MobileToolbar({ editor, onSetLink, onPickImage }: ToolbarProps) 
           <Heading2 size={20} />
         </button>
         <button type="button" aria-label="文字色" className={mobileBtn(colorOpen)}
-          onClick={() => setColorOpen((v) => !v)}>
+          onClick={() => { setLinkOpen(false); setColorOpen((v) => !v); }}>
           <Palette size={20} />
         </button>
         <button type="button" aria-label="中央寄せ" className={mobileBtn(state.center)}
@@ -234,8 +404,8 @@ export function MobileToolbar({ editor, onSetLink, onPickImage }: ToolbarProps) 
           onClick={() => editor.chain().focus().toggleBulletList().run()}>
           <List size={20} />
         </button>
-        <button type="button" aria-label="リンク" className={mobileBtn(state.link)}
-          onClick={onSetLink}>
+        <button type="button" aria-label="リンク" className={mobileBtn(state.link || linkOpen)}
+          onClick={() => { setColorOpen(false); setLinkOpen((v) => !v); }}>
           <LinkIcon size={20} />
         </button>
         <button type="button" aria-label="画像を追加" className={mobileBtn(false)}

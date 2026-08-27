@@ -41,6 +41,8 @@ type SaveState =
   | { kind: "error"; message: string };
 
 const AUTOSAVE_DELAY_MS = 3000;
+// 自動保存失敗時のリトライ間隔（一時的な通信失敗を1回だけ拾う）
+const AUTOSAVE_RETRY_DELAY_MS = 30000;
 
 // 本文 HTML 先頭の <img src="..."> を抜き出す
 function firstImageSrc(html: string): string | null {
@@ -93,6 +95,8 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savingRef = useRef(false); // savePost 実行中（自動保存・公開共通の直列化フラグ）
   const dirtyRef = useRef(false);  // 前回保存以降に変化があったか
+  const publishedRef = useRef(false); // 公開成功後（遷移待ち）は自動保存を一切走らせない
+  const retryRef = useRef(0);      // 自動保存失敗後の自動リトライ回数
 
   const currentThumbnailUrl = (body: string): string | null => {
     const firstSrc = firstImageSrc(body);
@@ -103,6 +107,7 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
   const runDraftSave = async (manual: boolean) => {
     const editor = editorRef.current;
     if (!editor) return;
+    if (publishedRef.current) return; // 公開直後に残ったタイマーからの迷子保存を防ぐ
     if (savingRef.current) return; // 実行中はスキップ（完了時に dirty なら再スケジュール）
     if (!titleRef.current.trim()) {
       // savePost が弾くため自動保存しない。明示保存時のみエラーを見せる
@@ -135,8 +140,17 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
     if (!result.ok) {
       dirtyRef.current = true;
       setSaveState({ kind: "error", message: result.error });
+      // 一時的な通信失敗に備え、自動保存は少し置いて1回だけ自動リトライする
+      if (!manual && autosaveEnabled && retryRef.current < 1) {
+        retryRef.current += 1;
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          void runDraftSaveRef.current(false);
+        }, AUTOSAVE_RETRY_DELAY_MS);
+      }
       return;
     }
+    retryRef.current = 0;
     if (dirtyRef.current) {
       // 保存中に発生した変更を拾って再スケジュール
       setSaveState({ kind: "dirty" });
@@ -161,6 +175,7 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
   // title / body / tags の変化時に呼ぶ
   const markDirty = () => {
     dirtyRef.current = true;
+    retryRef.current = 0; // 新しい編集が入ったらリトライ回数をリセット
     if (!savingRef.current) {
       setSaveState({ kind: titleRef.current.trim() ? "dirty" : "untitled" });
     }
@@ -172,6 +187,28 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
+
+  // 未保存の変更（保存実行中を含む）を残したままのリロード・タブ閉じを確認ダイアログで止める
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (dirtyRef.current || savingRef.current) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, []);
+
+  // 「← 記事一覧」クリック時の離脱確認（SPA遷移は beforeunload が効かないため）
+  const confirmLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (
+      (dirtyRef.current || savingRef.current) &&
+      !window.confirm("未保存の変更があります。破棄して記事一覧に戻りますか？")
+    ) {
+      e.preventDefault();
+    }
+  };
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -230,18 +267,6 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
 
   const pickImage = () => fileInputRef.current?.click();
 
-  const setLink = () => {
-    if (!editor) return;
-    const prev = editor.getAttributes("link").href as string | undefined;
-    const url = window.prompt("リンク先URLを入力してください", prev ?? "https://");
-    if (url === null) return;
-    if (url === "") {
-      editor.chain().focus().unsetLink().run();
-      return;
-    }
-    editor.chain().focus().setLink({ href: url }).run();
-  };
-
   const saveDraftNow = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     void runDraftSave(true);
@@ -267,6 +292,8 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
       }
       savingRef.current = true;
       dirtyRef.current = false;
+      // 待機中に完了した自動保存が再アームしたタイマーをここで確実に潰す
+      if (timerRef.current) clearTimeout(timerRef.current);
       const body = editor.getHTML();
       let result: Awaited<ReturnType<typeof savePost>>;
       try {
@@ -284,9 +311,13 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
         savingRef.current = false;
       }
       if (result.ok) {
+        publishedRef.current = true; // 遷移完了までの間に迷子の自動保存が走らないようにする
         router.push("/admin/blog");
       } else {
         setPublishError(result.error);
+        // クリック時に落とした dirty と自動保存タイマーを復元し、変更を取りこぼさない
+        dirtyRef.current = true;
+        if (autosaveEnabled) scheduleRef.current();
       }
     });
   };
@@ -305,6 +336,7 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
         <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
           <Link
             href="/admin/blog"
+            onClick={confirmLeave}
             className="shrink-0 text-sm text-slate-500 hover:text-slate-900"
           >
             ← 記事一覧
@@ -353,6 +385,14 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
             titleRef.current = e.target.value;
             markDirty();
           }}
+          onKeyDown={(e) => {
+            // note と同じく、タイトルで Enter すると本文へ移動
+            if (e.key === "Enter") {
+              e.preventDefault();
+              editor?.commands.focus("start");
+            }
+          }}
+          autoFocus={!initial}
           placeholder="記事タイトル"
           aria-label="記事タイトル"
           className="mt-8 w-full border-0 bg-transparent px-0 pb-2 text-3xl font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-0 md:text-4xl"
@@ -360,15 +400,13 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
         <EditorContent editor={editor} />
         {editor && isDesktop && (
           <>
-            <EditorBubbleMenu editor={editor} onSetLink={setLink} />
+            <EditorBubbleMenu editor={editor} />
             <EditorFloatingMenu editor={editor} onPickImage={pickImage} />
           </>
         )}
       </main>
 
-      {editor && (
-        <MobileToolbar editor={editor} onSetLink={setLink} onPickImage={pickImage} />
-      )}
+      {editor && <MobileToolbar editor={editor} onPickImage={pickImage} />}
 
       <input
         ref={fileInputRef}
