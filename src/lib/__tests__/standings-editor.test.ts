@@ -62,3 +62,22 @@ describe("normalizeSortOrder", () => {
     expect(out.find((x) => x.key === "b1")!.sort_order).toBe(0);
   });
 });
+
+describe("renumberRanks", () => {
+  const vm = (key: string, block: "A" | "B", sort: number, rank: string) =>
+    ({ key, block, sort_order: sort, rank, university: `大学${key}` });
+  it("ブロックごとに表示順で順位を1から振り直す", async () => {
+    const { renumberRanks } = await import("@/lib/standings-editor");
+    const rows = [vm("a2", "A", 1, "9"), vm("a1", "A", 0, "5"), vm("b1", "B", 0, "3")];
+    const out = renumberRanks(rows);
+    expect(out.find((r) => r.key === "a1")!.rank).toBe("1");
+    expect(out.find((r) => r.key === "a2")!.rank).toBe("2");
+    expect(out.find((r) => r.key === "b1")!.rank).toBe("1");
+  });
+  it("元配列を破壊しない", async () => {
+    const { renumberRanks } = await import("@/lib/standings-editor");
+    const rows = [vm("a1", "A", 0, "5")];
+    renumberRanks(rows);
+    expect(rows[0].rank).toBe("5");
+  });
+});

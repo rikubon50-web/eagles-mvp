@@ -1,7 +1,7 @@
 "use client";
 import { useId, useRef, useState, useTransition } from "react";
 import type { StandingsRowInput } from "@/lib/standings";
-import { addRow, removeRow, moveRow, normalizeSortOrder } from "@/lib/standings-editor";
+import { addRow, removeRow, moveRow, normalizeSortOrder, renumberRanks } from "@/lib/standings-editor";
 import { saveStandings } from "./actions";
 
 const NUM_COLS = [
@@ -97,7 +97,7 @@ export default function StandingsEditor({
               <tr className="bg-slate-100 text-slate-600">
                 <th className="px-2 py-2 text-left">大学名</th>
                 {NUM_COLS.map(([, label]) => (
-                  <th key={label} className="px-2 py-2 w-20">{label}</th>
+                  <th key={label} className="px-2 py-2 w-24">{label}</th>
                 ))}
                 <th className="px-2 py-2 w-28">操作</th>
               </tr>
@@ -129,19 +129,19 @@ export default function StandingsEditor({
                         pattern="-?[0-9]*"
                         value={r[field]}
                         onChange={(e) => update(r.key, field, e.target.value)}
-                        className="w-full min-w-12 rounded border border-slate-300 px-2 py-1.5 text-center"
+                        className="w-full min-w-16 rounded border border-slate-300 px-2 py-1.5 text-center"
                       />
                     </td>
                   ))}
                   <td className="px-2 py-1 whitespace-nowrap text-center">
                     <button type="button" aria-label="上へ"
-                      onClick={() => setRows((rs) => moveRow(rs, r.key, -1))}
+                      onClick={() => setRows((rs) => renumberRanks(moveRow(rs, r.key, -1)))}
                       className="px-1.5 py-1 text-slate-500 hover:text-slate-900">↑</button>
                     <button type="button" aria-label="下へ"
-                      onClick={() => setRows((rs) => moveRow(rs, r.key, 1))}
+                      onClick={() => setRows((rs) => renumberRanks(moveRow(rs, r.key, 1)))}
                       className="px-1.5 py-1 text-slate-500 hover:text-slate-900">↓</button>
                     <button type="button" aria-label="削除"
-                      onClick={() => setRows((rs) => removeRow(rs, r.key))}
+                      onClick={() => setRows((rs) => renumberRanks(removeRow(rs, r.key)))}
                       className="px-1.5 py-1 text-red-500 hover:text-red-700">✕</button>
                   </td>
                 </tr>
@@ -173,6 +173,11 @@ export default function StandingsEditor({
 
   return (
     <div className="space-y-6">
+      <p className="rounded bg-emerald-50 border border-emerald-200 text-emerald-900 px-3 py-2 text-sm">
+        使い方: 数字のマスを直接書き換えて、最後に「保存して公開に反映」を押すだけ。
+        ↑↓で行を並べ替えると順位は自動で振り直されます（同順位にしたいときだけ順位の数字を手で直してください）。
+        保存すると公式サイトにすぐ反映されます。
+      </p>
       {blockTable("A")}
       {blockTable("B")}
       {message && (

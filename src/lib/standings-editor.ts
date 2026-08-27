@@ -61,3 +61,14 @@ export function normalizeSortOrder<T extends RowBase>(rows: T[]): T[] {
   });
   return rows.map((r) => ({ ...r, sort_order: renumbered.get(r.key)! }));
 }
+
+// 行の並び（sort_order）に合わせて順位をブロックごとに1から振り直す。
+// ↑↓での並べ替え直後に呼び、「動かした順番＝順位」という直感的な挙動にする。
+// 同順位にしたい場合は振り直し後に順位セルを手で編集すればよい。
+export function renumberRanks<T extends RowBase & { rank: string }>(rows: T[]): T[] {
+  const ranked = new Map<string, string>();
+  (["A", "B"] as const).forEach((block) => {
+    blockRows(rows, block).forEach((r, i) => ranked.set(r.key, String(i + 1)));
+  });
+  return rows.map((r) => ({ ...r, rank: ranked.get(r.key)! }));
+}
