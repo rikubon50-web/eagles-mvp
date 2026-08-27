@@ -109,20 +109,27 @@ function LinkForm({
   // 空欄=リンク解除（既存リンクがある時のみ）、入力あり=有効な http(s) URL のみ適用可
   const canApply = trimmed ? valid : hasLink;
 
+  // Tiptap v3のfocusコマンドはリンク入力欄からのDOMフォーカス復帰を行わない
+  // ことがあるため、view.dom.focus()を直接併用する
+  const refocus = () => requestAnimationFrame(() => editor.view.dom.focus());
+
   const apply = () => {
     if (!trimmed) {
       if (!hasLink) return;
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      refocus();
       onDone();
       return;
     }
     if (!valid) return;
     editor.chain().focus().extendMarkRange("link").setLink({ href: trimmed }).run();
+    refocus();
     onDone();
   };
 
   const remove = () => {
     editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    refocus();
     onDone();
   };
 

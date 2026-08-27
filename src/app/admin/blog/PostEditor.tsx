@@ -389,7 +389,10 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
             // note と同じく、タイトルで Enter すると本文へ移動
             if (e.key === "Enter") {
               e.preventDefault();
+              // Tiptap v3のfocusコマンドは他要素からのDOMフォーカス移動を行わない
+              // ことがあるため、view.dom.focus()を直接併用する
               editor?.commands.focus("start");
+              requestAnimationFrame(() => editor?.view.dom.focus());
             }
           }}
           autoFocus={!initial}
