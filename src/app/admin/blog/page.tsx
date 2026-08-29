@@ -15,6 +15,15 @@ type PostRow = {
   title: string;
   status: "draft" | "published";
   updated_at: string;
+  like_count: number;
+  view_count: number;
+};
+
+type PopularRow = {
+  id: string;
+  title: string;
+  like_count: number;
+  view_count: number;
 };
 
 function toSingle(v: string | string[] | undefined): string | undefined {
@@ -46,7 +55,7 @@ export default async function AdminBlogListPage({
 
   let listQuery = supabase
     .from("posts")
-    .select("id, title, status, updated_at")
+    .select("id, title, status, updated_at, like_count, view_count")
     .order("updated_at", { ascending: false })
     .range(from, to);
   if (!isAdmin) {
@@ -59,6 +68,18 @@ export default async function AdminBlogListPage({
 
   const posts = (data ?? []) as PostRow[];
 
+  // 人気記事トップ5（公開記事を閲覧数降順。member/admin とも全記事を対象に閲覧可）
+  const { data: popularData, error: popularError } = await supabase
+    .from("posts")
+    .select("id, title, like_count, view_count")
+    .eq("status", "published")
+    .order("view_count", { ascending: false })
+    .limit(5);
+  if (popularError) {
+    console.error("AdminBlogListPage: popular posts fetch failed", popularError);
+  }
+  const popular = (popularData ?? []) as PopularRow[];
+
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-6">
@@ -67,6 +88,24 @@ export default async function AdminBlogListPage({
           <button className="text-sm text-slate-500 underline">ログアウト</button>
         </form>
       </div>
+
+      {/* 人気記事トップ5（公開記事・閲覧数降順） */}
+      {popular.length > 0 && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <h2 className="text-sm font-bold text-amber-800 mb-2">人気記事トップ5（閲覧数順）</h2>
+          <ol className="space-y-1">
+            {popular.map((p, i) => (
+              <li key={p.id} className="flex items-center gap-2 text-sm">
+                <span className="w-5 shrink-0 text-right font-bold text-amber-700">{i + 1}.</span>
+                <span className="min-w-0 flex-1 truncate text-slate-800">{p.title}</span>
+                <span className="shrink-0 text-xs text-slate-500">
+                  ♡ {p.like_count} ・ 閲覧 {p.view_count}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       <div className="flex justify-end mb-4">
         <Link
@@ -100,6 +139,9 @@ export default async function AdminBlogListPage({
                   </span>
                   <span className="text-xs text-slate-400">
                     {new Date(post.updated_at).toLocaleDateString("ja-JP")}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    ♡ {post.like_count ?? 0} ・ 閲覧 {post.view_count ?? 0}
                   </span>
                 </div>
                 <p className="truncate font-semibold text-slate-900">{post.title}</p>
