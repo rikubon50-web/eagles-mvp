@@ -131,67 +131,112 @@ export default function LikeButton({
 
   const particles = particleVectors(PARTICLE_COUNT, PARTICLE_DISTANCE);
 
-  return (
-    <div className="relative inline-flex flex-col items-center not-prose">
-      {/* お礼の吹き出し（スキした瞬間だけ約1.5秒） */}
-      {bubble && (
-        <span
-          role="status"
-          className="like-bubble absolute bottom-full left-1/2 mb-2 whitespace-nowrap rounded-full border border-rose-200 bg-white px-3 py-1 text-sm font-semibold text-rose-500 shadow-md"
+  // ハート（バウンス＋パーティクル）と数字。インライン／フローティングの両ボタンで共用。
+  // 状態は本コンポーネント1インスタンス内で共有するため、二重RPC・二重カウントは起きない
+  // （表示される・押せるボタンはブレークポイントごとに常に1つだけ）。
+  const buttonBody = (
+    <>
+      {/* ハート＋パーティクルの基準点 */}
+      <span className="relative inline-flex">
+        <svg
+          viewBox="0 0 24 24"
+          className={`h-6 w-6 transition-colors duration-200 ${bouncing ? "like-heart-bounce" : ""}`}
+          fill={liked ? "#f43f5e" : "none"}
+          stroke={liked ? "#f43f5e" : "currentColor"}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
         >
-          {bubble}
-        </span>
-      )}
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
 
-      <button
-        type="button"
-        onClick={toggle}
-        aria-pressed={liked}
-        aria-label={liked ? "スキを取り消す" : "スキ"}
-        className={`group inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 transition-colors duration-200 ${
-          liked
-            ? "border-rose-300 bg-rose-50 text-rose-500"
-            : "border-slate-300 bg-white text-slate-500 hover:border-rose-300 hover:text-rose-400"
-        }`}
-      >
-        {/* ハート＋パーティクルの基準点 */}
-        <span className="relative inline-flex">
-          <svg
-            viewBox="0 0 24 24"
-            className={`h-6 w-6 transition-colors duration-200 ${bouncing ? "like-heart-bounce" : ""}`}
-            fill={liked ? "#f43f5e" : "none"}
-            stroke={liked ? "#f43f5e" : "currentColor"}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+        {/* パーティクルバースト（one-shot。CSS側で prefers-reduced-motion なら非表示） */}
+        {burstKey > 0 && (
+          <span key={burstKey} aria-hidden="true">
+            {particles.map((v, i) => (
+              <span
+                key={i}
+                className="like-particle"
+                style={
+                  {
+                    "--lp-x": `${v.x.toFixed(1)}px`,
+                    "--lp-y": `${v.y.toFixed(1)}px`,
+                    background: PARTICLE_COLORS[i % PARTICLE_COLORS.length],
+                    animationDelay: `${(i % 3) * 40}ms`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </span>
+        )}
+      </span>
+
+      <span className="min-w-[1.5rem] text-left text-lg font-bold tabular-nums">{count}</span>
+    </>
+  );
+
+  return (
+    <>
+      {/* md以上: 記事末尾のインライン表示（現行どおり。モバイルでは非表示） */}
+      <div className="relative hidden md:inline-flex flex-col items-center not-prose">
+        {/* お礼の吹き出し（スキした瞬間だけ約1.5秒） */}
+        {bubble && (
+          <span
+            role="status"
+            className="like-bubble absolute bottom-full left-1/2 mb-2 whitespace-nowrap rounded-full border border-rose-200 bg-white px-3 py-1 text-sm font-semibold text-rose-500 shadow-md"
           >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
+            {bubble}
+          </span>
+        )}
 
-          {/* パーティクルバースト（one-shot。CSS側で prefers-reduced-motion なら非表示） */}
-          {burstKey > 0 && (
-            <span key={burstKey} aria-hidden="true">
-              {particles.map((v, i) => (
-                <span
-                  key={i}
-                  className="like-particle"
-                  style={
-                    {
-                      "--lp-x": `${v.x.toFixed(1)}px`,
-                      "--lp-y": `${v.y.toFixed(1)}px`,
-                      background: PARTICLE_COLORS[i % PARTICLE_COLORS.length],
-                      animationDelay: `${(i % 3) * 40}ms`,
-                    } as CSSProperties
-                  }
-                />
-              ))}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-pressed={liked}
+          aria-label={liked ? "スキを取り消す" : "スキ"}
+          className={`group inline-flex items-center gap-2 rounded-full border-2 px-5 py-2.5 transition-colors duration-200 ${
+            liked
+              ? "border-rose-300 bg-rose-50 text-rose-500"
+              : "border-slate-300 bg-white text-slate-500 hover:border-rose-300 hover:text-rose-400"
+          }`}
+        >
+          {buttonBody}
+        </button>
+      </div>
+
+      {/* モバイル: 画面左下のフローティング表示（md以上では非表示）。
+          safe-area-inset-bottom を考慮して bottom-6 相当を確保する */}
+      <div
+        className="md:hidden fixed left-4 z-40 not-prose"
+        style={{ bottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}
+      >
+        <div className="relative inline-flex flex-col items-start">
+          {/* 吹き出しはボタンの真上・左揃え（画面外にはみ出さない） */}
+          {bubble && (
+            <span
+              role="status"
+              className="like-bubble-left absolute bottom-full left-0 mb-2 whitespace-nowrap rounded-full border border-rose-200 bg-white px-3 py-1 text-sm font-semibold text-rose-500 shadow-md"
+            >
+              {bubble}
             </span>
           )}
-        </span>
 
-        <span className="min-w-[1.5rem] text-left text-lg font-bold tabular-nums">{count}</span>
-      </button>
-    </div>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-pressed={liked}
+            aria-label={liked ? "スキを取り消す" : "スキ"}
+            className={`inline-flex items-center gap-2 rounded-full border-2 px-4 py-2.5 shadow-lg transition-colors duration-200 ${
+              liked
+                ? "border-rose-300 bg-rose-50 text-rose-500"
+                : "border-slate-300 bg-white text-slate-500"
+            }`}
+          >
+            {buttonBody}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }

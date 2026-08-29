@@ -16,9 +16,9 @@ export default async function BlogSection() {
   }));
   return (
     <section>
-      <h2 className="section-title text-3xl md:text-4xl font-bold mb-6">Blog</h2>
+      <h2 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6">Blog</h2>
       {blogs.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-0 max-md:divide-y max-md:divide-slate-200 md:gap-4 md:grid-cols-2 lg:grid-cols-3">
           {blogs.map((b) => (
             <BlogCard key={b.id} item={b} />
           ))}

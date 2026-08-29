@@ -52,17 +52,17 @@ export default async function BlogListPage({
   }));
 
   return (
-    <div className="space-y-8">
-      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">Blog</h1>
+    <div className="space-y-4 md:space-y-8">
+      <h1 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 mt-6 md:mt-12">Blog</h1>
 
       <BlogFilterList tags={tags} q={q ?? ""} tag={tag ?? null} />
 
       {/* 件数表示 */}
-      <p className="text-sm text-slate-500 mb-6">{totalCount}件</p>
+      <p className="text-sm text-slate-500 mb-3 md:mb-6">{totalCount}件</p>
 
       {/* 一覧 */}
       {blogs.length > 0 ? (
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid gap-0 max-md:divide-y max-md:divide-slate-200 md:grid-cols-3 md:gap-6">
           {blogs.map((b) => (
             <BlogCard key={b.id} item={b} />
           ))}

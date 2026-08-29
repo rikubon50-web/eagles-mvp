@@ -57,7 +57,7 @@ export default async function Home() {
       </div>
 
       {/* UpcomingSection — white */}
-      <div className={`${fullWidth} bg-white py-16`}>
+      <div className={`${fullWidth} bg-white py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <UpcomingSection />
@@ -66,7 +66,7 @@ export default async function Home() {
       </div>
 
       {/* StandingsSection — slate-100 */}
-      <div className={`${fullWidth} bg-slate-100 py-16`}>
+      <div className={`${fullWidth} bg-slate-100 py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <StandingsSection />
@@ -75,7 +75,7 @@ export default async function Home() {
       </div>
 
       {/* NewsSection — slate-900 (dark) */}
-      <div className={`${fullWidth} bg-slate-900 py-16`}>
+      <div className={`${fullWidth} bg-slate-900 py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <NewsSection dark />
@@ -103,7 +103,7 @@ export default async function Home() {
       />
 
       {/* BlogSection — white */}
-      <div className={`${fullWidth} bg-white py-16`}>
+      <div className={`${fullWidth} bg-white py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <BlogSection />
@@ -112,7 +112,7 @@ export default async function Home() {
       </div>
 
       {/* RosterSection — slate-900 (dark) */}
-      <div className={`${fullWidth} bg-slate-900 py-16`}>
+      <div className={`${fullWidth} bg-slate-900 py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <RosterSection dark />

@@ -67,7 +67,8 @@
   }
 
   /* ===== Footer ===== */
-  .footer { @apply mt-20 border-t border-slate-200 bg-white text-slate-900; }
+  /* モバイルは上余白を半分に、md以上は従来の mt-20 を復元 */
+  .footer { @apply mt-10 md:mt-20 border-t border-slate-200 bg-white text-slate-900; }
 
   /* 上段の濃紺帯 */
   .footer__bar { @apply bg-[#0f6536] py-6; }
@@ -343,12 +344,19 @@
 }
 
 /* 一部だけ線の色を変える */
+/* モバイルは余白を圧縮し、md(768px)以上で従来値（margin/padding 2em）を復元する */
 .cstm-box-corner-accent {
-   margin: 0 auto 2em; /* 外側の余白（上下と中央配置） */
-   padding: 2em; /* 内側余白 */
+   margin: 0 auto 1.25em; /* 外側の余白（モバイル圧縮値） */
+   padding: 1.25em; /* 内側余白（モバイル圧縮値） */
    border: 3px solid #eee; /* 線の太さ（3px）、種類（実線）、色（#eee） */
    position: relative; /* 配置（基準となる位置） */
    z-index: 0; /* 他の要素との重なり順（0は通常の順番） */
+}
+@media (min-width: 768px) {
+  .cstm-box-corner-accent {
+    margin: 0 auto 2em; /* 従来値 */
+    padding: 2em; /* 従来値 */
+  }
 }
 
 .cstm-box-corner-accent:before {
@@ -438,6 +446,19 @@
   100% { opacity: 0; transform: translate(-50%, -4px) scale(0.95); }
 }
 
+/* 3b) モバイルのフローティングスキボタン用: 左端固定ボタンの真上に左揃えで出す吹き出し
+   （中央寄せの translateX(-50%) を使わず、画面外へのはみ出しを防ぐ） */
+.like-bubble-left {
+  animation: like-bubble-pop-left 1.5s ease-out both;
+}
+@keyframes like-bubble-pop-left {
+  0% { opacity: 0; transform: translate(0, 6px) scale(0.8); }
+  10% { opacity: 1; transform: translate(0, 0) scale(1.05); }
+  16% { transform: translate(0, 0) scale(1); }
+  85% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(0, -4px) scale(0.95); }
+}
+
 /* 動きを減らす設定のユーザーには演出を無効化（数字と塗りの変化のみ） */
 @media (prefers-reduced-motion: reduce) {
   .live-dot,
@@ -451,5 +472,10 @@
     animation: none;
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+  .like-bubble-left {
+    animation: none;
+    opacity: 1;
+    transform: translate(0, 0);
   }
 }

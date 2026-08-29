@@ -13,7 +13,7 @@ export default async function UpcomingSection() {
   const heading = live.length > 0 ? "試合速報" : "Up Coming";
   return (
     <section>
-      <h2 className="section-title text-3xl md:text-4xl font-bold mb-6">{heading}</h2>
+      <h2 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6">{heading}</h2>
       {games.length > 0 ? (
         <div className="grid md:grid-cols-2 gap-4">
           {games.slice(0, 2).map((g) => (
