@@ -438,6 +438,19 @@
   100% { opacity: 0; transform: translate(-50%, -4px) scale(0.95); }
 }
 
+/* 3b) モバイルのフローティングスキボタン用: 左端固定ボタンの真上に左揃えで出す吹き出し
+   （中央寄せの translateX(-50%) を使わず、画面外へのはみ出しを防ぐ） */
+.like-bubble-left {
+  animation: like-bubble-pop-left 1.5s ease-out both;
+}
+@keyframes like-bubble-pop-left {
+  0% { opacity: 0; transform: translate(0, 6px) scale(0.8); }
+  10% { opacity: 1; transform: translate(0, 0) scale(1.05); }
+  16% { transform: translate(0, 0) scale(1); }
+  85% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(0, -4px) scale(0.95); }
+}
+
 /* 動きを減らす設定のユーザーには演出を無効化（数字と塗りの変化のみ） */
 @media (prefers-reduced-motion: reduce) {
   .live-dot,
@@ -451,5 +464,10 @@
     animation: none;
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+  .like-bubble-left {
+    animation: none;
+    opacity: 1;
+    transform: translate(0, 0);
   }
 }

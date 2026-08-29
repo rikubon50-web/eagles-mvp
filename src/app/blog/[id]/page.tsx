@@ -63,10 +63,10 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* ダーク見出し帯 */}
-      <div className={`${fullWidth} bg-slate-900 py-12`}>
+      <div className={`${fullWidth} bg-slate-900 py-8 md:py-12`}>
         <div className={innerCls}>
           {/* パンくず */}
-          <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white transition-colors mb-6">
+          <Link href="/blog" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white transition-colors mb-4 md:mb-6">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -74,7 +74,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           </Link>
 
           {/* 日付 */}
-          <div className="mb-4 flex items-center gap-3">
+          <div className="mb-3 md:mb-4 flex items-center gap-3">
             <time className="text-slate-400 text-sm">
               {new Date(item.publishedAt).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}
             </time>
@@ -92,7 +92,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
 
       {/* サムネイル */}
       {item.thumbnailUrl && (
-        <div className={`${fullWidth} bg-slate-100 py-8`}>
+        <div className={`${fullWidth} bg-slate-100 py-4 md:py-8`}>
           <div className="max-w-3xl mx-auto px-6">
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl shadow-lg">
               <Image
@@ -108,20 +108,21 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
       )}
 
       {/* 本文エリア */}
-      <div className="pt-16 pb-16 md:pt-20 md:pb-20">
+      <div className="pt-8 pb-8 md:pt-20 md:pb-20">
         <div className="max-w-3xl mx-auto">
           <article
-            className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
+            className="prose prose-slate md:prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
             dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
           />
 
-          {/* スキ♡（noteと同じく本文末尾の目立つ位置） */}
-          <div className="mt-10 flex justify-center">
+          {/* スキ♡（md以上は本文末尾のインライン表示。モバイルは LikeButton 内の
+              フローティング表示のみになるため、この枠のモバイル余白は 0 にする） */}
+          <div className="md:mt-10 flex justify-center">
             <LikeButton postId={item.id} initialCount={item.likeCount} />
           </div>
           <ViewTracker postId={item.id} />
 
-          <div className="mt-12 pt-8 border-t border-slate-200">
+          <div className="mt-6 pt-4 md:mt-12 md:pt-8 border-t border-slate-200">
             <Link href="/blog" className="button-32">
               ブログ一覧へ戻る
             </Link>
