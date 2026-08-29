@@ -8,7 +8,7 @@ export const gameInputSchema = z
     startAt: z.string().min(1, "日時を入力してください"),
     venue: z.string().trim().max(120),
     opponent: z.string().trim().min(1, "相手校を入力してください").max(60),
-    status: z.enum(["scheduled", "finished", "postponed"]),
+    status: z.enum(["scheduled", "live", "finished", "postponed"]),
     ourScore: score,
     oppScore: score,
     note: z.string().max(2000),
@@ -20,7 +20,12 @@ export const gameInputSchema = z
     }
   })
   .transform((v) =>
-    v.status === "finished" ? v : { ...v, ourScore: null, oppScore: null }
+    // finished は両スコア必須（superRefine 済み）。live は途中経過なので
+    // 空欄可・片方だけでも可として入力値をそのまま保持する。
+    // それ以外（scheduled / postponed）はスコアを null に正規化する。
+    v.status === "finished" || v.status === "live"
+      ? v
+      : { ...v, ourScore: null, oppScore: null }
   );
 export type GameInput = z.infer<typeof gameInputSchema>;
 

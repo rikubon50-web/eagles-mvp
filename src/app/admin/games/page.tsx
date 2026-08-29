@@ -13,19 +13,21 @@ type GameRow = {
   start_at: string;
   venue: string;
   opponent: string;
-  status: "scheduled" | "finished" | "postponed";
+  status: "scheduled" | "live" | "finished" | "postponed";
   our_score: number | null;
   opp_score: number | null;
 };
 
 const STATUS_LABEL: Record<GameRow["status"], string> = {
   scheduled: "予定",
+  live: "試合中",
   finished: "終了",
   postponed: "延期",
 };
 
 const STATUS_CLASS: Record<GameRow["status"], string> = {
   scheduled: "bg-emerald-100 text-emerald-700",
+  live: "bg-red-100 text-red-700",
   finished: "bg-slate-100 text-slate-600",
   postponed: "bg-amber-100 text-amber-700",
 };

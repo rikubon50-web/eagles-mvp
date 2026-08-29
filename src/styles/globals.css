@@ -381,3 +381,75 @@
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+
+/* ===== 試合速報 LIVE バッジ ===== */
+/* 赤バッジ内で小さな点が明滅する（●LIVE） */
+.live-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: #fff;
+  animation: live-pulse 1.2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+
+/* ===== ブログ スキ♡ボタン（noteを模した演出） ===== */
+/* 1) ハートのぽんっと弾むスケールバウンス（~400ms） */
+@keyframes like-bounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.35); }
+  65% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+.like-heart-bounce {
+  animation: like-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* 2) パーティクルバースト: ハート中心から放射状に飛び散ってフェードアウト */
+/* 各パーティクルは inline style の --lp-x / --lp-y（飛距離ベクトル）を持つ */
+.like-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: like-particle-fly 0.6s ease-out both;
+}
+@keyframes like-particle-fly {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--lp-x), var(--lp-y)) scale(0.4); }
+}
+
+/* 3) お礼の吹き出し: ボタンの上にぽこっと現れて消える（表示は約1.5秒） */
+.like-bubble {
+  animation: like-bubble-pop 1.5s ease-out both;
+}
+@keyframes like-bubble-pop {
+  0% { opacity: 0; transform: translate(-50%, 6px) scale(0.8); }
+  10% { opacity: 1; transform: translate(-50%, 0) scale(1.05); }
+  16% { transform: translate(-50%, 0) scale(1); }
+  85% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -4px) scale(0.95); }
+}
+
+/* 動きを減らす設定のユーザーには演出を無効化（数字と塗りの変化のみ） */
+@media (prefers-reduced-motion: reduce) {
+  .live-dot,
+  .like-heart-bounce {
+    animation: none;
+  }
+  .like-particle {
+    display: none;
+  }
+  .like-bubble {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

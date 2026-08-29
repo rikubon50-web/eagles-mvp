@@ -10,7 +10,7 @@ export type InitialGame = {
   startAt: string; // ISO
   venue: string;
   opponent: string;
-  status: "scheduled" | "finished" | "postponed";
+  status: "scheduled" | "live" | "finished" | "postponed";
   ourScore: number | null;
   oppScore: number | null;
   note: string;
@@ -19,6 +19,7 @@ export type InitialGame = {
 
 const STATUS_OPTIONS: { value: InitialGame["status"]; label: string }[] = [
   { value: "scheduled", label: "予定" },
+  { value: "live", label: "試合中" },
   { value: "finished", label: "終了" },
   { value: "postponed", label: "延期" },
 ];
@@ -192,28 +193,35 @@ export default function GameForm({ initial }: { initial: InitialGame | null }) {
         </select>
       </div>
 
-      {status === "finished" && (
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block text-sm font-semibold text-slate-600 mb-1">自チーム得点</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={ourScore}
-              onChange={(e) => setOurScore(e.target.value)}
-              className="w-full rounded border border-slate-300 px-3 py-2"
-            />
+      {(status === "finished" || status === "live") && (
+        <div>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-slate-600 mb-1">自チーム得点</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={ourScore}
+                onChange={(e) => setOurScore(e.target.value)}
+                className="w-full rounded border border-slate-300 px-3 py-2"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-slate-600 mb-1">相手得点</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={oppScore}
+                onChange={(e) => setOppScore(e.target.value)}
+                className="w-full rounded border border-slate-300 px-3 py-2"
+              />
+            </div>
           </div>
-          <div className="flex-1">
-            <label className="block text-sm font-semibold text-slate-600 mb-1">相手得点</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={oppScore}
-              onChange={(e) => setOppScore(e.target.value)}
-              className="w-full rounded border border-slate-300 px-3 py-2"
-            />
-          </div>
+          {status === "live" && (
+            <p className="text-xs text-slate-400 mt-1">
+              試合中はスコア空欄のまま保存できます（未入力は公開ページで「-」表示）
+            </p>
+          )}
         </div>
       )}
 

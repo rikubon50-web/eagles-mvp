@@ -20,18 +20,21 @@ export default function GameCard({ game }: { game: GameView }) {
   });
   
   // --- 結果/ステータス用（正規化） ---
-  const normalizeStatus = (v: any): "scheduled" | "finished" | "postponed" | undefined => {
+  const normalizeStatus = (v: any): "scheduled" | "live" | "finished" | "postponed" | undefined => {
     let val = v;
     if (Array.isArray(val)) val = val[0]; // microCMS で配列になるケースに対応
     if (typeof val === "string") {
       const s = val.trim().toLowerCase();
-      return s === "scheduled" || s === "finished" || s === "postponed" ? (s as any) : undefined;
+      return s === "scheduled" || s === "live" || s === "finished" || s === "postponed"
+        ? (s as any)
+        : undefined;
     }
     return undefined;
   };
 
   const status = normalizeStatus((game as any).status);
   const isFinished = status === "finished";
+  const isLive = status === "live";
 
   // our/opp が文字列で来ても数値化する（空文字や無効値は undefined）
   const toNum = (v: any): number | undefined => {
@@ -68,13 +71,22 @@ export default function GameCard({ game }: { game: GameView }) {
         {game.title}
       </div>
 
-      {/* ステータス（常に表示：status があれば） */}
-      {statusLabel && (
+      {/* ステータス（常に表示：status があれば）。live は赤バッジ＋pulseする点 */}
+      {isLive ? (
         <div className="text-center mt-3">
-          <span className={`inline-block rounded-full border px-3 py-0.5 text-xs font-bold tracking-widest ${statusClass}`}>
-            {statusLabel}
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-0.5 text-xs font-bold tracking-widest">
+            <span className="live-dot" aria-hidden="true" />
+            LIVE
           </span>
         </div>
+      ) : (
+        statusLabel && (
+          <div className="text-center mt-3">
+            <span className={`inline-block rounded-full border px-3 py-0.5 text-xs font-bold tracking-widest ${statusClass}`}>
+              {statusLabel}
+            </span>
+          </div>
+        )
       )}
 
       {/* 会場 */}
@@ -113,6 +125,17 @@ export default function GameCard({ game }: { game: GameView }) {
             <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{our}</span>
             <span className="font-extrabold text-3xl md:text-5xl text-slate-700">–</span>
             <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{opp}</span>
+          </div>
+        </div>
+      )}
+
+      {/* 現在スコア（live のとき。未入力は 0 ではなく「-」で表示） */}
+      {isLive && (
+        <div className="text-center py-2">
+          <div className="flex items-center justify-center gap-6 md:gap-10">
+            <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{our ?? "-"}</span>
+            <span className="font-extrabold text-3xl md:text-5xl text-slate-700">–</span>
+            <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{opp ?? "-"}</span>
           </div>
         </div>
       )}

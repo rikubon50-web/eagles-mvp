@@ -11,7 +11,7 @@ type GameRow = {
   start_at: string;
   venue: string;
   opponent: string;
-  status: "scheduled" | "finished" | "postponed";
+  status: "scheduled" | "live" | "finished" | "postponed";
   our_score: number | null;
   opp_score: number | null;
   note: string;

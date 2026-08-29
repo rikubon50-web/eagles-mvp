@@ -13,7 +13,7 @@ export type GameView = {
   homeTeamLogo: { url: string; width: number; height: number };
   awayTeamName: string;
   awayTeamLogo?: { url: string; width: number; height: number };
-  status: "scheduled" | "finished" | "postponed";
+  status: "scheduled" | "live" | "finished" | "postponed";
   ourScore?: number;
   oppScore?: number;
   result?: "win" | "lose" | "draw";
@@ -26,7 +26,7 @@ type GameRow = {
   start_at: string;
   venue: string;
   opponent: string;
-  status: "scheduled" | "finished" | "postponed";
+  status: "scheduled" | "live" | "finished" | "postponed";
   our_score: number | null;
   opp_score: number | null;
   note: string | null;
@@ -61,7 +61,20 @@ function toGameView(row: GameRow): GameView {
   };
 }
 
-// これからの試合（start_at > now、昇順）。失敗時は throw。
+// 進行中の試合（status=live、start_at 昇順）。失敗時は throw。
+export async function fetchGamesLive(): Promise<GameView[]> {
+  const supabase = createSupabasePublic();
+  const { data, error } = await supabase
+    .from("games")
+    .select(GAME_SELECT)
+    .eq("status", "live")
+    .order("start_at", { ascending: true });
+
+  if (error) throw error;
+  return (data as GameRow[]).map(toGameView);
+}
+
+// これからの試合（start_at > now、昇順）。live は速報セクションに出すため除外。失敗時は throw。
 export async function fetchGamesUpcoming(): Promise<GameView[]> {
   const now = new Date().toISOString();
   const supabase = createSupabasePublic();
@@ -69,13 +82,14 @@ export async function fetchGamesUpcoming(): Promise<GameView[]> {
     .from("games")
     .select(GAME_SELECT)
     .gt("start_at", now)
+    .neq("status", "live")
     .order("start_at", { ascending: true });
 
   if (error) throw error;
   return (data as GameRow[]).map(toGameView);
 }
 
-// 終了した試合（start_at <= now、降順）。失敗時は throw。
+// 終了した試合（start_at <= now、降順）。live は速報セクションに出すため除外。失敗時は throw。
 export async function fetchGamesArchive(): Promise<GameView[]> {
   const now = new Date().toISOString();
   const supabase = createSupabasePublic();
@@ -83,6 +97,7 @@ export async function fetchGamesArchive(): Promise<GameView[]> {
     .from("games")
     .select(GAME_SELECT)
     .lte("start_at", now)
+    .neq("status", "live")
     .order("start_at", { ascending: false });
 
   if (error) throw error;

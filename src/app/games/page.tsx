@@ -1,6 +1,6 @@
 // src/app/games/page.tsx
 import type { Metadata } from "next";
-import { fetchGamesUpcoming, fetchGamesArchive } from "@/lib/games";
+import { fetchGamesLive, fetchGamesUpcoming, fetchGamesArchive } from "@/lib/games";
 import GameCard from "@/components/GameCard";
 
 export const revalidate = 300;
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 };
 
 export default async function GamesListPage() {
-  const [upcoming, archive] = await Promise.all([
+  const [live, upcoming, archive] = await Promise.all([
+    fetchGamesLive(),
     fetchGamesUpcoming(),
     fetchGamesArchive(),
   ]);
@@ -26,6 +27,18 @@ export default async function GamesListPage() {
   return (
     <div className="space-y-12">
       <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">Game Schedule</h1>
+
+      {/* 進行中の試合（あるときだけ最上部に表示） */}
+      {live.length > 0 && (
+        <section>
+          <h2 className="section-title text-2xl md:text-3xl font-bold mb-6">試合速報</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {live.map((g) => (
+              <GameCard key={g.id} game={g} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* これからの試合 */}
       <section>

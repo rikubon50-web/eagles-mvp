@@ -30,6 +30,23 @@ describe("gameInputSchema", () => {
     expect(gameInputSchema.safeParse({ ...base, opponentLogoUrl: "https://example.com/logo.jpg" }).success).toBe(true);
     expect(gameInputSchema.safeParse({ ...base, opponentLogoUrl: "not-a-url" }).success).toBe(false);
   });
+
+  // --- live（試合中）ステータス ---
+  it("liveを受理し、スコア両方nullのままでよい", () => {
+    const r = gameInputSchema.safeParse({ ...base, status: "live" });
+    expect(r.success).toBe(true);
+    if (r.success) { expect(r.data.ourScore).toBeNull(); expect(r.data.oppScore).toBeNull(); }
+  });
+  it("liveで片方だけのスコアも受理し、null化せず保持する", () => {
+    const r = gameInputSchema.safeParse({ ...base, status: "live", ourScore: 3 });
+    expect(r.success).toBe(true);
+    if (r.success) { expect(r.data.ourScore).toBe(3); expect(r.data.oppScore).toBeNull(); }
+  });
+  it("liveで両スコアありは値を保持する", () => {
+    const r = gameInputSchema.safeParse({ ...base, status: "live", ourScore: 4, oppScore: 2 });
+    expect(r.success).toBe(true);
+    if (r.success) { expect(r.data.ourScore).toBe(4); expect(r.data.oppScore).toBe(2); }
+  });
 });
 
 describe("deriveResult", () => {
@@ -38,4 +55,6 @@ describe("deriveResult", () => {
   it("引き分け", () => expect(deriveResult("finished", 3, 3)).toBe("draw"));
   it("未終了はnull", () => expect(deriveResult("scheduled", null, null)).toBeNull());
   it("finishedでもスコアnullならnull", () => expect(deriveResult("finished", null, null)).toBeNull());
+  it("liveは両スコアがあってもnull（勝敗は確定させない）", () =>
+    expect(deriveResult("live", 5, 3)).toBeNull());
 });
