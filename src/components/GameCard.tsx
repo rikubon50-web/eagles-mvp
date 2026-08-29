@@ -129,13 +129,18 @@ export default function GameCard({ game }: { game: GameView }) {
         </div>
       )}
 
-      {/* 現在スコア（live のとき。未入力は 0 ではなく「-」で表示） */}
+      {/* 現在スコア（live のとき。未入力は 0 ではなく「-」で表示。
+          プレースホルダの「-」は区切りの「–」と紛れないよう減灰する） */}
       {isLive && (
         <div className="text-center py-2">
           <div className="flex items-center justify-center gap-6 md:gap-10">
-            <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{our ?? "-"}</span>
+            <span className={`font-extrabold text-5xl md:text-6xl ${our != null ? "text-slate-900" : "text-slate-300"}`}>
+              {our ?? "-"}
+            </span>
             <span className="font-extrabold text-3xl md:text-5xl text-slate-700">–</span>
-            <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{opp ?? "-"}</span>
+            <span className={`font-extrabold text-5xl md:text-6xl ${opp != null ? "text-slate-900" : "text-slate-300"}`}>
+              {opp ?? "-"}
+            </span>
           </div>
         </div>
       )}
@@ -174,8 +179,8 @@ export default function GameCard({ game }: { game: GameView }) {
         </div>
       </div>
 
-      {/* CTA: ステータス別に表示 */}
-      {(status === "scheduled" || status === "postponed") && (
+      {/* CTA: ステータス別に表示（live でも会場・アクセス案内への導線を残す） */}
+      {(status === "scheduled" || status === "postponed" || isLive) && (
         <div className="border-t-2 border-slate-300 mt-6 pt-6">
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link

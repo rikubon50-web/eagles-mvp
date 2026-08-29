@@ -9,7 +9,8 @@ const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const PARTICLE_COUNT = 7;
 const PARTICLE_DISTANCE = 34;
-const PARTICLE_COLORS = ["#f43f5e", "#fb7185", "#fda4af", "#f59e0b", "#34d399", "#60a5fa", "#f43f5e"];
+// noteの温かいバーストに寄せたローズ/ピンク/アンバー系。7個すべて相異なる色（隣接同色を避ける）
+const PARTICLE_COLORS = ["#f43f5e", "#fb7185", "#f59e0b", "#fda4af", "#e11d48", "#fbbf24", "#f472b6"];
 
 function restHeaders(): Record<string, string> {
   return {
@@ -33,6 +34,9 @@ export default function LikeButton({
   const [bubble, setBubble] = useState<string | null>(null);
   const busyRef = useRef(false);
   const timersRef = useRef<number[]>([]);
+  // マウント時の like_count 取得。トグル後に遅れて届くと RPC の返した最新値を
+  // 古い値で上書きしてしまうため、初回トグル時に abort する
+  const mountFetchRef = useRef<AbortController | null>(null);
 
   const storageKey = `liked:${postId}`;
 
@@ -46,6 +50,7 @@ export default function LikeButton({
     }
     if (!SUPABASE_URL || !ANON_KEY) return;
     const ctrl = new AbortController();
+    mountFetchRef.current = ctrl;
     fetch(
       `${SUPABASE_URL}/rest/v1/posts?id=eq.${encodeURIComponent(postId)}&select=like_count`,
       { headers: restHeaders(), signal: ctrl.signal }
@@ -87,6 +92,8 @@ export default function LikeButton({
 
   const toggle = async () => {
     if (busyRef.current) return;
+    // 未完了のマウント時取得が残っていたら破棄（古い値で RPC の結果を上書きさせない）
+    mountFetchRef.current?.abort();
     const next = !liked;
     const prevCount = count;
 
@@ -107,7 +114,10 @@ export default function LikeButton({
       });
       if (!res.ok) throw new Error(`increment_post_like failed: ${res.status}`);
       const value = await res.json().catch(() => null);
-      if (typeof value === "number") setCount(Math.max(0, value));
+      // RPC が0行更新（記事の非公開化・削除直後など）だと null が返る。
+      // その場合サーバは加算していないので、楽観更新を残さず失敗扱いでロールバックする
+      if (typeof value !== "number") throw new Error("increment_post_like returned no value");
+      setCount(Math.max(0, value));
     } catch {
       // 失敗時はロールバック表示
       setLiked(!next);

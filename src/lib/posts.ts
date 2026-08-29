@@ -26,7 +26,8 @@ const SUMMARY_SELECT = "id,title,thumbnail_url,tags,published_at,like_count,view
 const SELECT_LEGACY = "id,title,body,thumbnail_url,tags,published_at,profiles(name)";
 const SUMMARY_SELECT_LEGACY = "id,title,thumbnail_url,tags,published_at,profiles(name)";
 
-function isMissingCountColumns(e: unknown): boolean {
+// 管理画面（/admin/blog）のフォールバック判定でも使うため export
+export function isMissingCountColumns(e: unknown): boolean {
   return (e as { code?: string } | null)?.code === "42703"; // undefined_column
 }
 

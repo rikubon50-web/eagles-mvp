@@ -4,6 +4,7 @@ import { getProfile } from "@/lib/auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { logout } from "@/app/admin/actions";
 import { pageWindow } from "@/lib/posts-domain";
+import { isMissingCountColumns } from "@/lib/posts";
 import DeletePostButton from "./DeletePostButton";
 
 export const dynamic = "force-dynamic";
@@ -53,29 +54,40 @@ export default async function AdminBlogListPage({
   const pageParam = Number(toSingle(searchParams.page)) || 1;
   const { page, pageCount, from, to } = pageWindow(count ?? 0, pageParam, PER_PAGE);
 
-  let listQuery = supabase
-    .from("posts")
-    .select("id, title, status, updated_at, like_count, view_count")
-    .order("updated_at", { ascending: false })
-    .range(from, to);
-  if (!isAdmin) {
-    listQuery = listQuery.eq("author_id", profile.userId);
+  // likes-live-schema.sql 適用前の DB には like_count / view_count 列がない（42703）。
+  // 公開側（posts.ts）と同様にフォールバックし、一覧が空表示にならないようにする
+  const buildListQuery = (select: string) => {
+    let q = supabase
+      .from("posts")
+      .select(select)
+      .order("updated_at", { ascending: false })
+      .range(from, to);
+    if (!isAdmin) q = q.eq("author_id", profile.userId);
+    return q;
+  };
+  let { data, error } = await buildListQuery("id, title, status, updated_at, like_count, view_count");
+  if (error && isMissingCountColumns(error)) {
+    ({ data, error } = await buildListQuery("id, title, status, updated_at"));
   }
-  const { data, error } = await listQuery;
   if (error) {
     console.error("AdminBlogListPage: posts fetch failed", error);
   }
 
-  const posts = (data ?? []) as PostRow[];
+  const posts = ((data ?? []) as unknown as PostRow[]).map((p) => ({
+    ...p,
+    like_count: p.like_count ?? 0,
+    view_count: p.view_count ?? 0,
+  }));
 
-  // 人気記事トップ5（公開記事を閲覧数降順。member/admin とも全記事を対象に閲覧可）
+  // 人気記事トップ5（公開記事を閲覧数降順。member/admin とも全記事を対象に閲覧可）。
+  // 列未適用時は view_count で並べられないため、ボックス自体を非表示にする（popular=[]）
   const { data: popularData, error: popularError } = await supabase
     .from("posts")
     .select("id, title, like_count, view_count")
     .eq("status", "published")
     .order("view_count", { ascending: false })
     .limit(5);
-  if (popularError) {
+  if (popularError && !isMissingCountColumns(popularError)) {
     console.error("AdminBlogListPage: popular posts fetch failed", popularError);
   }
   const popular = (popularData ?? []) as PopularRow[];

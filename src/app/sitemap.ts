@@ -1,15 +1,16 @@
 import type { MetadataRoute } from "next";
 import { fetchNewsList, fetchPlayers } from "@/lib/microcms";
-import { fetchGamesUpcoming, fetchGamesArchive } from "@/lib/games";
+import { fetchGamesUpcoming, fetchGamesArchive, fetchGamesLive } from "@/lib/games";
 import { fetchAllPostIds } from "@/lib/posts";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [news, blogs, players, upcoming, archive] = await Promise.all([
+  const [news, blogs, players, live, upcoming, archive] = await Promise.all([
     fetchNewsList(),
     fetchAllPostIds(),
     fetchPlayers(),
+    fetchGamesLive(),
     fetchGamesUpcoming(),
     fetchGamesArchive(),
   ]);
@@ -50,7 +51,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const gamePages: MetadataRoute.Sitemap = [...upcoming, ...archive].map((game) => ({
+  // live は upcoming/archive の両クエリから除外されるため、sitemap では明示的に合流させる
+  const gamePages: MetadataRoute.Sitemap = [...live, ...upcoming, ...archive].map((game) => ({
     url: `${BASE_URL}/games/${game.id}`,
     lastModified: game.startAt,
     changeFrequency: "yearly",
