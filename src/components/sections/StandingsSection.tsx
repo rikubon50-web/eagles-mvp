@@ -15,16 +15,16 @@ export default async function StandingsSection() {
       {/* モバイル: 要約カード */}
       <div className="md:hidden">
         <div className="rounded-2xl border-[3px] border-slate-800 overflow-hidden">
-          <div className="bg-slate-900 text-white text-center py-4 px-4">
-            <h2 className="tracking-widest text-3xl font-extrabold text-white">STANDINGS</h2>
+          <div className="bg-slate-900 text-white text-center py-3 px-4">
+            <h2 className="tracking-widest text-2xl font-extrabold text-white">STANDINGS</h2>
           </div>
-          <div className="bg-white px-4 py-5 text-center">
+          <div className="bg-white px-4 py-4 text-center">
             {ours ? (
               <>
                 <p className="text-sm font-bold text-slate-500">{OUR_UNIVERSITY}</p>
-                <p className="mt-2 font-extrabold text-slate-900">
+                <p className="mt-1 font-extrabold text-slate-900">
                   <span className="text-lg">{ours.block}ブロック</span>
-                  <span className="mx-2 text-4xl">{rankLabel}位</span>
+                  <span className="mx-2 text-3xl">{rankLabel}位</span>
                   <span className="text-lg">勝点{ours.points}</span>
                 </p>
               </>

@@ -17,7 +17,7 @@ export default function BlogCard({ item }: { item: BlogCardItem }) {
   return (
     <Link
       href={`/blog/${item.id}`}
-      className="group card rounded-none md:rounded-xl border-0 md:border shadow-none md:shadow-card md:bg-gradient-to-b from-white to-slate-50 md:hover:shadow-2xl md:hover:-translate-y-1 transition-transform duration-300 h-full flex flex-row-reverse items-center gap-3 md:gap-0 md:flex-col md:items-stretch px-0 py-3 md:p-6"
+      className="group card rounded-none md:rounded-xl border-0 md:border shadow-none md:shadow-card md:bg-gradient-to-b from-white to-slate-50 md:hover:shadow-2xl md:hover:-translate-y-1 transition-transform duration-300 h-full flex flex-row-reverse items-center gap-3 md:gap-0 md:flex-col md:items-stretch px-0 py-2 md:p-6"
       aria-label={item.title}
     >
       <div className="relative w-24 h-24 shrink-0 md:w-full md:h-auto md:shrink md:mb-3 overflow-hidden rounded-lg aspect-[16/9] bg-slate-100">

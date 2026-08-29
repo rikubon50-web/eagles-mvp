@@ -39,7 +39,7 @@ export default async function AboutPage() {
                 />
               </div>
             )}
-            <div className="cstm-box-corner-accent prose prose-slate max-w-none">
+            <div className="cstm-box-corner-accent prose prose-sm md:prose-base prose-slate max-w-none">
               {about?.body ? (
                 <div
                   className="font-bold"
