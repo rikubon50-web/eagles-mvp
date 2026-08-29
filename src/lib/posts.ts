@@ -20,6 +20,16 @@ const PER_PAGE = 24;
 const SELECT = "id,title,body,thumbnail_url,tags,published_at,like_count,view_count,profiles(name)";
 const SUMMARY_SELECT = "id,title,thumbnail_url,tags,published_at,like_count,view_count,profiles(name)";
 
+// likes-live-schema.sql 適用前の DB には like_count / view_count 列がない。
+// 適用前でもビルド・公開ページが壊れないよう、未定義列エラー時は旧SELECTへフォールバックする
+// （そのとき likeCount / viewCount は 0 になる）。SQL適用後はこの経路は通らない。
+const SELECT_LEGACY = "id,title,body,thumbnail_url,tags,published_at,profiles(name)";
+const SUMMARY_SELECT_LEGACY = "id,title,thumbnail_url,tags,published_at,profiles(name)";
+
+function isMissingCountColumns(e: unknown): boolean {
+  return (e as { code?: string } | null)?.code === "42703"; // undefined_column
+}
+
 function toPost(r: any): Post {
   return {
     id: r.id,
@@ -49,11 +59,23 @@ function toSummary(r: any): PostSummary {
 
 // 取得失敗時は throw し、ISR が前回成功ページを維持する（フェーズ1と同方針）
 export async function fetchPostsPage(opts: { page: number; q?: string; tag?: string }) {
+  try {
+    return await fetchPostsPageWith(SUMMARY_SELECT, opts);
+  } catch (e) {
+    if (isMissingCountColumns(e)) return fetchPostsPageWith(SUMMARY_SELECT_LEGACY, opts);
+    throw e;
+  }
+}
+
+async function fetchPostsPageWith(
+  select: string,
+  opts: { page: number; q?: string; tag?: string }
+) {
   const supabase = createSupabasePublic();
   const buildQuery = () => {
     let query = supabase
       .from("posts")
-      .select(SUMMARY_SELECT, { count: "exact" })
+      .select(select, { count: "exact" })
       .eq("status", "published")
       .order("published_at", { ascending: false });
     if (opts.q) query = query.ilike("title", `%${opts.q}%`);
@@ -84,17 +106,21 @@ export async function fetchPostsPage(opts: { page: number; q?: string; tag?: str
 
 export async function fetchPostById(id: string): Promise<Post | null> {
   const supabase = createSupabasePublic();
-  const { data, error } = await supabase
-    .from("posts").select(SELECT).eq("id", id).eq("status", "published").maybeSingle();
+  const run = async (select: string) =>
+    supabase.from("posts").select(select).eq("id", id).eq("status", "published").maybeSingle();
+  let { data, error } = await run(SELECT);
+  if (error && isMissingCountColumns(error)) ({ data, error } = await run(SELECT_LEGACY));
   if (error) throw error;
   return data ? toPost(data) : null;
 }
 
 export async function fetchLatestPosts(limit: number): Promise<PostSummary[]> {
   const supabase = createSupabasePublic();
-  const { data, error } = await supabase
-    .from("posts").select(SUMMARY_SELECT).eq("status", "published")
-    .order("published_at", { ascending: false }).limit(limit);
+  const run = async (select: string) =>
+    supabase.from("posts").select(select).eq("status", "published")
+      .order("published_at", { ascending: false }).limit(limit);
+  let { data, error } = await run(SUMMARY_SELECT);
+  if (error && isMissingCountColumns(error)) ({ data, error } = await run(SUMMARY_SELECT_LEGACY));
   if (error) throw error;
   return (data ?? []).map(toSummary);
 }
