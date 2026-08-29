@@ -391,8 +391,9 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
               e.preventDefault();
               // Tiptap v3のfocusコマンドは他要素からのDOMフォーカス移動を行わない
               // ことがあるため、view.dom.focus()を直接併用する
+              // caret位置はコマンドで、DOMフォーカスは同期呼び出しで確実に移す
               editor?.commands.focus("start");
-              requestAnimationFrame(() => editor?.view.dom.focus());
+              editor?.view.dom.focus();
             }
           }}
           autoFocus={!initial}
