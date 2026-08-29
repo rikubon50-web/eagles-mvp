@@ -64,8 +64,8 @@ export default function StandingsBoard({ rows, updatedAt }: { rows: StandingRow[
 
         {/* 2カラム（中央仕切りも太線） */}
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y-[3px] md:divide-y-0 md:divide-x-[3px] divide-slate-800">
-          <BlockTable title="関東学生ラクロスリーグ戦2025 男子1部 Aブロック" rows={A} />
-          <BlockTable title="関東学生ラクロスリーグ戦2025 男子1部 Bブロック" rows={B} />
+          <BlockTable title="関東学生ラクロスリーグ戦2026 男子1部 Aブロック" rows={A} />
+          <BlockTable title="関東学生ラクロスリーグ戦2026 男子1部 Bブロック" rows={B} />
         </div>
 
       </div>
