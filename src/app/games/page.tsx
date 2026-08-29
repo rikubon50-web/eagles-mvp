@@ -25,13 +25,13 @@ export default async function GamesListPage() {
   ]);
 
   return (
-    <div className="space-y-12">
-      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">Game Schedule</h1>
+    <div className="space-y-6 md:space-y-12">
+      <h1 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 mt-6 md:mt-12">Game Schedule</h1>
 
       {/* 進行中の試合（あるときだけ最上部に表示） */}
       {live.length > 0 && (
         <section>
-          <h2 className="section-title text-2xl md:text-3xl font-bold mb-6">試合速報</h2>
+          <h2 className="section-title text-xl md:text-3xl font-bold mb-4 md:mb-6">試合速報</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {live.map((g) => (
               <GameCard key={g.id} game={g} />
@@ -42,7 +42,7 @@ export default async function GamesListPage() {
 
       {/* これからの試合 */}
       <section>
-        <h2 className="section-title text-2xl md:text-3xl font-bold mb-6">Upcoming</h2>
+        <h2 className="section-title text-xl md:text-3xl font-bold mb-4 md:mb-6">Upcoming</h2>
         {upcoming.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-4">
             {upcoming.map((g) => (
@@ -56,7 +56,7 @@ export default async function GamesListPage() {
 
       {/* 終了した試合 */}
       <section>
-        <h2 className="section-title text-2xl md:text-3xl font-bold mb-6">Results</h2>
+        <h2 className="section-title text-xl md:text-3xl font-bold mb-4 md:mb-6">Results</h2>
         {archive.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-4">
             {archive.map((g) => (

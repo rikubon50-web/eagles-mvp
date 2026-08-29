@@ -343,12 +343,19 @@
 }
 
 /* 一部だけ線の色を変える */
+/* モバイルは余白を圧縮し、md(768px)以上で従来値（margin/padding 2em）を復元する */
 .cstm-box-corner-accent {
-   margin: 0 auto 2em; /* 外側の余白（上下と中央配置） */
-   padding: 2em; /* 内側余白 */
+   margin: 0 auto 1.25em; /* 外側の余白（モバイル圧縮値） */
+   padding: 1.25em; /* 内側余白（モバイル圧縮値） */
    border: 3px solid #eee; /* 線の太さ（3px）、種類（実線）、色（#eee） */
    position: relative; /* 配置（基準となる位置） */
    z-index: 0; /* 他の要素との重なり順（0は通常の順番） */
+}
+@media (min-width: 768px) {
+  .cstm-box-corner-accent {
+    margin: 0 auto 2em; /* 従来値 */
+    padding: 2em; /* 従来値 */
+  }
 }
 
 .cstm-box-corner-accent:before {
