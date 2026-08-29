@@ -26,8 +26,8 @@ export default function BlogCard({ item }: { item: BlogCardItem }) {
             src={item.thumbnail.url}
             alt={item.title}
             fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover md:object-contain transition-transform group-hover:scale-[1.02]"
+            sizes="(max-width: 767px) 96px, 33vw"
+            className="object-cover md:object-contain transition-transform md:group-hover:scale-[1.02]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">

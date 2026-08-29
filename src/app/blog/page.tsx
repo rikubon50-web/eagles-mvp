@@ -62,7 +62,7 @@ export default async function BlogListPage({
 
       {/* 一覧 */}
       {blogs.length > 0 ? (
-        <div className="grid gap-0 divide-y divide-slate-200 md:grid-cols-3 md:gap-6 md:divide-y-0">
+        <div className="grid gap-0 max-md:divide-y max-md:divide-slate-200 md:grid-cols-3 md:gap-6">
           {blogs.map((b) => (
             <BlogCard key={b.id} item={b} />
           ))}

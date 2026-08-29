@@ -8,7 +8,7 @@ const OUR_UNIVERSITY = "青山学院大学";
 
 export default async function StandingsSection() {
   const standingsData = await fetchStandings();
-  const ours = standingsData.rows.find((r) => r.university === OUR_UNIVERSITY);
+  const ours = standingsData.rows.find((r) => r.university.trim() === OUR_UNIVERSITY);
   const rankLabel = ours && ours.rank !== "0" ? ours.rank : "-";
   return (
     <section>
