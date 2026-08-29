@@ -9,14 +9,16 @@ export type Post = {
   tags: string[];
   publishedAt: string;
   authorName: string | null;
+  likeCount: number;
+  viewCount: number;
 };
 
 // 一覧・トップの新着表示など本文を描画しない画面向け（egress 削減のため body を含めない）
 export type PostSummary = Omit<Post, "body">;
 
 const PER_PAGE = 24;
-const SELECT = "id,title,body,thumbnail_url,tags,published_at,profiles(name)";
-const SUMMARY_SELECT = "id,title,thumbnail_url,tags,published_at,profiles(name)";
+const SELECT = "id,title,body,thumbnail_url,tags,published_at,like_count,view_count,profiles(name)";
+const SUMMARY_SELECT = "id,title,thumbnail_url,tags,published_at,like_count,view_count,profiles(name)";
 
 function toPost(r: any): Post {
   return {
@@ -27,6 +29,8 @@ function toPost(r: any): Post {
     tags: r.tags ?? [],
     publishedAt: r.published_at,
     authorName: r.profiles?.name ?? null,
+    likeCount: r.like_count ?? 0,
+    viewCount: r.view_count ?? 0,
   };
 }
 
@@ -38,6 +42,8 @@ function toSummary(r: any): PostSummary {
     tags: r.tags ?? [],
     publishedAt: r.published_at,
     authorName: r.profiles?.name ?? null,
+    likeCount: r.like_count ?? 0,
+    viewCount: r.view_count ?? 0,
   };
 }
 

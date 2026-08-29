@@ -8,6 +8,7 @@ export type BlogCardItem = {
   thumbnail?: { url: string; width?: number; height?: number };
   publishedAt: string;
   tags?: string[];
+  likeCount?: number;
 };
 
 export default function BlogCard({ item }: { item: BlogCardItem }) {
@@ -33,12 +34,17 @@ export default function BlogCard({ item }: { item: BlogCardItem }) {
         )}
       </div>
       <h3 className="mb-2 line-clamp-2 font-bold leading-snug text-lg md:text-xl">{item.title}</h3>
-      <time
-        dateTime={item.publishedAt}
-        className="block mt-2 mb-2 text-xs text-slate-500"
-      >
-        {new Date(item.publishedAt).toLocaleDateString("ja-JP")}
-      </time>
+      <div className="mt-2 mb-2 flex items-center justify-between gap-2">
+        <time dateTime={item.publishedAt} className="block text-xs text-slate-500">
+          {new Date(item.publishedAt).toLocaleDateString("ja-JP")}
+        </time>
+        {/* スキ数（0 のときは出さない） */}
+        {(item.likeCount ?? 0) > 0 && (
+          <span className="text-xs text-rose-400" aria-label={`スキ ${item.likeCount}件`}>
+            ♡ {item.likeCount}
+          </span>
+        )}
+      </div>
     </Link>
   );
 }

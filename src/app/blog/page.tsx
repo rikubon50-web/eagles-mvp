@@ -48,6 +48,7 @@ export default async function BlogListPage({
     thumbnail: p.thumbnailUrl ? { url: p.thumbnailUrl, width: 1280, height: 720 } : undefined,
     publishedAt: p.publishedAt,
     tags: p.tags,
+    likeCount: p.likeCount,
   }));
 
   return (

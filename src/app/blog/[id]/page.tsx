@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchPostById } from "@/lib/posts";
 import { notFound } from "next/navigation";
+import LikeButton from "../LikeButton";
+import ViewTracker from "../ViewTracker";
 
 export const revalidate = 300;
 
@@ -112,6 +114,12 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
             className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
             dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
           />
+
+          {/* スキ♡（noteと同じく本文末尾の目立つ位置） */}
+          <div className="mt-10 flex justify-center">
+            <LikeButton postId={item.id} initialCount={item.likeCount} />
+          </div>
+          <ViewTracker postId={item.id} />
 
           <div className="mt-12 pt-8 border-t border-slate-200">
             <Link href="/blog" className="button-32">
