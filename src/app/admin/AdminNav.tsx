@@ -27,7 +27,12 @@ export default function AdminNav({ role }: { role: "member" | "admin" }) {
       <div className="flex h-12 items-center gap-4 px-4 overflow-x-auto">
         <Link
           href="/admin"
-          className="shrink-0 text-xs font-semibold text-slate-700 hover:text-emerald-700"
+          aria-current={pathname === "/admin" ? "page" : undefined}
+          className={`flex h-full shrink-0 items-center text-xs font-semibold ${
+            pathname === "/admin"
+              ? "text-emerald-700"
+              : "text-slate-700 hover:text-emerald-700"
+          }`}
         >
           管理メニュー
         </Link>
@@ -36,7 +41,7 @@ export default function AdminNav({ role }: { role: "member" | "admin" }) {
             <Link
               key={t.href}
               href={t.href}
-              className={`flex shrink-0 items-center border-b-2 px-1 text-sm transition-colors ${
+              className={`flex shrink-0 items-center border-b-2 px-2 text-sm transition-colors ${
                 isActive(t.href)
                   ? "border-emerald-600 font-bold text-emerald-700"
                   : "border-transparent text-slate-600 hover:text-slate-900"

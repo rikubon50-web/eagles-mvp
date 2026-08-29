@@ -33,7 +33,7 @@ export default async function AdminHomePage() {
   ].filter((m) => m.show);
 
   return (
-    <div className="max-w-md mx-auto pt-16 px-4 pb-16">
+    <div className="max-w-md mx-auto pt-10 px-4 pb-16">
       <h1 className="text-2xl font-bold text-slate-900 mb-1">管理メニュー</h1>
       <p className="text-sm text-slate-600 mb-8">{profile.name} さんとしてログイン中</p>
 

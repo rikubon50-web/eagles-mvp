@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export type Profile = { userId: string; name: string; role: "admin" | "member" };
 
-export async function getProfile(): Promise<Profile | null> {
+export const getProfile = cache(async (): Promise<Profile | null> => {
   const supabase = createSupabaseServer();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
@@ -34,4 +35,4 @@ export async function getProfile(): Promise<Profile | null> {
     .single();
   if (!healed) return null;
   return { userId: user.id, name: healed.name, role: healed.role };
-}
+});
