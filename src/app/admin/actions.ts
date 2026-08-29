@@ -10,7 +10,7 @@ export async function login(formData: FormData) {
   if (error) {
     redirect("/admin/login?error=" + encodeURIComponent("メールアドレスまたはパスワードが違います"));
   }
-  redirect("/admin/standings");
+  redirect("/admin");
 }
 
 export async function signup(formData: FormData) {
@@ -44,7 +44,7 @@ export async function signup(formData: FormData) {
     fail("登録に失敗しました。入力内容を確認するか、時間をおいて再度お試しください。");
   }
 
-  redirect("/admin/standings");
+  redirect("/admin");
 }
 
 export async function logout() {
