@@ -59,7 +59,7 @@ export default function GameForm({ initial }: { initial: InitialGame | null }) {
     try {
       const blob = await prepareLogoForUpload(file);
       const form = new FormData();
-      form.append("image", blob, "logo.jpg");
+      form.append("image", blob, "logo.png");
       form.append("postId", uploadId);
       const res = await fetch("/api/admin/upload", { method: "POST", body: form });
       if (!res.ok) {

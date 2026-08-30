@@ -6,12 +6,12 @@ async function decode(file: File): Promise<ImageBitmap> {
   catch { throw new Error("この画像形式は使用できません。スクリーンショット等のJPEG/PNGでお試しください"); }
 }
 
-function toBlob(canvas: HTMLCanvasElement): Promise<Blob> {
+function toBlob(canvas: HTMLCanvasElement, type: "image/jpeg" | "image/png" = "image/jpeg"): Promise<Blob> {
   return new Promise((res, rej) =>
-    canvas.toBlob((b) => (b ? res(b) : rej(new Error("画像の変換に失敗しました"))), "image/jpeg", 0.85));
+    canvas.toBlob((b) => (b ? res(b) : rej(new Error("画像の変換に失敗しました"))), type, 0.85));
 }
 
-// 相手ロゴ用: 長辺400pxへ縮小したJPEGを1枚だけ返す
+// 相手ロゴ用: 長辺400pxへ縮小して1枚だけ返す（透過ロゴの背景が黒くならないようPNG）
 export async function prepareLogoForUpload(file: File): Promise<Blob> {
   const bmp = await decode(file);
   const scale = Math.min(1, 400 / Math.max(bmp.width, bmp.height));
@@ -19,7 +19,7 @@ export async function prepareLogoForUpload(file: File): Promise<Blob> {
   c.width = Math.round(bmp.width * scale);
   c.height = Math.round(bmp.height * scale);
   c.getContext("2d")!.drawImage(bmp, 0, 0, c.width, c.height);
-  return toBlob(c);
+  return toBlob(c, "image/png");
 }
 
 export async function prepareImageForUpload(file: File): Promise<{ image: Blob; thumb: Blob }> {

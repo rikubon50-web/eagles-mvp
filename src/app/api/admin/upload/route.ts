@@ -22,18 +22,21 @@ export async function POST(req: NextRequest) {
   }
   const ts = Date.now();
   const base = `${user.id}/${postId}/${ts}`;
+  // 透過ロゴ(PNG)は形式を保持し、それ以外は従来どおりJPEGとして保存
+  const isPng = image.type === "image/png";
+  const ext = isPng ? "png" : "jpg";
   const up1 = await supabase.storage.from("blog-images")
-    .upload(`${base}.jpg`, image, { contentType: "image/jpeg" });
+    .upload(`${base}.${ext}`, image, { contentType: isPng ? "image/png" : "image/jpeg" });
   if (up1.error) return NextResponse.json({ error: up1.error.message }, { status: 500 });
 
   const pub = (p: string) => supabase.storage.from("blog-images").getPublicUrl(p).data.publicUrl;
   if (!thumb) {
-    return NextResponse.json({ url: pub(`${base}.jpg`) });
+    return NextResponse.json({ url: pub(`${base}.${ext}`) });
   }
 
   const up2 = await supabase.storage.from("blog-images")
     .upload(`${base}-thumb.jpg`, thumb, { contentType: "image/jpeg" });
   if (up2.error) return NextResponse.json({ error: up2.error.message }, { status: 500 });
 
-  return NextResponse.json({ url: pub(`${base}.jpg`), thumbUrl: pub(`${base}-thumb.jpg`) });
+  return NextResponse.json({ url: pub(`${base}.${ext}`), thumbUrl: pub(`${base}-thumb.jpg`) });
 }
