@@ -87,7 +87,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   return (
     <div
-      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-white ring-1 ring-black/5"
+      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-transparent ring-1 ring-black/5"
       style={{
         boxShadow: "0 2px 12px rgba(15,23,42,0.12)",
         aspectRatio: "3/4",

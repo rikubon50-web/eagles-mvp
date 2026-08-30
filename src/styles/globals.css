@@ -479,3 +479,12 @@
     transform: translate(0, 0);
   }
 }
+
+/* 横スクロール領域のスクロールバーを隠す（ホームのRoster等） */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
