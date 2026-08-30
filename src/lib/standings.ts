@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { createSupabasePublic } from "@/lib/supabase/public";
 
+// 大会名（年度更新はここだけ変更する）
+export const LEAGUE_TITLE = "関東学生ラクロスリーグ戦2026 男子1部";
+
 export const standingsRowSchema = z.object({
   block: z.enum(["A", "B"]),
   rank: z.number().int(),

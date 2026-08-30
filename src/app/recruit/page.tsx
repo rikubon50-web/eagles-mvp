@@ -112,7 +112,7 @@ export default async function ShinkanPage() {
       </div>
 
       {/* 2. 新歓情報 */}
-      <div className={`${fullWidth} bg-white py-16`}>
+      <div className={`${fullWidth} bg-white py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-8">新歓情報</h2>
           {shinkanNews.length > 0 ? (
@@ -143,7 +143,7 @@ export default async function ShinkanPage() {
       </div>
 
       {/* 3. EAGLESの数字 */}
-      <div className={`${fullWidth} bg-slate-100 py-16`}>
+      <div className={`${fullWidth} bg-slate-100 py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-10 text-center">
             EAGLESの数字
@@ -162,7 +162,7 @@ export default async function ShinkanPage() {
       </div>
 
       {/* 4. 入部の流れ */}
-      <div className={`${fullWidth} bg-white py-16`}>
+      <div className={`${fullWidth} bg-white py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-10">入部の流れ</h2>
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-0">
@@ -188,7 +188,7 @@ export default async function ShinkanPage() {
 
       {/* 5. 先輩の声 */}
       {testimonials.length > 0 && (
-        <div className={`${fullWidth} bg-slate-900 py-16`}>
+        <div className={`${fullWidth} bg-slate-900 py-8 md:py-16`}>
           <FadeIn className={innerCls}>
             <h2 className="section-title text-3xl md:text-4xl font-bold mb-10 text-white">
               先輩の声
@@ -223,7 +223,7 @@ export default async function ShinkanPage() {
       )}
 
       {/* 6. FAQ */}
-      <div className={`${fullWidth} bg-white py-16`}>
+      <div className={`${fullWidth} bg-white py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <h2 className="section-title text-3xl md:text-4xl font-bold mb-8">よくある質問</h2>
           <div className="faq space-y-3 max-w-3xl">
@@ -253,7 +253,7 @@ export default async function ShinkanPage() {
       </div>
 
       {/* 7. CTA */}
-      <div className={`${fullWidth} bg-[#0f6536] py-16`}>
+      <div className={`${fullWidth} bg-[#0f6536] py-8 md:py-16`}>
         <FadeIn className={`${innerCls} text-center`}>
           <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
             まずは気軽に連絡してください

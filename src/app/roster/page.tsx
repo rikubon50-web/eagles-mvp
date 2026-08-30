@@ -38,24 +38,24 @@ export default async function RosterPage() {
   return (
     <div className="scroll-smooth">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
-        {/* Cohort Tabs (このページ内で完結するアンカーリンク) */}
-        <nav className="relative z-10 bg-white py-3">
-          <ul className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* Cohort Tabs (このページ内で完結するアンカーリンク・ヘッダー直下に固定) */}
+        <nav className="sticky top-[85px] z-30 bg-white/95 backdrop-blur border-b border-slate-200 py-2 md:py-3 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <ul className="flex overflow-x-auto gap-2 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
             {cohorts.map((c) => (
-              <li key={`tab-${c}`}>
+              <li key={`tab-${c}`} className="shrink-0 md:shrink">
                 <a
                   href={`#cohort-${c}`}
-                  className="block text-center border border-[#0f6536] px-6 py-4 font-extrabold tracking-wider text-[#0f6536] hover:bg-[#0f6536] hover:text-white transition-colors"
+                  className="block text-center border border-[#0f6536] px-4 py-2 text-sm md:px-6 md:py-4 md:text-base whitespace-nowrap font-extrabold tracking-wider text-[#0f6536] hover:bg-[#0f6536] hover:text-white transition-colors"
                 >
                   {cohortLabel(c)}
                 </a>
               </li>
             ))}
             {coaches.length > 0 && (
-              <li key="tab-coach">
+              <li key="tab-coach" className="shrink-0 md:shrink">
                 <a
                   href="#coach"
-                  className="block text-center border border-slate-900 px-6 py-4 font-extrabold tracking-wider text-slate-900 hover:bg-slate-900 hover:text-white transition-colors"
+                  className="block text-center border border-slate-900 px-4 py-2 text-sm md:px-6 md:py-4 md:text-base whitespace-nowrap font-extrabold tracking-wider text-slate-900 hover:bg-slate-900 hover:text-white transition-colors"
                 >
                   COACH
                 </a>
@@ -73,7 +73,7 @@ export default async function RosterPage() {
             (a, b) => roleRank(a) - roleRank(b) || a.name.localeCompare(b.name, "ja")
           );
           return (
-            <section id={`cohort-${cohort}`} key={cohort} className="space-y-6">
+            <section id={`cohort-${cohort}`} key={cohort} className="space-y-6 scroll-mt-[150px] md:scroll-mt-44">
               <div className="w-full bg-[#0f6536] text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
                 {cohortLabel(cohort)}
               </div>
@@ -87,7 +87,7 @@ export default async function RosterPage() {
         })}
 
         {coaches.length > 0 && (
-          <section id="coach" className="space-y-6">
+          <section id="coach" className="space-y-6 scroll-mt-[150px] md:scroll-mt-44">
             <div className="w-full bg-slate-900 text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
               COACH
             </div>

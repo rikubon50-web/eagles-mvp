@@ -1,6 +1,7 @@
 // src/components/Footer.tsx
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram, Mail } from "lucide-react";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -30,6 +31,21 @@ export default function Footer() {
             height={60}
             className="footer__logoImg"
           />
+        </div>
+
+        {/* SNS・お問い合わせ導線 */}
+        <div className="mb-4 flex justify-center gap-5">
+          <Link
+            href="https://www.instagram.com/eagles_agulax"
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram"
+          >
+            <Instagram className="w-6 h-6 text-brand-600 hover:text-brand-700" />
+          </Link>
+          <Link href="/contact" aria-label="Contact">
+            <Mail className="w-6 h-6 text-brand-600 hover:text-brand-700" />
+          </Link>
         </div>
 
         <div className="footer__copy">© {year} Aoyama Gakuin Univ. Men’s Lacrosse EAGLES</div>

@@ -99,10 +99,10 @@ export default function Attraction({ backgroundImgUrl, slogan, body }: Attractio
           >
             <Link
               href="/about"
-              className="inline-flex flex-wrap items-center gap-[clamp(0.375rem,1vw,0.5rem)] rounded-md border border-slate-400 px-[clamp(0.75rem,1.5vw,1rem)] py-[clamp(0.5rem,1vw,0.75rem)] text-[clamp(0.9rem,1.2vw,0.95rem)] font-medium text-slate-700 hover:bg-white/70 max-w-full whitespace-normal break-words [text-wrap:pretty] leading-[1.2]"
+              className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-[clamp(0.9rem,1.2vw,0.95rem)] font-semibold text-white shadow-lg hover:bg-slate-700 transition-colors max-w-full whitespace-normal break-words [text-wrap:pretty] leading-[1.2]"
             >
-              <span className="inline-block w-[clamp(1.25rem,4vw,2rem)] h-px bg-slate-400 shrink-0" />
               部について詳しく見る
+              <span aria-hidden="true" className="shrink-0">→</span>
             </Link>
           </motion.div>
         </div>

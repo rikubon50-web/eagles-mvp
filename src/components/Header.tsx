@@ -1,13 +1,21 @@
 // src/components/Header.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Mail, Menu, X } from "lucide-react";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+
+  // メニュー展開中は背景スクロールをロック
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <header className="header">
@@ -101,23 +109,26 @@ export default function Header() {
           }
         }
         .header { position: sticky; top: 0; z-index: 1000; background: #fff; }
-        /* Mobile dropdown base */
-        @media (max-width: 899px) {
+        /* モバイルメニュー：ヘッダー下から画面全体を覆う白パネル */
+        @media (max-width: 1023px) {
           .header__nav--mobile {
             display: flex;
             flex-direction: column;
-            position: absolute;
-            top: 100%;
+            position: fixed;
+            top: 85px; /* ヘッダー高さ分 */
             left: 0;
             right: 0;
+            bottom: 0;
+            overflow-y: auto;
             background: #fff;
-            padding: 12px 16px;
+            padding: 12px 16px 32px;
             border-top: 1px solid #e5e7eb; /* slate-200 */
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
             z-index: 1001; /* raised for sticky header */
           }
+          /* 区切り線は付けず全項目で統一 */
           .header__nav--mobile .header__link {
             padding: 12px 8px;
+            border: 0;
           }
         }
         /* Hide mobile nav on desktop just in case */

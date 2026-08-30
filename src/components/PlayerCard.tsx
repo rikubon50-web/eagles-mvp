@@ -105,9 +105,9 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          height: "38%",
+          height: "44%",
           background:
-            "linear-gradient(0deg, #0f6536 25%, rgba(15,101,54,0.0) 100%)",
+            "linear-gradient(0deg, #0f6536 40%, rgba(15,101,54,0.75) 70%, rgba(15,101,54,0.0) 100%)",
           zIndex: 2,
           display: "flex",
           flexDirection: "column",
@@ -129,9 +129,11 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
                 fontSize: "0.82rem",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                opacity: 0.86,
-                fontWeight: 500,
+                color: "rgba(255,255,255,0.9)",
+                fontWeight: 600,
+                lineHeight: 1.35,
                 marginBottom: "0.12em",
+                textShadow: "0 1px 3px rgba(0,0,0,0.35)",
               }}
             >
               {_alphabetName}

@@ -1,4 +1,4 @@
-import { fetchGamesLive, fetchGamesUpcoming } from "@/lib/games";
+import { fetchGamesArchive, fetchGamesLive, fetchGamesUpcoming } from "@/lib/games";
 import GameCard from "@/components/GameCard";
 import Link from "next/link";
 
@@ -9,8 +9,16 @@ export default async function UpcomingSection() {
     fetchGamesUpcoming(),
   ]);
   // live があれば最上部に出し、見出しも「試合速報」へ切り替える
-  const games = [...live, ...upcoming];
-  const heading = live.length > 0 ? "試合速報" : "Up Coming";
+  let games = [...live, ...upcoming];
+  let heading = live.length > 0 ? "試合速報" : "Up Coming";
+  // live も予定も無いときは直近の結果を1件表示して空白を避ける
+  if (games.length === 0) {
+    const archive = await fetchGamesArchive();
+    if (archive.length > 0) {
+      games = archive.slice(0, 1);
+      heading = "Recent Result";
+    }
+  }
   return (
     <section>
       <h2 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6">{heading}</h2>

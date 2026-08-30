@@ -42,13 +42,13 @@ export default async function AboutPage() {
             <div className="cstm-box-corner-accent prose prose-sm md:prose-base prose-slate max-w-none">
               {about?.body ? (
                 <div
-                  className="font-bold"
+                  className="font-normal"
                   dangerouslySetInnerHTML={{
                     __html: about.body.replace(/<p><\/p>/g, "<br />"),
                   }}
                 />
               ) : (
-                <p className="text-slate-700 leading-relaxed font-bold">主将からの挨拶文を準備中です。</p>
+                <p className="text-slate-700 leading-relaxed">主将からの挨拶文を準備中です。</p>
               )}
             </div>
           </div>

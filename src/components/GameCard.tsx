@@ -11,12 +11,14 @@ export default function GameCard({ game }: { game: GameView }) {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
+      timeZone: "Asia/Tokyo", // サーバーがUTCでも日本時間で表示
     })
     .replace(/\//g, "/");
   const t = date.toLocaleTimeString("ja-JP", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "Asia/Tokyo",
   });
   
   // --- 結果/ステータス用（正規化） ---
@@ -54,8 +56,15 @@ export default function GameCard({ game }: { game: GameView }) {
   const autoResult = isFinished && hasScores ? (our! > opp! ? "win" : our! < opp! ? "lose" : "draw") : undefined;
   const resultLabel = (manualResult as "win" | "lose" | "draw" | undefined) ?? autoResult;
 
-  // ステータス表示用のラベル & 色
-  const statusLabel = status ? status.toUpperCase() : undefined;
+  // ステータス表示用のラベル & 色（live は別枠で「●LIVE」表示のまま）
+  const statusLabel =
+    status === "scheduled"
+      ? "試合予定"
+      : status === "postponed"
+      ? "延期"
+      : status === "finished"
+      ? "試合終了"
+      : undefined;
 
   const statusClass =
     status === "postponed"
