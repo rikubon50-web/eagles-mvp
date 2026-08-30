@@ -45,7 +45,7 @@ export default async function RosterPage() {
               <li key={`tab-${c}`} className="shrink-0 md:shrink">
                 <a
                   href={`#cohort-${c}`}
-                  className="block text-center border border-[#0f6536] px-4 py-2 text-sm md:px-6 md:py-4 md:text-base whitespace-nowrap font-extrabold tracking-wider text-[#0f6536] hover:bg-[#0f6536] hover:text-white transition-colors"
+                  className="block text-center rounded-full border border-slate-300 px-4 py-2 text-sm md:px-6 md:py-3 md:text-base whitespace-nowrap font-bold tracking-wider text-slate-700 hover:border-emerald-600 hover:text-emerald-700 transition-colors"
                 >
                   {cohortLabel(c)}
                 </a>
@@ -55,7 +55,7 @@ export default async function RosterPage() {
               <li key="tab-coach" className="shrink-0 md:shrink">
                 <a
                   href="#coach"
-                  className="block text-center border border-slate-900 px-4 py-2 text-sm md:px-6 md:py-4 md:text-base whitespace-nowrap font-extrabold tracking-wider text-slate-900 hover:bg-slate-900 hover:text-white transition-colors"
+                  className="block text-center rounded-full border border-slate-300 px-4 py-2 text-sm md:px-6 md:py-3 md:text-base whitespace-nowrap font-bold tracking-wider text-slate-700 hover:border-emerald-600 hover:text-emerald-700 transition-colors"
                 >
                   COACH
                 </a>
@@ -74,8 +74,13 @@ export default async function RosterPage() {
           );
           return (
             <section id={`cohort-${cohort}`} key={cohort} className="space-y-6 scroll-mt-[150px] md:scroll-mt-44">
-              <div className="w-full bg-[#0f6536] text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
-                {cohortLabel(cohort)}
+              <div className="flex items-baseline gap-3 border-b-2 border-slate-900 pb-2">
+                <span className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
+                  {cohortLabel(cohort)}
+                </span>
+                <span className="text-[11px] sm:text-sm font-bold uppercase tracking-[0.3em] text-emerald-700">
+                  Members
+                </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {list.map((p) => (
@@ -88,8 +93,11 @@ export default async function RosterPage() {
 
         {coaches.length > 0 && (
           <section id="coach" className="space-y-6 scroll-mt-[150px] md:scroll-mt-44">
-            <div className="w-full bg-slate-900 text-white text-center font-extrabold text-4xl sm:text-6xl py-6">
-              COACH
+            <div className="flex items-baseline gap-3 border-b-2 border-slate-900 pb-2">
+              <span className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900">COACH</span>
+              <span className="text-[11px] sm:text-sm font-bold uppercase tracking-[0.3em] text-emerald-700">
+                Staff
+              </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {coaches

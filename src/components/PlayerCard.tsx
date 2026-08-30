@@ -30,65 +30,34 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
   const href = p?.id ? `/roster/${p.id}` : undefined;
   const aria = _japaneseName || _alphabetName || "player";
 
+  // C → 役職(無ければ"COACH") / それ以外(PL·MG·TR·AS) → ロールをそのまま表示
+  const role = p?.role;
+  const roleLabel = role ? (role === "C" ? p?.position || "COACH" : role) : null;
+
   const figureContents = (
     <>
-      {(() => {
-        const role = p?.role;
-        if (!role) return null;
-        // C → 役職(無ければ"COACH") / それ以外(PL·MG·TR·AS) → ロールをそのまま表示
-        const label = role === "C" ? p?.position || "COACH" : role;
-        return (
-          <div
-            style={{
-              position: "absolute",
-              top: "0.7rem",
-              left: "0.7rem",
-              zIndex: 4,
-              background: "#0f6536",
-              color: "#fff",
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              letterSpacing: "0.06em",
-              padding: "0.28rem 0.8rem",
-              borderRadius: "999px",
-            }}
-          >
-            {label}
-          </div>
-        );
-      })()}
       {_photoUrl ? (
         <img
           src={_photoUrl}
           alt={_japaneseName || _alphabetName || "player"}
-          className="transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            zIndex: 1,
-          }}
+          className="absolute inset-0 z-[1] block h-full w-full object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
         />
       ) : (
         // 画像が無い場合のプレースホルダ
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "#e6eef2",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#64748b",
-            zIndex: 1,
-            fontWeight: 600,
-          }}
-        >
+        <div className="absolute inset-0 z-[1] flex items-center justify-center bg-slate-100 font-semibold text-slate-500">
           {_japaneseName || _alphabetName || "No Image"}
+        </div>
+      )}
+
+      {/* 上部スクリム（ロール表記を写真の明暗に関わらず読めるように） */}
+      {roleLabel && (
+        <div className="absolute inset-x-0 top-0 z-[2] h-16 bg-gradient-to-b from-black/45 to-transparent" />
+      )}
+
+      {/* ロール表記: ピルではなくタイポグラフィで */}
+      {roleLabel && (
+        <div className="absolute left-3 top-3 z-[4] border-l-2 border-emerald-400 pl-2 text-[11px] font-bold uppercase tracking-[0.25em] text-white drop-shadow">
+          {roleLabel}
         </div>
       )}
 
@@ -98,56 +67,16 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         style={{ zIndex: 3 }}
       />
 
-      {/* 下部のグラデーション帯 */}
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: "44%",
-          background:
-            "linear-gradient(0deg, #0f6536 40%, rgba(15,101,54,0.75) 70%, rgba(15,101,54,0.0) 100%)",
-          zIndex: 2,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-        }}
-      >
-        <div
-          style={{
-            padding: "1.1rem 1rem 1.2rem 1rem",
-            color: "#fff",
-            textAlign: "center",
-            width: "100%",
-            boxSizing: "border-box",
-          }}
-        >
+      {/* 下部の名前ブロック（ダークスクリム＋左揃えのエディトリアル調） */}
+      <div className="absolute inset-x-0 bottom-0 z-[2] flex h-[46%] flex-col justify-end bg-gradient-to-t from-slate-950/85 via-slate-950/45 to-transparent">
+        <div className="w-full px-4 pb-4 pt-2 text-left">
           {_alphabetName && (
-            <div
-              style={{
-                fontSize: "0.82rem",
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: "rgba(255,255,255,0.9)",
-                fontWeight: 600,
-                lineHeight: 1.35,
-                marginBottom: "0.12em",
-                textShadow: "0 1px 3px rgba(0,0,0,0.35)",
-              }}
-            >
+            <div className="mb-0.5 text-[10px] font-bold uppercase leading-snug tracking-[0.22em] text-emerald-300/90">
               {_alphabetName}
             </div>
           )}
           {_japaneseName && (
-            <div
-              style={{
-                fontSize: "1.22rem",
-                fontWeight: 700,
-                letterSpacing: "0.04em",
-                lineHeight: 1.13,
-              }}
-            >
+            <div className="text-lg font-bold leading-tight tracking-wide text-white">
               {_japaneseName}
             </div>
           )}
@@ -158,14 +87,9 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   return (
     <div
-      className="group relative overflow-hidden"
+      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-white ring-1 ring-black/5"
       style={{
-        borderRadius: "1rem",
-        boxShadow: "0 4px 16px rgba(20,30,55,0.18)",
-        background: "#fff",
-        maxWidth: "280px",
-        margin: "0 auto",
-        width: "100%",
+        boxShadow: "0 2px 12px rgba(15,23,42,0.12)",
         aspectRatio: "3/4",
         display: "flex",
         flexDirection: "column",
