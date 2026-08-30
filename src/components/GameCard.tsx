@@ -173,11 +173,11 @@ export default function GameCard({ game }: { game: GameView }) {
 
         {/* AWAY */}
         <div className="flex flex-col items-center text-center">
-          <div className="mb-2 text-slate-800 font-bold text-lg md:text-2xl whitespace-nowrap">
+          <div className="mb-1 md:mb-2 text-slate-800 font-bold text-sm md:text-2xl whitespace-nowrap">
             {game.awayTeamName}
           </div>
           {game.awayTeamLogo ? (
-            <div className="relative h-16 w-24 sm:h-20 sm:w-32 md:h-24 md:w-32 lg:h-28 lg:w-40">
+            <div className="relative h-12 w-20 sm:h-20 sm:w-32 md:h-24 md:w-32 lg:h-28 lg:w-40">
               <Image src={game.awayTeamLogo.url} alt={game.awayTeamName} fill className="object-contain" />
             </div>
           ) : (
