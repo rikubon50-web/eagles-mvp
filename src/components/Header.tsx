@@ -118,7 +118,9 @@ export default function Header() {
             top: 85px; /* ヘッダー高さ分 */
             left: 0;
             right: 0;
-            bottom: 0;
+            /* 祖先にtransformがあるとfixedのbottom:0がビューポート基準にならないため高さで指定 */
+            height: calc(100vh - 85px);
+            height: calc(100dvh - 85px);
             overflow-y: auto;
             background: #fff;
             padding: 12px 16px 32px;
