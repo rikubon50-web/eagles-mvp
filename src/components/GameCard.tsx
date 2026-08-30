@@ -74,9 +74,9 @@ export default function GameCard({ game }: { game: GameView }) {
       : "text-slate-700 border-slate-700";
 
   return (
-    <div className="border-2 border-slate-800 rounded-md p-6 md:p-10 bg-white not-prose">
+    <div className="border-2 border-slate-800 rounded-md p-4 md:p-10 bg-white not-prose">
       {/* 見出し帯 */}
-      <div className="border-2 border-slate-800 text-center py-3 font-bold text-slate-800 text-lg md:text-2xl">
+      <div className="border-2 border-slate-800 text-center py-2 md:py-3 font-bold text-slate-800 text-base md:text-2xl">
         {game.title}
       </div>
 
@@ -99,22 +99,22 @@ export default function GameCard({ game }: { game: GameView }) {
       )}
 
       {/* 会場 */}
-      <div className="border-b-2 border-slate-300 text-center py-6 md:py-8 text-slate-800 font-bold text-lg md:text-2xl">
+      <div className="border-b-2 border-slate-300 text-center py-3 md:py-8 text-slate-800 font-bold text-sm md:text-2xl">
         会場：{game.venue}
       </div>
 
       {/* 日付・時間（時間を少し小さく） */}
-      <div className="pt-8 pb-2 md:pt-6 md:pb-3 text-center text-slate-900">
-        <div className="font-extrabold text-4xl md:text-4xl tracking-widest">{d}</div>
-        <div className="mt-2 font-extrabold text-4xl md:text-4xl tracking-widest">{t}</div>
+      <div className="pt-4 pb-1 md:pt-6 md:pb-3 text-center text-slate-900 flex flex-wrap items-baseline justify-center gap-x-3 md:block">
+        <div className="font-extrabold text-xl md:text-4xl tracking-wider md:tracking-widest">{d}</div>
+        <div className="md:mt-2 font-extrabold text-xl md:text-4xl tracking-wider md:tracking-widest">{t}</div>
       </div>
 
       {/* 勝敗バッジ（finished のときだけ） */}
       {resultLabel && (
-        <div className="text-center py-2">
+        <div className="text-center py-1 md:py-2">
           <span
             className={
-              "inline-block rounded px-4 py-1 font-extrabold text-5xl " +
+              "inline-block rounded px-4 py-0.5 md:py-1 font-extrabold text-3xl md:text-5xl " +
               (resultLabel === "win"
                 ? "text-yellow-600"
                 : resultLabel === "lose"
@@ -129,11 +129,11 @@ export default function GameCard({ game }: { game: GameView }) {
 
       {/* スコア（finished のときだけ） */}
       {isFinished && our != null && opp != null && (
-        <div className="text-center py-2">
-          <div className="flex items-center justify-center gap-6 md:gap-10">
-            <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{our}</span>
-            <span className="font-extrabold text-3xl md:text-5xl text-slate-700">–</span>
-            <span className="font-extrabold text-5xl md:text-6xl text-slate-900">{opp}</span>
+        <div className="text-center py-1 md:py-2">
+          <div className="flex items-center justify-center gap-4 md:gap-10">
+            <span className="font-extrabold text-4xl md:text-6xl text-slate-900">{our}</span>
+            <span className="font-extrabold text-2xl md:text-5xl text-slate-700">–</span>
+            <span className="font-extrabold text-4xl md:text-6xl text-slate-900">{opp}</span>
           </div>
         </div>
       )}
@@ -141,13 +141,13 @@ export default function GameCard({ game }: { game: GameView }) {
       {/* 現在スコア（live のとき。未入力は 0 ではなく「-」で表示。
           プレースホルダの「-」は区切りの「–」と紛れないよう減灰する） */}
       {isLive && (
-        <div className="text-center py-2">
-          <div className="flex items-center justify-center gap-6 md:gap-10">
-            <span className={`font-extrabold text-5xl md:text-6xl ${our != null ? "text-slate-900" : "text-slate-300"}`}>
+        <div className="text-center py-1 md:py-2">
+          <div className="flex items-center justify-center gap-4 md:gap-10">
+            <span className={`font-extrabold text-4xl md:text-6xl ${our != null ? "text-slate-900" : "text-slate-300"}`}>
               {our ?? "-"}
             </span>
-            <span className="font-extrabold text-3xl md:text-5xl text-slate-700">–</span>
-            <span className={`font-extrabold text-5xl md:text-6xl ${opp != null ? "text-slate-900" : "text-slate-300"}`}>
+            <span className="font-extrabold text-2xl md:text-5xl text-slate-700">–</span>
+            <span className={`font-extrabold text-4xl md:text-6xl ${opp != null ? "text-slate-900" : "text-slate-300"}`}>
               {opp ?? "-"}
             </span>
           </div>
@@ -155,21 +155,21 @@ export default function GameCard({ game }: { game: GameView }) {
       )}
 
       {/* 対戦カード：中央揃え・大学名は改行禁止・ロゴを少し小さく */}
-      <div className="grid grid-cols-3 items-center gap-6 md:gap-10 py-6">
+      <div className="grid grid-cols-3 items-center gap-3 md:gap-10 py-3 md:py-6">
         {/* HOME */}
         <div className="flex flex-col items-center text-center">
-          <div className="mb-2 text-slate-800 font-bold text-lg md:text-2xl whitespace-nowrap">
+          <div className="mb-1 md:mb-2 text-slate-800 font-bold text-sm md:text-2xl whitespace-nowrap">
             {game.homeTeamName}
           </div>
           {game.homeTeamLogo && (
-            <div className="relative h-16 w-24 sm:h-20 sm:w-32 md:h-24 md:w-32 lg:h-28 lg:w-40">
+            <div className="relative h-12 w-20 sm:h-20 sm:w-32 md:h-24 md:w-32 lg:h-28 lg:w-40">
               <Image src={game.homeTeamLogo.url} alt={game.homeTeamName} fill className="object-contain" />
             </div>
           )}
         </div>
 
         {/* VS */}
-        <div className="text-center font-extrabold text-3xl md:text-5xl text-slate-900">VS</div>
+        <div className="text-center font-extrabold text-xl md:text-5xl text-slate-900">VS</div>
 
         {/* AWAY */}
         <div className="flex flex-col items-center text-center">
@@ -181,7 +181,7 @@ export default function GameCard({ game }: { game: GameView }) {
               <Image src={game.awayTeamLogo.url} alt={game.awayTeamName} fill className="object-contain" />
             </div>
           ) : (
-            <div className="h-20 w-32 md:h-28 md:w-40 grid place-items-center text-xs text-slate-400 border">
+            <div className="h-12 w-20 md:h-28 md:w-40 grid place-items-center text-xs text-slate-400 border">
               NO LOGO
             </div>
           )}
@@ -190,11 +190,11 @@ export default function GameCard({ game }: { game: GameView }) {
 
       {/* CTA: ステータス別に表示（live でも会場・アクセス案内への導線を残す） */}
       {(status === "scheduled" || status === "postponed" || isLive) && (
-        <div className="border-t-2 border-slate-300 mt-6 pt-6">
+        <div className="border-t-2 border-slate-300 mt-4 md:mt-6 pt-4 md:pt-6">
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={`/games/${game.id}`}
-              className="inline-block border-2 border-slate-800 px-6 py-3 text-slate-900 font-bold hover:bg-slate-50"
+              className="inline-block border-2 border-slate-800 px-5 py-2 md:px-6 md:py-3 text-sm md:text-base text-slate-900 font-bold hover:bg-slate-50"
             >
               ゲーム案内を見る
             </Link>
@@ -203,12 +203,12 @@ export default function GameCard({ game }: { game: GameView }) {
       )}
 
       {status === "finished" && (
-        <div className="border-t-2 border-slate-300 mt-6 pt-6">
+        <div className="border-t-2 border-slate-300 mt-4 md:mt-6 pt-4 md:pt-6">
           <div className="flex flex-wrap items-center justify-center gap-3">
             {/* ゲームレポート（finished のときのみ） */}
             <Link
               href={`/games/${game.id}`}
-              className="inline-block border-2 border-slate-800 px-6 py-3 text-slate-900 font-bold hover:bg-slate-50"
+              className="inline-block border-2 border-slate-800 px-5 py-2 md:px-6 md:py-3 text-sm md:text-base text-slate-900 font-bold hover:bg-slate-50"
             >
               ゲームレポートを見る
             </Link>
