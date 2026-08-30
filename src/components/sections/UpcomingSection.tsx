@@ -26,7 +26,7 @@ export default async function UpcomingSection() {
       {games.length > 0 ? (
         <div className="grid md:grid-cols-2 gap-4">
           {games.slice(0, 2).map((g) => (
-            <GameCard key={g.id} game={g} />
+            <GameCard key={g.id} game={g} compact />
           ))}
         </div>
       ) : (

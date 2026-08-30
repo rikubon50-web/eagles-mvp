@@ -3,8 +3,8 @@ import Image from "next/image";
 import type { GameView } from "@/lib/games";
 import Link from "next/link";
 
-// 試合カード（ポスター風）
-export default function GameCard({ game }: { game: GameView }) {
+// 試合カード（ポスター風）。compact=true でモバイルのみ簡易表示（ホーム用）、md以上は常にポスター型
+export default function GameCard({ game, compact = false }: { game: GameView; compact?: boolean }) {
   const date = new Date(game.startAt);
   const d = date
     .toLocaleDateString("ja-JP", {
@@ -73,7 +73,81 @@ export default function GameCard({ game }: { game: GameView }) {
       ? "text-blue-700 border-blue-700"
       : "text-slate-700 border-slate-700";
 
-  return (
+  // モバイル用コンパクトカード（ホームのUp Coming / Recent Result向け）
+  const compactCard = (
+    <div className="border border-slate-300 rounded-lg p-4 bg-white not-prose space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        {isLive ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-0.5 text-xs font-bold tracking-widest">
+            <span className="live-dot" aria-hidden="true" />
+            LIVE
+          </span>
+        ) : (
+          <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[11px] font-bold tracking-wider ${statusClass}`}>
+            {statusLabel}
+          </span>
+        )}
+        <span className="text-sm font-bold text-slate-800">
+          {d} {t}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 items-center gap-2">
+        <div className="flex flex-col items-center gap-1">
+          {game.homeTeamLogo && (
+            <div className="relative h-10 w-16">
+              <Image src={game.homeTeamLogo.url} alt={game.homeTeamName} fill className="object-contain" />
+            </div>
+          )}
+          <div className="text-[11px] font-bold text-slate-700 whitespace-nowrap">{game.homeTeamName}</div>
+        </div>
+        <div className="text-center">
+          {resultLabel && (
+            <div
+              className={
+                "text-xs font-extrabold " +
+                (resultLabel === "win" ? "text-yellow-600" : resultLabel === "lose" ? "text-blue-700" : "text-slate-700")
+              }
+            >
+              {resultLabel.toUpperCase()}
+            </div>
+          )}
+          {(isFinished || isLive) && (our != null || opp != null || isLive) ? (
+            <div className="font-extrabold text-2xl text-slate-900">
+              {our ?? "-"}<span className="mx-1 text-slate-500">–</span>{opp ?? "-"}
+            </div>
+          ) : (
+            <div className="font-extrabold text-xl text-slate-900">VS</div>
+          )}
+        </div>
+        <div className="flex flex-col items-center gap-1">
+          {game.awayTeamLogo ? (
+            <div className="relative h-10 w-16">
+              <Image src={game.awayTeamLogo.url} alt={game.awayTeamName} fill className="object-contain" />
+            </div>
+          ) : (
+            <div className="h-10 w-16 grid place-items-center text-[10px] text-slate-400 border">NO LOGO</div>
+          )}
+          <div className="text-[11px] font-bold text-slate-700 whitespace-nowrap">{game.awayTeamName}</div>
+        </div>
+      </div>
+
+      <p className="text-xs text-slate-500 truncate text-center">
+        {game.title}／{game.venue}
+      </p>
+
+      <div className="text-center">
+        <Link
+          href={`/games/${game.id}`}
+          className="inline-block border border-slate-800 rounded px-4 py-1.5 text-xs font-bold text-slate-900"
+        >
+          {status === "finished" ? "ゲームレポートを見る" : "ゲーム案内を見る"}
+        </Link>
+      </div>
+    </div>
+  );
+
+  const poster = (
     <div className="border-2 border-slate-800 rounded-md p-4 md:p-10 bg-white not-prose">
       {/* 見出し帯 */}
       <div className="border-2 border-slate-800 text-center py-2 md:py-3 font-bold text-slate-800 text-base md:text-2xl">
@@ -216,5 +290,15 @@ export default function GameCard({ game }: { game: GameView }) {
         </div>
       )}
     </div>
+  );
+
+  if (!compact) return poster;
+  // compact: モバイルは簡易カード、md以上は従来のポスター型
+  return (
+    <>
+      {/* min-w-0: 親グリッド内でtruncate行がカード幅を押し広げないように */}
+      <div className="md:hidden min-w-0">{compactCard}</div>
+      <div className="hidden md:block">{poster}</div>
+    </>
   );
 }
