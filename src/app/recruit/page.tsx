@@ -97,13 +97,13 @@ export default async function ShinkanPage() {
               href="https://www.instagram.com/eagles_agulax"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#0f6536] hover:bg-[#0a5229] text-white font-bold px-6 py-3 rounded-md transition-colors"
+              className="inline-flex items-center gap-2 bg-[#0f6536] hover:bg-[#0a5229] text-white font-bold px-6 py-3 rounded-full transition-colors"
             >
               Instagram をフォロー
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 border-2 border-white text-white hover:bg-white hover:text-slate-900 font-bold px-6 py-3 rounded-md transition-colors"
+              className="inline-flex items-center gap-2 border border-white text-white hover:bg-white hover:text-slate-900 font-bold px-6 py-3 rounded-full transition-colors"
             >
               お問い合わせ
             </Link>
@@ -266,13 +266,13 @@ export default async function ShinkanPage() {
               href="https://www.instagram.com/eagles_agulax"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-[#0f6536] font-bold px-8 py-3 rounded-md hover:bg-green-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-white text-[#0f6536] font-bold px-8 py-3 rounded-full hover:bg-green-50 transition-colors"
             >
               Instagram で DM
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 border-2 border-white text-white font-bold px-8 py-3 rounded-md hover:bg-white/10 transition-colors"
+              className="inline-flex items-center gap-2 border border-white text-white font-bold px-8 py-3 rounded-full hover:bg-white/10 transition-colors"
             >
               お問い合わせフォーム
             </Link>

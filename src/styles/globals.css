@@ -13,7 +13,13 @@
 @layer components {
   /* container & common */
   .container { @apply mx-auto max-w-6xl px-4; }
-  .section-title { @apply text-xl font-bold mb-4 relative pb-2; display: inline-block; width: fit-content; }
+  .section-title {
+    @apply text-xl font-bold mb-4 relative pb-2;
+    display: inline-block;
+    width: fit-content;
+    font-family: var(--font-heading), ui-sans-serif, system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+    letter-spacing: 0.05em;
+  }
 
   .section-title::after {
     content: '';
@@ -70,11 +76,11 @@
   /* モバイルは上余白を半分に、md以上は従来の mt-20 を復元 */
   .footer { @apply mt-10 md:mt-20 border-t border-slate-200 bg-white text-slate-900; }
 
-  /* 上段の濃紺帯 */
-  .footer__bar { @apply bg-[#0f6536] py-6; }
+  /* 上段の濃紺帯（ネイビー=地） */
+  .footer__bar { @apply bg-slate-900 py-6; }
   .footer__nav { @apply container flex flex-wrap justify-center gap-6 md:gap-10 py-4 text-center; }
   .footer__link {
-    @apply relative text-white/90 hover:text-white uppercase tracking-widest text-lg font-bold; 
+    @apply relative text-white hover:text-emerald-300 uppercase tracking-widest text-lg font-bold transition-colors;
   }
   .footer__link::after {
     content: '';
@@ -83,7 +89,7 @@
     bottom: -10px;
     width: 100%;
     height: 2px;
-    background: #ffffff;
+    background: #6ee7b7; /* emerald-300 */
     opacity: 0;
     visibility: hidden;
     transition: 0.3s;
@@ -102,7 +108,7 @@
   .footer__hr { @apply mx-auto my-4 w-24 border-t border-slate-200; }
   .footer__copy { @apply text-xs text-slate-500; }
 
-  /* ===== Custom Button Style ===== */
+  /* ===== Custom Button Style（セカンダリボタン：枠1px・角丸・ホバーで塗り） ===== */
   .button-32 {
     display: flex;
     justify-content: center;
@@ -113,41 +119,26 @@
     padding: .9em 2.75em .9em 2em;
     overflow: hidden;
     border: 1px solid #0f6536;
-    border-radius: 5px;
+    border-radius: 9999px;
     background-color: #fff;
     color: #0f6536;
     font-size: 1em;
+    font-weight: 600;
     white-space: nowrap;
-    isolation: isolate;
-    z-index: 0;
-    transition: color .3s ease, background-color .3s ease, box-shadow .3s ease;
+    letter-spacing: 0.02em;
+    transition: color .25s ease, background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
   }
 
   .button-32:hover {
-    background-color: transparent;
-    color: #fff;
-  }
-
-  .button-32::before {
-    position: absolute;
-    z-index: -1;
-    transform: rotate(-30deg);
-    width: 100%;
-    height: 0;
-    border-radius: 5px;
     background-color: #0f6536;
-    content: '';
-    transition: height .3s ease;
-  }
-
-  .button-32:hover::before {
-    height: 350%;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(15, 101, 54, 0.25);
   }
 
   .button-32::after {
     content: '';
     position: absolute;
-    right: 14px;
+    right: 18px;
     top: 50%;
     width: 6px;
     height: 6px;
@@ -155,27 +146,23 @@
     border-top: 2px solid currentColor;
     border-right: 2px solid currentColor;
     pointer-events: none;
+    transition: right .25s ease;
   }
 
   .button-32:hover::after {
-    border-color: #fff;
+    right: 14px;
   }
 
-  /* button-32 の dark 背景バリアント（白ベース→ホバーで緑） */
+  /* button-32 の dark 背景バリアント（透過＋白枠→ホバーで白塗り） */
   .button-32-dark {
     border-color: #fff;
     background-color: transparent;
     color: #fff;
   }
   .button-32-dark:hover {
-    background-color: transparent;
-    color: #0f6536;
-  }
-  .button-32-dark::before {
     background-color: #fff;
-  }
-  .button-32-dark:hover::after {
-    border-color: #0f6536;
+    color: #0f6536;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
   }
 
   /* ===== Side Navigation (About page) ===== */

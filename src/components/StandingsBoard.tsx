@@ -6,7 +6,7 @@ function BlockTable({ title, rows }: { title: string; rows: StandingRow[] }) {
   return (
     <div>
       {/* ブロック見出し帯 */}
-      <div className="bg-slate-100 border-b-[3px] border-slate-800 px-4 py-3 text-center font-bold text-slate-800">
+      <div className="bg-slate-100 border-b border-slate-200 px-4 py-3 text-center font-bold text-slate-800">
         {title}
       </div>
 
@@ -18,7 +18,7 @@ function BlockTable({ title, rows }: { title: string; rows: StandingRow[] }) {
               {["順位","大学名","勝点","試合数","総得点","得失点差"].map((h) => (
                 <th
                   key={h}
-                  className="border-b-[3px] border-slate-800 px-3 py-2 text-sm font-semibold text-center"
+                  className="border-b border-slate-200 px-3 py-2 text-sm font-semibold text-center"
                 >
                   {h}
                 </th>
@@ -27,19 +27,26 @@ function BlockTable({ title, rows }: { title: string; rows: StandingRow[] }) {
           </thead>
           <tbody>
             {rows.map((r, i) => (
-              <tr key={i} className="even:bg-white odd:bg-white">
-                <td className="border-t-[3px] border-slate-800 px-3 py-3 font-extrabold text-3xl md:text-4xl text-slate-900 text-center">
+              <tr
+                key={i}
+                className={
+                  (r.university ?? "").trim() === "青山学院大学"
+                    ? "bg-emerald-50 font-bold"
+                    : "even:bg-white odd:bg-white"
+                }
+              >
+                <td className="border-t border-slate-200 px-3 py-3 font-extrabold text-3xl md:text-4xl text-slate-900 text-center">
                   {r.rank}
                 </td>
-                <td className="border-t-[3px] border-slate-800 px-3 py-3 text-lg md:text-xl font-bold text-slate-900 text-center">
+                <td className="border-t border-slate-200 px-3 py-3 text-lg md:text-xl font-bold text-slate-900 text-center">
                   <div className="min-h-[3.5rem] md:min-h-[3.75rem] flex items-center justify-center leading-snug">
                     {r.university}
                   </div>
                 </td>
-                <td className="border-t-[3px] border-slate-800 px-3 py-3 text-center">{r.points}</td>
-                <td className="border-t-[3px] border-slate-800 px-3 py-3 text-center">{r.games}</td>
-                <td className="border-t-[3px] border-slate-800 px-3 py-3 text-center">{r.gf}</td>
-                <td className="border-t-[3px] border-slate-800 px-3 py-3 text-center">{r.diff}</td>
+                <td className="border-t border-slate-200 px-3 py-3 text-center">{r.points}</td>
+                <td className="border-t border-slate-200 px-3 py-3 text-center">{r.games}</td>
+                <td className="border-t border-slate-200 px-3 py-3 text-center">{r.gf}</td>
+                <td className="border-t border-slate-200 px-3 py-3 text-center">{r.diff}</td>
               </tr>
             ))}
           </tbody>
@@ -56,16 +63,19 @@ export default function StandingsBoard({ rows, updatedAt }: { rows: StandingRow[
   return (
     <section className="not-prose">
       {/* 外枠：左右とも太線／角丸／オーバーフロー隠し */}
-      <div className="rounded-2xl border-[3px] border-slate-800 overflow-hidden">
+      <div className="rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {/* 上部 濃紺帯に STANDINGS */}
         <div className="bg-slate-900 text-white text-center py-6 px-4">
-          <h2 className="tracking-widest text-4xl md:text-6xl font-extrabold text-white">
+          <h2
+            className="tracking-widest text-4xl md:text-6xl font-extrabold text-white"
+            style={{ fontFamily: "var(--font-heading), inherit" }}
+          >
             STANDINGS
           </h2>
         </div>
 
         {/* 2カラム（中央仕切りも太線） */}
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y-[3px] md:divide-y-0 md:divide-x-[3px] divide-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
           <BlockTable title={`${LEAGUE_TITLE} Aブロック`} rows={A} />
           <BlockTable title={`${LEAGUE_TITLE} Bブロック`} rows={B} />
         </div>

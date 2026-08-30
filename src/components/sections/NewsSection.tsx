@@ -6,7 +6,7 @@ export default async function NewsSection({ dark = false }: { dark?: boolean }) 
   const news = await fetchNewsList();
   return (
     <section>
-      <h2 className={`section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${dark ? "text-white" : ""}`}>News</h2>
+      <h2 className={`section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${dark ? "text-white" : ""}`}>NEWS</h2>
       {news.length > 0 ? (
         <div className="space-y-4">
           {news.slice(0, 5).map((n) => (

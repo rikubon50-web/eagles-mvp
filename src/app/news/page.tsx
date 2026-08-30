@@ -22,7 +22,7 @@ export default async function NewsListPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">News</h1>
+      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">NEWS</h1>
 
       {news.length > 0 ? (
         <NewsFilterList news={news} />

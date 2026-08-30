@@ -6,7 +6,7 @@ export default async function RosterSection({ dark = false }: { dark?: boolean }
   const players = await fetchPlayers();
   return (
     <section>
-      <h2 className={`section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${dark ? "text-white" : ""}`}>Roster</h2>
+      <h2 className={`section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${dark ? "text-white" : ""}`}>ROSTER</h2>
       {players && players.length > 0 ? (
         <div className="grid grid-flow-col auto-cols-[minmax(50%,_1fr)] md:auto-cols-[minmax(33.333%,_1fr)] lg:auto-cols-[minmax(25%,_1fr)] gap-4 overflow-x-auto scrollbar-none pb-2">
           {players.slice(0, 6).map((p) => (

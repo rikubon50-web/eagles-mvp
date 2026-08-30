@@ -1,5 +1,13 @@
 // src/app/layout.tsx
 import localFont from "next/font/local";
+import { Oswald } from "next/font/google";
+
+const oswald = Oswald({
+  weight: ["500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
 
 const abashiri = localFont({
   // NOTE: path is relative to this file. Public dir is at project root.
@@ -78,7 +86,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={abashiri.variable}>
+    <html lang="ja" className={`${abashiri.variable} ${oswald.variable}`}>
       <body className="min-h-screen bg-slate-50 text-slate-900">
         <Header />
 

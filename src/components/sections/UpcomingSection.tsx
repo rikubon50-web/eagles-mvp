@@ -10,14 +10,14 @@ export default async function UpcomingSection() {
   ]);
   // live があれば最上部に出し、見出しも「試合速報」へ切り替える
   let games = [...live, ...upcoming];
-  let heading = live.length > 0 ? "試合速報" : "Up Coming";
+  let heading = live.length > 0 ? "試合速報" : "UPCOMING";
   // live も予定も無いときは直近の「終了した」試合を1件表示して空白を避ける
   if (games.length === 0) {
     const archive = await fetchGamesArchive();
     const finished = archive.find((g) => g.status === "finished");
     if (finished) {
       games = [finished];
-      heading = "Recent Result";
+      heading = "RECENT RESULT";
     }
   }
   return (

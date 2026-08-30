@@ -53,7 +53,7 @@ export default async function BlogListPage({
 
   return (
     <div className="space-y-4 md:space-y-8">
-      <h1 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 mt-6 md:mt-12">Blog</h1>
+      <h1 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 mt-6 md:mt-12">BLOG</h1>
 
       <BlogFilterList tags={tags} q={q ?? ""} tag={tag ?? null} />
 

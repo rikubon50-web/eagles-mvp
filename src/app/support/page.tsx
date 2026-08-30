@@ -11,7 +11,7 @@ export default function SupportTop() {
   return (
     <div className="space-y-10">
       <header>
-        <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">Support</h1>
+        <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">SUPPORT</h1>
         <p className="mt-3 text-slate-600">
           目的に応じてサポート窓口をご案内します。
         </p>

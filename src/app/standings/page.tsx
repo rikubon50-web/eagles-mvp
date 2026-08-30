@@ -59,7 +59,7 @@ export default async function StandingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">Standings</h1>
+      <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">STANDINGS</h1>
 
       <BlockTable title={`${LEAGUE_TITLE} Aブロック`} rows={blockA} />
       <BlockTable title={`${LEAGUE_TITLE} Bブロック`} rows={blockB} />

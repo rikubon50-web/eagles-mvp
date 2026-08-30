@@ -2,7 +2,9 @@
 import { Suspense } from "react";
 import Attraction from "@/components/Attraction";
 import HeroImage from "@/components/HeroImage";
+import NextGameStrip from "@/components/NextGameStrip";
 import FadeIn from "@/components/motion/FadeIn";
+import { fetchGamesLive, fetchGamesUpcoming } from "@/lib/games";
 import { SectionSkeleton } from "@/components/Skeleton";
 import NewsTickerSection from "@/components/sections/NewsTickerSection";
 import UpcomingSection from "@/components/sections/UpcomingSection";
@@ -20,6 +22,14 @@ export const metadata = {
 };
 
 export default async function Home() {
+  // ヒーロー下端の NEXT GAME ストリップ用。失敗時は throw に任せる（UpcomingSection と同方針）。
+  const [live, upcoming] = await Promise.all([
+    fetchGamesLive(),
+    fetchGamesUpcoming(),
+  ]);
+  const stripGame = live[0] ?? upcoming[0] ?? null;
+  const stripIsLive = live.length > 0;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsTeam",
@@ -48,6 +58,9 @@ export default async function Home() {
           style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}
         >
           <HeroImage />
+          {stripGame && (
+            <NextGameStrip game={stripGame} isLive={stripIsLive} />
+          )}
         </div>
         <div className={`${fullWidth} bg-slate-900/90 text-white`}>
           <Suspense fallback={<div className="h-10 bg-slate-900/90" />}>

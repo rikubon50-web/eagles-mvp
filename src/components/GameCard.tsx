@@ -147,148 +147,93 @@ export default function GameCard({ game, compact = false }: { game: GameView; co
     </div>
   );
 
+  // モダンカード（/games・PC用）。compactCard の文法（バッジ+日時 / ロゴ対戦+スコア / 情報行 / ボタン）の拡大版
   const poster = (
-    <div className="border-2 border-slate-800 rounded-md p-4 md:p-10 bg-white not-prose">
-      {/* 見出し帯 */}
-      <div className="border-2 border-slate-800 text-center py-2 md:py-3 font-bold text-slate-800 text-base md:text-2xl">
-        {game.title}
-      </div>
-
-      {/* ステータス（常に表示：status があれば）。live は赤バッジ＋pulseする点 */}
-      {isLive ? (
-        <div className="text-center mt-3">
+    <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-4 md:p-6 not-prose space-y-4 md:space-y-5">
+      {/* ヘッダー行：ステータスバッジ + 日時 */}
+      <div className="flex items-center justify-between gap-2">
+        {isLive ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-red-600 text-white px-3 py-0.5 text-xs font-bold tracking-widest">
             <span className="live-dot" aria-hidden="true" />
             LIVE
           </span>
-        </div>
-      ) : (
-        statusLabel && (
-          <div className="text-center mt-3">
-            <span className={`inline-block rounded-full border px-3 py-0.5 text-xs font-bold tracking-widest ${statusClass}`}>
-              {statusLabel}
-            </span>
-          </div>
-        )
-      )}
-
-      {/* 会場 */}
-      <div className="border-b-2 border-slate-300 text-center py-3 md:py-8 text-slate-800 font-bold text-sm md:text-2xl">
-        会場：{game.venue}
-      </div>
-
-      {/* 日付・時間（時間を少し小さく） */}
-      <div className="pt-4 pb-1 md:pt-6 md:pb-3 text-center text-slate-900 flex flex-wrap items-baseline justify-center gap-x-3 md:block">
-        <div className="font-extrabold text-xl md:text-4xl tracking-wider md:tracking-widest">{d}</div>
-        <div className="md:mt-2 font-extrabold text-xl md:text-4xl tracking-wider md:tracking-widest">{t}</div>
-      </div>
-
-      {/* 勝敗バッジ（finished のときだけ） */}
-      {resultLabel && (
-        <div className="text-center py-1 md:py-2">
-          <span
-            className={
-              "inline-block rounded px-4 py-0.5 md:py-1 font-extrabold text-3xl md:text-5xl " +
-              (resultLabel === "win"
-                ? "text-yellow-600"
-                : resultLabel === "lose"
-                ? "text-blue-700"
-                : "text-black")
-            }
-          >
-            {resultLabel.toUpperCase()}
+        ) : statusLabel ? (
+          <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-bold tracking-wider ${statusClass}`}>
+            {statusLabel}
           </span>
-        </div>
-      )}
+        ) : (
+          <span aria-hidden="true" />
+        )}
+        <span className="text-sm md:text-lg font-bold text-slate-800">
+          {d} {t}
+        </span>
+      </div>
 
-      {/* スコア（finished のときだけ） */}
-      {isFinished && our != null && opp != null && (
-        <div className="text-center py-1 md:py-2">
-          <div className="flex items-center justify-center gap-4 md:gap-10">
-            <span className="font-extrabold text-4xl md:text-6xl text-slate-900">{our}</span>
-            <span className="font-extrabold text-2xl md:text-5xl text-slate-700">–</span>
-            <span className="font-extrabold text-4xl md:text-6xl text-slate-900">{opp}</span>
-          </div>
-        </div>
-      )}
-
-      {/* 現在スコア（live のとき。未入力は 0 ではなく「-」で表示。
-          プレースホルダの「-」は区切りの「–」と紛れないよう減灰する） */}
-      {isLive && (
-        <div className="text-center py-1 md:py-2">
-          <div className="flex items-center justify-center gap-4 md:gap-10">
-            <span className={`font-extrabold text-4xl md:text-6xl ${our != null ? "text-slate-900" : "text-slate-300"}`}>
-              {our ?? "-"}
-            </span>
-            <span className="font-extrabold text-2xl md:text-5xl text-slate-700">–</span>
-            <span className={`font-extrabold text-4xl md:text-6xl ${opp != null ? "text-slate-900" : "text-slate-300"}`}>
-              {opp ?? "-"}
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* 対戦カード：中央揃え・大学名は改行禁止・ロゴを少し小さく */}
-      <div className="grid grid-cols-3 items-center gap-3 md:gap-10 py-3 md:py-6">
+      {/* 対戦ブロック：ロゴ＋チーム名 / 中央にスコア or VS */}
+      <div className="grid grid-cols-3 items-center gap-2 md:gap-6">
         {/* HOME */}
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-1 md:mb-2 text-slate-800 font-bold text-sm md:text-2xl whitespace-nowrap">
-            {game.homeTeamName}
-          </div>
+        <div className="flex flex-col items-center gap-1 md:gap-2">
           {game.homeTeamLogo && (
-            <div className="relative h-12 w-20 sm:h-20 sm:w-32 md:h-24 md:w-32 lg:h-28 lg:w-40">
+            <div className="relative h-12 w-20 md:h-20 md:w-28">
               <Image src={game.homeTeamLogo.url} alt={game.homeTeamName} fill className="object-contain" />
             </div>
           )}
+          <div className="text-xs md:text-base font-bold text-slate-700 whitespace-nowrap">{game.homeTeamName}</div>
         </div>
 
-        {/* VS */}
-        <div className="text-center font-extrabold text-xl md:text-5xl text-slate-900">VS</div>
+        {/* 中央：finished/live はスコア、scheduled/postponed は VS */}
+        <div className="text-center">
+          {resultLabel && (
+            <div
+              className={
+                "text-xs md:text-sm font-extrabold " +
+                (resultLabel === "win" ? "text-yellow-600" : resultLabel === "lose" ? "text-blue-700" : "text-slate-700")
+              }
+            >
+              {resultLabel.toUpperCase()}
+            </div>
+          )}
+          {(isFinished || isLive) && (our != null || opp != null || isLive) ? (
+            <div className="font-extrabold text-3xl md:text-5xl">
+              {/* live の未入力スコアは 0 ではなく薄い「-」で表示 */}
+              <span className={our != null ? "text-slate-900" : "text-slate-300"}>{our ?? "-"}</span>
+              <span className="mx-1.5 md:mx-3 text-slate-500">–</span>
+              <span className={opp != null ? "text-slate-900" : "text-slate-300"}>{opp ?? "-"}</span>
+            </div>
+          ) : (
+            <div className="font-extrabold text-2xl md:text-4xl text-slate-900">VS</div>
+          )}
+        </div>
 
         {/* AWAY */}
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-1 md:mb-2 text-slate-800 font-bold text-sm md:text-2xl whitespace-nowrap">
-            {game.awayTeamName}
-          </div>
+        <div className="flex flex-col items-center gap-1 md:gap-2">
           {game.awayTeamLogo ? (
-            <div className="relative h-12 w-20 sm:h-20 sm:w-32 md:h-24 md:w-32 lg:h-28 lg:w-40">
+            <div className="relative h-12 w-20 md:h-20 md:w-28">
               <Image src={game.awayTeamLogo.url} alt={game.awayTeamName} fill className="object-contain" />
             </div>
           ) : (
-            <div className="h-12 w-20 md:h-28 md:w-40 grid place-items-center text-xs text-slate-400 border">
+            <div className="h-12 w-20 md:h-20 md:w-28 grid place-items-center text-[10px] md:text-xs text-slate-400 border">
               NO LOGO
             </div>
           )}
+          <div className="text-xs md:text-base font-bold text-slate-700 whitespace-nowrap">{game.awayTeamName}</div>
         </div>
       </div>
 
-      {/* CTA: ステータス別に表示（live でも会場・アクセス案内への導線を残す） */}
-      {(status === "scheduled" || status === "postponed" || isLive) && (
-        <div className="border-t-2 border-slate-300 mt-4 md:mt-6 pt-4 md:pt-6">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href={`/games/${game.id}`}
-              className="inline-block border-2 border-slate-800 px-5 py-2 md:px-6 md:py-3 text-sm md:text-base text-slate-900 font-bold hover:bg-slate-50"
-            >
-              ゲーム案内を見る
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* 情報行：大会名・会場（/games では情報が命なので全文表示・折返し可） */}
+      <p className="text-sm text-slate-500 text-center">
+        {game.title}／{game.venue}
+      </p>
 
-      {status === "finished" && (
-        <div className="border-t-2 border-slate-300 mt-4 md:mt-6 pt-4 md:pt-6">
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {/* ゲームレポート（finished のときのみ） */}
-            <Link
-              href={`/games/${game.id}`}
-              className="inline-block border-2 border-slate-800 px-5 py-2 md:px-6 md:py-3 text-sm md:text-base text-slate-900 font-bold hover:bg-slate-50"
-            >
-              ゲームレポートを見る
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* フッター行：ステータス別CTA */}
+      <div className="text-center">
+        <Link
+          href={`/games/${game.id}`}
+          className="inline-block rounded-md border border-slate-300 px-5 py-2 text-sm font-bold text-slate-900 hover:border-emerald-600 hover:text-emerald-700"
+        >
+          {status === "finished" ? "ゲームレポートを見る" : "ゲーム案内を見る"}
+        </Link>
+      </div>
     </div>
   );
 
