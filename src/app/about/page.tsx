@@ -1,4 +1,5 @@
 import Image from "next/image";
+import GroundCard from "@/components/GroundCard";
 import { fetchAbout } from "@/lib/microcms";
 import AboutSideNav from "@/components/AboutSideNav";
 
@@ -57,8 +58,7 @@ export default async function AboutPage() {
         <section id="venues" className="scroll-mt-[100px]">
           <h2 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 mt-6 md:mt-12">活動時間・場所</h2>
           {/* 青山学院大学 緑ヶ丘グラウンド */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">青山学院大学 緑ヶ丘グラウンド</h3>
+          <GroundCard name="青山学院大学 緑ヶ丘グラウンド">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               JR横浜線「淵野辺駅」よりバス10分<br />
               「和泉短大前」下車 徒歩約2分
@@ -73,11 +73,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 大宮けんぽグラウンド */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">大宮けんぽグラウンド</h3>
+          <GroundCard name="大宮けんぽグラウンド">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               行き：西武バス 1番乗場「大宮駅西口」より（所要約20分）<br />
               ＜ららぽーと富士見 行き＞または＜馬宮団地 行き＞に乗車し、「運動場前」で下車（※時刻表に「ら」「馬」の表示があるバスのみ運動場前まで行きます）<br />
@@ -98,11 +97,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 葛飾にいじゅくみらい公園運動場 */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">葛飾にいじゅくみらい公園運動場（多目的広場）</h3>
+          <GroundCard name="葛飾にいじゅくみらい公園運動場（多目的広場）">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               JR常磐線・京成線「金町」駅から徒歩約10分／駐車場あり（大型車は事前予約必要）<br />
               駐車料金：最初の30分は無料。以降30分ごとに100円
@@ -117,11 +115,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 品川南ふ頭公園 */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">品川南ふ頭公園</h3>
+          <GroundCard name="品川南ふ頭公園">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">りんかい線・東京モノレール「天王洲アイル」駅 徒歩7分</p>
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">東京都品川区東品川5-8-4</p>
             <div className="relative w-full aspect-[4/3] md:h-[450px] md:aspect-auto rounded-md overflow-hidden mt-3 md:mt-4">
@@ -133,11 +130,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 多摩川Aグラウンド */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">多摩川Aグラウンド</h3>
+          <GroundCard name="多摩川Aグラウンド">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               東急東横線・目黒線・多摩川線「多摩川」駅 徒歩約25分／東急東横線・目黒線「田園調布」駅 徒歩約20分<br />
               土日祝のみ駐車場使用可能 100円/30分
@@ -152,11 +148,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 多摩川Bグラウンド */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">多摩川Bグラウンド</h3>
+          <GroundCard name="多摩川Bグラウンド">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               東急東横線・目黒線・多摩川線「多摩川」駅 徒歩約25分／東急東横線・目黒線「田園調布」駅 徒歩約20分<br />
               土日祝のみ駐車場使用可能 100円/30分
@@ -171,11 +166,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 東金町運動場 */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">東金町運動場</h3>
+          <GroundCard name="東金町運動場">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               東武バスセントラル：<br />
               （金50）金町駅（南口）～東金町循環（朝夕のみ）… 東金町運動場入口 下車5分<br />
@@ -192,11 +186,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 三鷹大沢総合グラウンド */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">三鷹大沢総合グラウンド</h3>
+          <GroundCard name="三鷹大沢総合グラウンド">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               JR中央線：
             </p>
@@ -225,11 +218,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* 横浜FC東戸塚フットボールパーク */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">横浜FC東戸塚フットボールパーク</h3>
+          <GroundCard name="横浜FC東戸塚フットボールパーク">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               JR横須賀線「東戸塚」駅 徒歩約20分／無料駐車場あり
             </p>
@@ -243,11 +235,10 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
 
           {/* Anker フロンタウン生田 */}
-          <div className="mt-4 md:mt-8 p-4 md:p-6 border rounded-lg bg-white shadow-sm space-y-2">
-            <h3 className="text-lg md:text-xl font-bold mt-2 md:mt-6 mb-2">Anker フロンタウン生田</h3>
+          <GroundCard name="Anker フロンタウン生田">
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">
               JR南武線「中野島」駅 徒歩15分／小田急小田原線「生田」駅 徒歩15分
             </p>
@@ -261,7 +252,7 @@ export default async function AboutPage() {
                 className="w-full h-full border-0"
               ></iframe>
             </div>
-          </div>
+          </GroundCard>
         </section>
 
         <section id="appeal" className="scroll-mt-[100px]">
