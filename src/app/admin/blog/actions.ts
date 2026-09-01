@@ -28,6 +28,12 @@ export async function savePost(input: SaveInput):
   }
   // 公開権を持つ全部員アカウントからの任意HTML持ち込みを防ぐ許可リスト浄化。
   const sanitizedBody = sanitizePostBody(parsed.data.body);
+  // サムネ未指定（＝エディタからの画像アップロードなし）の場合は本文1枚目の画像を使う。
+  // アメブロ等からコピペされた外部画像の記事でもサムネが付くようにするフォールバック。
+  const thumbnailUrl =
+    parsed.data.thumbnailUrl ??
+    sanitizedBody.match(/<img[^>]*src="(https?:[^"]+)"/)?.[1] ??
+    null;
   const supabase = createSupabaseServer();
   const id = input.id;
 
@@ -44,7 +50,7 @@ export async function savePost(input: SaveInput):
       title: parsed.data.title,
       body: sanitizedBody,
       tags: parsed.data.tags,
-      thumbnail_url: parsed.data.thumbnailUrl ?? null,
+      thumbnail_url: thumbnailUrl,
       ...(input.publish
         ? { status: "published", published_at: cur.published_at ?? new Date().toISOString() }
         : {}),
@@ -66,7 +72,7 @@ export async function savePost(input: SaveInput):
       title: parsed.data.title,
       body: sanitizedBody,
       tags: parsed.data.tags,
-      thumbnail_url: parsed.data.thumbnailUrl ?? null,
+      thumbnail_url: thumbnailUrl,
       author_id: profile.userId,
       status: input.publish ? "published" : "draft",
       published_at: input.publish ? new Date().toISOString() : null,
