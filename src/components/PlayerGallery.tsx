@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { mcmsImg } from "@/lib/image-url";
 
 export type GalleryImage = { url: string; width: number; height: number };
 
@@ -45,7 +46,7 @@ export default function PlayerGallery({
           {images.map((img, i) => (
             <div key={img.url} className="w-full flex-shrink-0">
               <Image
-                src={img.url}
+                src={mcmsImg(img.url, 1200)}
                 alt={count > 1 ? `${alt}（${i + 1}/${count}）` : alt}
                 width={img.width}
                 height={img.height}

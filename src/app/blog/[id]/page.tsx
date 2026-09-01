@@ -1,6 +1,7 @@
 // src/app/blog/[id]/page.tsx
 import type { Metadata } from "next";
 import Image from "next/image";
+import { mcmsImg, optimizeBodyImages } from "@/lib/image-url";
 import Link from "next/link";
 import { fetchPostById } from "@/lib/posts";
 import { notFound } from "next/navigation";
@@ -96,7 +97,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           <div className="max-w-3xl mx-auto px-6">
             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl shadow-lg">
               <Image
-                src={item.thumbnailUrl}
+                src={mcmsImg(item.thumbnailUrl, 1280)}
                 alt={item.title}
                 fill
                 className="object-cover"
@@ -112,7 +113,7 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
         <div className="max-w-3xl mx-auto">
           <article
             className="prose prose-slate md:prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
-            dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
+            dangerouslySetInnerHTML={{ __html: optimizeBodyImages(item.body ?? "") }}
           />
 
           {/* スキ♡（md以上は本文末尾のインライン表示。モバイルは LikeButton 内の

@@ -3,6 +3,7 @@
 // md以上は従来のカード型（サムネ上・タイトル下）を md: プレフィックスで完全維持。
 import Link from "next/link";
 import Image from "next/image";
+import { mcmsImg } from "@/lib/image-url";
 
 export type BlogCardItem = {
   id: string;
@@ -23,7 +24,7 @@ export default function BlogCard({ item }: { item: BlogCardItem }) {
       <div className="relative w-24 h-24 shrink-0 md:w-full md:h-auto md:shrink md:mb-3 overflow-hidden rounded-lg aspect-[16/9] bg-slate-100">
         {item.thumbnail ? (
           <Image
-            src={item.thumbnail.url}
+            src={mcmsImg(item.thumbnail.url, 480)}
             alt={item.title}
             fill
             sizes="(max-width: 767px) 96px, 33vw"

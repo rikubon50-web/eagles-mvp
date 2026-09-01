@@ -1,4 +1,5 @@
 // src/app/news/[id]/page.tsx
+import { optimizeBodyImages } from "@/lib/image-url";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchNewsById } from "@/lib/microcms";
@@ -90,7 +91,7 @@ export default async function NewsDetailPage({ params }: { params: { id: string 
         <div className="max-w-3xl mx-auto">
           <article
             className="prose prose-slate prose-lg prose-headings:font-bold prose-a:text-[#0f6536] prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-md prose-img:mt-8"
-            dangerouslySetInnerHTML={{ __html: item.body ?? "" }}
+            dangerouslySetInnerHTML={{ __html: optimizeBodyImages(item.body ?? "") }}
           />
 
           <div className="mt-12 pt-8 border-t border-slate-200">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { mcmsImg } from "@/lib/image-url";
 import GroundCard from "@/components/GroundCard";
 import { fetchAbout } from "@/lib/microcms";
 import AboutSideNav from "@/components/AboutSideNav";
@@ -30,7 +31,7 @@ export default async function AboutPage() {
             {about?.visual && (
               <div className="w-full mb-4 md:float-left md:mr-6 md:mb-4 md:w-[48%] rounded-lg overflow-hidden shadow-md">
                 <Image
-                  src={about.visual.url}
+                  src={mcmsImg(about.visual.url, 800)}
                   alt="主将の写真"
                   width={about.visual.width}
                   height={about.visual.height}

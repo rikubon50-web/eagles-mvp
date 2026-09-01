@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { mcmsImg } from "@/lib/image-url";
 import type { Player } from "@/lib/microcms"; // Player 型が無い環境でも型だけなので実行時には影響ありません
 
 export type PlayerCardProps = {
@@ -38,8 +39,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
     <>
       {_photoUrl ? (
         <img
-          src={_photoUrl}
+          src={mcmsImg(_photoUrl, 560)}
           alt={_japaneseName || _alphabetName || "player"}
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 z-[1] block h-full w-full object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
         />
       ) : (
