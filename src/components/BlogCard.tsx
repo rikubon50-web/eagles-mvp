@@ -31,8 +31,15 @@ export default function BlogCard({ item }: { item: BlogCardItem }) {
             className="object-cover md:object-contain transition-transform md:group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
-            No Image
+          // 画像なし記事はチームロゴ入りプレースホルダ（テキストのみの引退ブログ等）
+          <div className="flex h-full w-full items-center justify-center bg-slate-900">
+            <Image
+              src="/img/logo.png"
+              alt=""
+              width={120}
+              height={74}
+              className="w-1/2 max-w-[120px] opacity-90 object-contain"
+            />
           </div>
         )}
       </div>
