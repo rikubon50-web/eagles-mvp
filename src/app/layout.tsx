@@ -2,6 +2,7 @@
 import localFont from "next/font/local";
 import { Oswald } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import PageViewTracker from "@/components/PageViewTracker";
 
 const oswald = Oswald({
   weight: ["500", "600", "700"],
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <Footer />
         <Analytics />
+        <PageViewTracker />
       </body>
     </html>
   );

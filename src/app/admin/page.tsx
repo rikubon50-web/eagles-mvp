@@ -19,6 +19,12 @@ export default async function AdminHomePage() {
       show: true,
     },
     {
+      href: "/admin/analytics",
+      title: "アクセス解析",
+      desc: "サイトの閲覧数・人気ページ（部員全員）",
+      show: true,
+    },
+    {
       href: "/admin/standings",
       title: "星取表",
       desc: "リーグ戦の順位・勝点の編集",

@@ -31,6 +31,7 @@ export default function AdminNav({ role }: { role: "member" | "admin" }) {
 
   const tabs = [
     { href: "/admin/blog", label: "ブログ", show: true },
+    { href: "/admin/analytics", label: "アクセス", show: true },
     { href: "/admin/standings", label: "星取表", show: role === "admin" },
     { href: "/admin/games", label: "試合情報", show: role === "admin" },
   ].filter((t) => t.show);
