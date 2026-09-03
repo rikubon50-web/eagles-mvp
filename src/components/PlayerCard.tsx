@@ -72,7 +72,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
       {/* 下部の名前ブロック（ダークスクリム＋左揃えのエディトリアル調） */}
       {/* 下端は完全不透明にする（透過だと明るい写真が透けて紺背景との境に薄い帯が出る） */}
-      <div className="absolute inset-x-0 bottom-0 z-[2] flex h-[46%] flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent">
+      <div className="absolute inset-x-0 bottom-0 z-[2] flex h-[46%] flex-col justify-end bg-gradient-to-t from-slate-950 from-15% via-slate-950/50 to-transparent">
         <div className="w-full px-4 pb-4 pt-2 text-left">
           {_alphabetName && (
             <div className="mb-0.5 text-[10px] font-bold uppercase leading-snug tracking-[0.22em] text-emerald-300/90">
@@ -91,7 +91,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   return (
     <div
-      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-transparent ring-1 ring-black/5"
+      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-transparent"
       style={{
         boxShadow: "0 2px 12px rgba(15,23,42,0.12)",
         aspectRatio: "3/4",

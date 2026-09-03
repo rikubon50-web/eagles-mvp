@@ -74,7 +74,7 @@
 
   /* ===== Footer ===== */
   /* モバイルは上余白を半分に、md以上は従来の mt-20 を復元 */
-  .footer { @apply mt-10 md:mt-20 border-t border-slate-200 bg-white text-slate-900; }
+  .footer { @apply pt-16 md:pt-24 bg-white text-slate-900; } /* 余白はpadding=白。marginだとbodyのslate-50が帯に見える */
 
   /* 上段の濃紺帯（ネイビー=地） */
   .footer__bar { @apply bg-slate-900 py-6; }

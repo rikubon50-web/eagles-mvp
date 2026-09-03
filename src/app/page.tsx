@@ -111,9 +111,8 @@ export default async function Home() {
         </FadeIn>
       </div>
 
-      {/* RosterSection — slate-900 (dark)。-mb-16はmainの下余白24px+フッターの上余白40pxを
-          打ち消し、紺のままフッターの紺帯へ切れ目なく続けるため */}
-      <div className={`${fullWidth} bg-slate-900 py-8 md:py-16 -mb-16`}>
+      {/* RosterSection — slate-900 (dark) */}
+      <div className={`${fullWidth} bg-slate-900 py-8 md:py-16`}>
         <FadeIn className={innerCls}>
           <Suspense fallback={<SectionSkeleton />}>
             <RosterSection dark />

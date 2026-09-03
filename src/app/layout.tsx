@@ -92,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-slate-50 text-slate-900">
         <Header />
 
-        <main className="pt-0 px-6 pb-6 mx-auto w-full max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem]">
+        <main className="pt-0 px-6 mx-auto w-full max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem]">
           {children}
         </main>
 
