@@ -33,26 +33,29 @@ const NewsTicker: React.FC<NewsTickerProps> = ({ items }) => {
   if (items.length < 3) {
     const latest = items[0];
     return (
-      <div className="w-full bg-slate-900 text-white py-5 md:py-8">
+      <div className="w-full bg-slate-900 text-white py-4 md:py-8">
+        {/* モバイルは日付・バッジ行＋タイトル行の2段（1行に詰めると潰れるため）。sm以上は1行中央寄せ */}
         <Link
           href={`/news/${latest.id}`}
-          className="mx-auto flex w-full max-w-5xl items-center justify-center gap-4 px-6 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className="mx-auto flex w-full max-w-5xl flex-col gap-1.5 px-5 sm:flex-row sm:items-center sm:justify-center sm:gap-4 sm:px-6 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
         >
-          {/* date */}
-          <span className="shrink-0 text-sm md:text-lg font-bold tracking-wider tabular-nums">
-            {latest.publishedAt.substring(0, 10).replaceAll("-", "/")}
-          </span>
-          {isNew(latest.publishedAt) && (
-            <span className="shrink-0 bg-[#0f6536] text-white px-4 py-2 rounded text-sm md:text-base font-bold">
-              NEW
+          <span className="flex shrink-0 items-center gap-2.5 sm:gap-4">
+            {/* date */}
+            <span className="text-xs md:text-lg font-bold tracking-wider tabular-nums text-white/80 sm:text-white">
+              {latest.publishedAt.substring(0, 10).replaceAll("-", "/")}
             </span>
-          )}
-          {/* category badge */}
-          <span className="shrink-0 rounded border border-white/40 px-3 py-1 text-sm md:text-base uppercase font-bold text-white/80">
-            {latest.category}
+            {isNew(latest.publishedAt) && (
+              <span className="bg-[#0f6536] text-white px-2.5 py-0.5 sm:px-4 sm:py-2 rounded text-xs md:text-base font-bold">
+                NEW
+              </span>
+            )}
+            {/* category badge */}
+            <span className="rounded border border-white/40 px-2.5 py-0.5 sm:px-3 sm:py-1 text-xs md:text-base uppercase font-bold text-white/80">
+              {latest.category}
+            </span>
           </span>
           {/* title */}
-          <span className="min-w-0 truncate text-sm md:text-lg font-bold">
+          <span className="min-w-0 text-sm md:text-lg font-bold leading-snug line-clamp-2 sm:truncate">
             {latest.title}
           </span>
         </Link>

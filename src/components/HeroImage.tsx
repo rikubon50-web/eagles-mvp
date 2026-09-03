@@ -10,6 +10,14 @@ export default function HeroImage() {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
     >
+      {/* 画面比率が画像と合わない時に左右へ出る帯を、同画像のぼかし拡大で埋める */}
+      <Image
+        src="/img/hero.png"
+        alt=""
+        aria-hidden
+        fill
+        className="object-cover blur-2xl scale-110 opacity-90"
+      />
       <Image
         src="/img/hero.png"
         alt="EAGLES Lacrosse"

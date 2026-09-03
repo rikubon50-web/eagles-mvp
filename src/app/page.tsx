@@ -44,7 +44,7 @@ export default async function Home() {
       {/* Hero — animated zoom-in entrance */}
       <div className="space-y-0">
         <div
-          className={`${fullWidth} bg-[#0f6536]`}
+          className={`${fullWidth} overflow-hidden bg-[#0f6536]`}
           style={{ aspectRatio: "1672/941", maxHeight: "calc(100vh - 85px)" }}
         >
           <HeroImage />
