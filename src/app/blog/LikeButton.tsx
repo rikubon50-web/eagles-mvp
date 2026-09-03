@@ -23,9 +23,12 @@ function restHeaders(): Record<string, string> {
 export default function LikeButton({
   postId,
   initialCount,
+  variant = "article",
 }: {
   postId: string;
   initialCount: number;
+  /** compact: 一覧カード用の小さなインライン表示（マウント時の通信なし・フローティングなし） */
+  variant?: "article" | "compact";
 }) {
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(Math.max(0, initialCount));
@@ -48,7 +51,7 @@ export default function LikeButton({
     } catch {
       /* storage が使えない環境では未スキ扱い */
     }
-    if (!SUPABASE_URL || !ANON_KEY) return;
+    if (!SUPABASE_URL || !ANON_KEY || variant === "compact") return;
     const ctrl = new AbortController();
     mountFetchRef.current = ctrl;
     fetch(
@@ -172,9 +175,35 @@ export default function LikeButton({
         )}
       </span>
 
-      <span className="min-w-[1.5rem] text-left text-lg font-bold tabular-nums">{count}</span>
+      <span className={`text-left font-bold tabular-nums ${variant === "compact" ? "text-xs" : "min-w-[1.5rem] text-lg"}`}>{count}</span>
     </>
   );
+
+  if (variant === "compact") {
+    return (
+      <span className="relative inline-flex not-prose">
+        {bubble && (
+          <span
+            role="status"
+            className="like-bubble-left absolute bottom-full left-0 mb-1.5 whitespace-nowrap rounded-full border border-rose-200 bg-white px-2.5 py-0.5 text-xs font-semibold text-rose-500 shadow-md"
+          >
+            {bubble}
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-pressed={liked}
+          aria-label={liked ? "スキを取り消す" : "スキ"}
+          className={`inline-flex h-8 items-center gap-1 rounded-full px-2 transition-colors duration-200 ${
+            liked ? "text-rose-500" : "text-slate-500 hover:bg-slate-100 hover:text-rose-400"
+          }`}
+        >
+          <span className="relative inline-flex [&_svg]:h-4 [&_svg]:w-4">{buttonBody}</span>
+        </button>
+      </span>
+    );
+  }
 
   return (
     <>

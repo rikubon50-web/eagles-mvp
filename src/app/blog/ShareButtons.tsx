@@ -66,3 +66,40 @@ export default function ShareButtons({ path, title }: { path: string; title: str
     </div>
   );
 }
+
+// 一覧カード用のコンパクトな共有ボタン（スマホ=OS共有シート／PC=リンクコピー）
+export function ShareIconButton({ path, title }: { path: string; title: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = `https://aoyamaeagles.com${path}`;
+  const text = `${title}｜青山学院大学男子ラクロス部 EAGLES`;
+
+  const onClick = async () => {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: text, url });
+      } catch {
+        /* キャンセル */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      window.prompt("このURLをコピーしてください", url);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="この記事を共有"
+      title="共有"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-emerald-700"
+    >
+      {copied ? <Check className="h-4 w-4 text-emerald-600" aria-hidden /> : <Share2 className="h-4 w-4" aria-hidden />}
+    </button>
+  );
+}
