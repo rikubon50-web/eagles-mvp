@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { mcmsImg, optimizeBodyImages } from "@/lib/image-url";
+import ShareButtons from "@/app/blog/ShareButtons";
+import InstagramFollowCard from "@/components/InstagramFollowCard";
 import Link from "next/link";
 import { fetchPostById } from "@/lib/posts";
 import { notFound } from "next/navigation";
@@ -122,6 +124,12 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
             <LikeButton postId={item.id} initialCount={item.likeCount} />
           </div>
           <ViewTracker postId={item.id} />
+
+          {/* 拡散導線: 共有ボタン → Instagramフォロー */}
+          <div className="mt-8 md:mt-12 space-y-6">
+            <ShareButtons path={`/blog/${item.id}`} title={item.title} />
+            <InstagramFollowCard />
+          </div>
 
           <div className="mt-6 pt-4 md:mt-12 md:pt-8 border-t border-slate-200">
             <Link href="/blog" className="button-32">

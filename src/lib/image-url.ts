@@ -9,6 +9,13 @@ export function mcmsImg(url: string, w: number): string {
   return `${base}?w=${w}&q=75&fm=webp`;
 }
 
+/** OGP画像生成用: WebPを扱えないため JPEG で取得する */
+export function mcmsImgJpeg(url: string, w: number): string {
+  if (!url || !url.includes("images.microcms-assets.io")) return url;
+  const base = url.split("?")[0];
+  return `${base}?w=${w}&q=80&fm=jpg`;
+}
+
 /** 記事本文HTML内の microCMS 画像srcに幅パラメータを付与する（表示時に適用） */
 export function optimizeBodyImages(html: string, w = 1200): string {
   return html.replace(
