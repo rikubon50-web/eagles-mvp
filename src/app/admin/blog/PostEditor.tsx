@@ -91,6 +91,13 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
   tagsRef.current = tags;
   const thumbMapRef = useRef(thumbMap);
   thumbMapRef.current = thumbMap;
+  // サムネ選択: "auto"=本文1枚目（従来挙動） / URL=著者が明示的に選んだ画像
+  const [thumbChoice, setThumbChoice] = useState<"auto" | string>("auto");
+  const thumbChoiceRef = useRef(thumbChoice);
+  thumbChoiceRef.current = thumbChoice;
+  // シート内アップロードで追加した専用サムネ候補
+  const [uploadedThumbs, setUploadedThumbs] = useState<string[]>([]);
+  const [thumbUploading, setThumbUploading] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savingRef = useRef(false); // savePost 実行中（自動保存・公開共通の直列化フラグ）
@@ -99,8 +106,42 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
   const retryRef = useRef(0);      // 自動保存失敗後の自動リトライ回数
 
   const currentThumbnailUrl = (body: string): string | null => {
+    const choice = thumbChoiceRef.current;
+    if (choice !== "auto") {
+      // 選択画像にサムネ版（アップロード時生成）があればそれを使う
+      return thumbMapRef.current[choice] ?? choice;
+    }
     const firstSrc = firstImageSrc(body);
     return (firstSrc && thumbMapRef.current[firstSrc]) || initial?.thumbnailUrl || null;
+  };
+
+  // シート用: 本文中の画像src一覧
+  const bodyImageSrcs = (): string[] => {
+    const html = editorRef.current?.getHTML() ?? "";
+    return [...html.matchAll(/<img[^>]*src="([^"]+)"/g)].map((m) => m[1]);
+  };
+
+  // シート内の専用サムネアップロード（本文には挿入しない）
+  const handleThumbUpload = async (file: File) => {
+    setThumbUploading(true);
+    try {
+      const { image, thumb } = await prepareImageForUpload(file);
+      const form = new FormData();
+      form.append("image", image, "image.jpg");
+      form.append("thumb", thumb, "thumb.jpg");
+      form.append("postId", postId);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+      if (!res.ok) throw new Error();
+      const { url, thumbUrl } = (await res.json()) as { url: string; thumbUrl: string };
+      setThumbMap((m) => ({ ...m, [url]: thumbUrl }));
+      setUploadedThumbs((l) => (l.includes(url) ? l : [...l, url]));
+      setThumbChoice(url);
+      markDirty();
+    } catch {
+      setPublishError("サムネイル画像のアップロードに失敗しました");
+    } finally {
+      setThumbUploading(false);
+    }
   };
 
   // 下書き保存の実体（自動保存と明示「下書き保存」で共用）
@@ -422,6 +463,20 @@ export default function PostEditor({ initial }: { initial: InitialPost | null })
 
       <PublishSheet
         open={publishOpen}
+        thumbCandidates={[...bodyImageSrcs(), ...uploadedThumbs.filter((u) => !bodyImageSrcs().includes(u))]}
+        thumbChoice={thumbChoice}
+        onThumbChoice={(v) => {
+          setThumbChoice(v);
+          markDirty();
+        }}
+        autoPreview={
+          (() => {
+            const f = firstImageSrc(editorRef.current?.getHTML() ?? "");
+            return (f && (thumbMap[f] ?? f)) || initial?.thumbnailUrl || null;
+          })()
+        }
+        thumbUploading={thumbUploading}
+        onThumbUpload={handleThumbUpload}
         tagsText={tagsText}
         onTagsChange={(v) => {
           setTagsText(v);

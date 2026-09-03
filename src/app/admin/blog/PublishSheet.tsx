@@ -1,12 +1,21 @@
 "use client";
 // note風の2段階公開フロー: 「公開する」→ シートでタグ確認 → 「投稿する」。
 // savePost の実行は PostEditor 側（onPublish）に委ねる純表示コンポーネント。
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type PublishSheetProps = {
   open: boolean;
   tagsText: string;
   onTagsChange: (value: string) => void;
+  /** 本文中の画像＋専用アップロード分のサムネ候補 */
+  thumbCandidates: string[];
+  /** "auto"=本文1枚目 / URL=明示選択 */
+  thumbChoice: "auto" | string;
+  onThumbChoice: (v: "auto" | string) => void;
+  /** 「自動」タイルに見せるプレビュー画像 */
+  autoPreview: string | null;
+  thumbUploading: boolean;
+  onThumbUpload: (file: File) => void;
   publishing: boolean;
   error: string | null;
   onPublish: () => void;
@@ -14,8 +23,11 @@ type PublishSheetProps = {
 };
 
 export default function PublishSheet({
-  open, tagsText, onTagsChange, publishing, error, onPublish, onClose,
+  open, tagsText, onTagsChange,
+  thumbCandidates, thumbChoice, onThumbChoice, autoPreview, thumbUploading, onThumbUpload,
+  publishing, error, onPublish, onClose,
 }: PublishSheetProps) {
+  const fileRef = useRef<HTMLInputElement>(null);
   // Escape で閉じる（投稿中は閉じない）
   useEffect(() => {
     if (!open) return;
@@ -48,6 +60,65 @@ export default function PublishSheet({
           placeholder="ブログ, 試合"
           className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 focus:border-slate-500 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400"
         />
+
+        <span className="mt-5 block text-sm font-semibold text-slate-600">サムネイル</span>
+        <div className="mt-1.5 flex gap-2 overflow-x-auto pb-1">
+          {/* 自動（本文1枚目） */}
+          <button
+            type="button"
+            disabled={publishing}
+            onClick={() => onThumbChoice("auto")}
+            className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-lg border-2 bg-slate-100 ${
+              thumbChoice === "auto" ? "border-emerald-600" : "border-slate-200"
+            }`}
+            aria-pressed={thumbChoice === "auto"}
+          >
+            {autoPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={autoPreview} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span className="grid h-full w-full place-items-center text-[10px] text-slate-400">画像なし</span>
+            )}
+            <span className="absolute inset-x-0 bottom-0 bg-slate-900/70 py-0.5 text-center text-[10px] font-bold text-white">
+              自動（1枚目）
+            </span>
+          </button>
+          {thumbCandidates.map((src) => (
+            <button
+              key={src}
+              type="button"
+              disabled={publishing}
+              onClick={() => onThumbChoice(src)}
+              className={`h-16 w-24 shrink-0 overflow-hidden rounded-lg border-2 bg-slate-100 ${
+                thumbChoice === src ? "border-emerald-600" : "border-slate-200"
+              }`}
+              aria-pressed={thumbChoice === src}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
+            </button>
+          ))}
+          {/* 専用画像のアップロード */}
+          <button
+            type="button"
+            disabled={publishing || thumbUploading}
+            onClick={() => fileRef.current?.click()}
+            className="grid h-16 w-24 shrink-0 place-items-center rounded-lg border-2 border-dashed border-slate-300 text-xs font-semibold text-slate-500 hover:border-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+          >
+            {thumbUploading ? "追加中…" : "＋ 画像を追加"}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (f) onThumbUpload(f);
+            }}
+          />
+        </div>
 
         {error && (
           <p role="status" className="mt-3 text-sm text-red-600">{error}</p>
