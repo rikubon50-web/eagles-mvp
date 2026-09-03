@@ -28,9 +28,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       type: "article",
       url: `${SITE_URL}/blog/${params.id}`,
       publishedTime: item.publishedAt,
-      images: item.thumbnailUrl
-        ? [{ url: item.thumbnailUrl, width: 1280, height: 720 }]
-        : undefined,
+      // 画像は同階層の opengraph-image.tsx（写真+タイトルの自動生成カード）に任せる
     },
   };
 }

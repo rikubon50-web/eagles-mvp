@@ -5,7 +5,8 @@ import { loadOgFont } from "@/lib/og-font";
 
 // 記事のOGP画像（LINE/X/Instagram等で共有されたときのカード）。
 // サムネがあれば写真の上にタイトル、なければ紺地のブランドカードを生成する。
-export const runtime = "edge";
+// Node.jsランタイム: 本番のEdgeでは依存ライブラリが動かず500になったため
+export const runtime = "nodejs";
 export const alt = "青山学院大学男子ラクロス部 EAGLES ブログ";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
