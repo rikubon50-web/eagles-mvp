@@ -1,9 +1,8 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
 
 export type AttractionProps = {
   backgroundImgUrl?: string;
@@ -37,7 +36,6 @@ export default function Attraction({ backgroundImgUrl, slogan, body }: Attractio
   const leadParagraph = paragraphs[0] ?? "";
   const restParagraphs = paragraphs.slice(1);
 
-  const [expanded, setExpanded] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -120,38 +118,14 @@ export default function Attraction({ backgroundImgUrl, slogan, body }: Attractio
               dangerouslySetInnerHTML={{ __html: leadParagraph }}
             />
 
-            {restParagraphs.length > 0 && (
-              <>
-                {/* 残りの段落 — md以上は常時表示、モバイルは折りたたみ */}
-                <div
-                  id="attraction-body-rest"
-                  className={`${expanded ? "block" : "hidden"} md:block`}
-                >
-                  {restParagraphs.map((paragraph, i) => (
-                    <p
-                      key={i}
-                      className="mt-4 md:mt-5 text-sm md:text-base leading-[1.9] whitespace-pre-line break-words"
-                      dangerouslySetInnerHTML={{ __html: paragraph }}
-                    />
-                  ))}
-                </div>
-
-                {/* 展開ボタン（モバイルのみ） */}
-                <button
-                  type="button"
-                  onClick={() => setExpanded((v) => !v)}
-                  aria-expanded={expanded}
-                  aria-controls="attraction-body-rest"
-                  className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors md:hidden"
-                >
-                  {expanded ? "閉じる" : "続きを読む"}
-                  <ChevronDown
-                    aria-hidden="true"
-                    className={`h-4 w-4 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
-                  />
-                </button>
-              </>
-            )}
+            {/* 理念の本文は重要な内容のため、モバイルでも常に全文表示する */}
+            {restParagraphs.map((paragraph, i) => (
+              <p
+                key={i}
+                className="mt-4 md:mt-5 text-sm md:text-base leading-[1.9] whitespace-pre-line break-words"
+                dangerouslySetInnerHTML={{ __html: paragraph }}
+              />
+            ))}
           </motion.div>
 
           <motion.div
