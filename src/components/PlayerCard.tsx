@@ -43,7 +43,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
           alt={_japaneseName || _alphabetName || "player"}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 z-[1] block h-full w-full object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-110"
+          className="absolute inset-0 z-[1] block h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
         />
       ) : (
         // 画像が無い場合のプレースホルダ
@@ -91,7 +91,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
 
   return (
     <div
-      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-transparent"
+      className="group relative mx-auto w-full max-w-[280px] overflow-hidden rounded-xl bg-slate-950"
       style={{
         boxShadow: "0 2px 12px rgba(15,23,42,0.12)",
         aspectRatio: "3/4",
