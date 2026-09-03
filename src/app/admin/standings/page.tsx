@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { LEAGUE_TITLE } from "@/lib/standings";
 import { getProfile } from "@/lib/auth";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { logout } from "@/app/admin/actions";
@@ -25,6 +26,9 @@ export default async function AdminStandingsPage() {
   }
 
   const supabase = createSupabaseServer();
+  const { data: meta } = await supabase.from("standings_meta").select("*").eq("id", 1).single();
+  const initialLeagueTitle =
+    ((meta as { league_title?: string } | null)?.league_title ?? "").trim() || LEAGUE_TITLE;
   const { data, error } = await supabase
     .from("standings_rows")
     .select("block, rank, university, points, games, gf, diff, sort_order")
@@ -47,7 +51,7 @@ export default async function AdminStandingsPage() {
           データの取得に失敗しました。再読み込みしてください。
         </p>
       ) : (
-        <StandingsEditor initialRows={data ?? []} />
+        <StandingsEditor initialRows={data ?? []} initialLeagueTitle={initialLeagueTitle} />
       )}
     </div>
   );

@@ -5,7 +5,8 @@ import { getProfile } from "@/lib/auth";
 import { standingsRowsSchema, type StandingsRowInput } from "@/lib/standings";
 
 export async function saveStandings(
-  rows: StandingsRowInput[]
+  rows: StandingsRowInput[],
+  leagueTitle?: string
 ): Promise<{ ok: boolean; error?: string }> {
   const profile = await getProfile();
   if (!profile || profile.role !== "admin") {
@@ -27,10 +28,24 @@ export async function saveStandings(
   if (del.error) return { ok: false, error: "保存に失敗しました: " + del.error.message };
   const ins = await supabase.from("standings_rows").insert(parsed.data);
   if (ins.error) return { ok: false, error: "保存に失敗しました: " + ins.error.message };
-  const meta = await supabase
+  const title = leagueTitle?.trim();
+  if (title !== undefined && (title.length === 0 || title.length > 60)) {
+    return { ok: false, error: "大会名は1〜60文字で入力してください" };
+  }
+  let meta = await supabase
     .from("standings_meta")
-    .update({ updated_at: new Date().toISOString() })
+    .update({
+      updated_at: new Date().toISOString(),
+      ...(title ? { league_title: title } : {}),
+    })
     .eq("id", 1);
+  if (meta.error && title) {
+    // league_title列が未追加の環境では列なしで再試行（大会名の変更だけ反映されない）
+    meta = await supabase
+      .from("standings_meta")
+      .update({ updated_at: new Date().toISOString() })
+      .eq("id", 1);
+  }
   if (meta.error) return { ok: false, error: "更新日の記録に失敗しました: " + meta.error.message };
 
   revalidatePath("/");

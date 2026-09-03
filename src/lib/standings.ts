@@ -55,6 +55,7 @@ export function formatJstDate(iso: string): string {
 export type StandingsData = {
   rows: Record<string, string>[];
   updatedAt?: string;
+  leagueTitle: string;
 };
 
 // 取得失敗時はthrowし、ISRが前回成功時のページを維持する。
@@ -63,13 +64,16 @@ export async function fetchStandings(): Promise<StandingsData> {
   const supabase = createSupabasePublic();
   const [rowsRes, metaRes] = await Promise.all([
     supabase.from("standings_rows").select("*"),
-    supabase.from("standings_meta").select("updated_at").eq("id", 1).single(),
+    supabase.from("standings_meta").select("*").eq("id", 1).single(),
   ]);
   if (rowsRes.error) throw rowsRes.error;
   if (metaRes.error) console.error("fetchStandings meta failed:", metaRes.error);
   const rows = toBoardRows(rowsRes.data ?? []);
+  // league_title列が未追加/未入力の間は定数にフォールバック
+  const leagueTitle =
+    (metaRes.data as { league_title?: string } | null)?.league_title?.trim() || LEAGUE_TITLE;
   const updatedAt = metaRes.data?.updated_at
     ? formatJstDate(metaRes.data.updated_at)
     : undefined;
-  return { rows, updatedAt };
+  return { rows, updatedAt, leagueTitle };
 }

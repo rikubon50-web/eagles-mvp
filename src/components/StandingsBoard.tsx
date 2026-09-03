@@ -56,7 +56,7 @@ function BlockTable({ title, rows }: { title: string; rows: StandingRow[] }) {
   );
 }
 
-export default function StandingsBoard({ rows, updatedAt }: { rows: StandingRow[]; updatedAt?: string }) {
+export default function StandingsBoard({ rows, updatedAt, leagueTitle = LEAGUE_TITLE }: { rows: StandingRow[]; updatedAt?: string; leagueTitle?: string }) {
   const A = rows.filter((r) => (r.block ?? "").toUpperCase() === "A");
   const B = rows.filter((r) => (r.block ?? "").toUpperCase() === "B");
 
@@ -76,8 +76,8 @@ export default function StandingsBoard({ rows, updatedAt }: { rows: StandingRow[
 
         {/* 2カラム（中央仕切りも太線） */}
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200">
-          <BlockTable title={`${LEAGUE_TITLE} Aブロック`} rows={A} />
-          <BlockTable title={`${LEAGUE_TITLE} Bブロック`} rows={B} />
+          <BlockTable title={`${leagueTitle} Aブロック`} rows={A} />
+          <BlockTable title={`${leagueTitle} Bブロック`} rows={B} />
         </div>
 
       </div>

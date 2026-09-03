@@ -45,7 +45,7 @@ export default async function StandingsSection() {
 
       {/* md以上: 従来どおりフル表 */}
       <div className="hidden md:block">
-        <StandingsBoard rows={standingsData.rows} updatedAt={standingsData.updatedAt ?? undefined} />
+        <StandingsBoard rows={standingsData.rows} updatedAt={standingsData.updatedAt ?? undefined} leagueTitle={standingsData.leagueTitle} />
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import localFont from "next/font/local";
 import { Oswald } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 const oswald = Oswald({
   weight: ["500", "600", "700"],
@@ -95,6 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
 
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

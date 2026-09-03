@@ -53,7 +53,7 @@ function BlockTable({ title, rows }: { title: string; rows: Record<string, strin
 }
 
 export default async function StandingsPage() {
-  const { rows, updatedAt } = await fetchStandings();
+  const { rows, updatedAt, leagueTitle } = await fetchStandings();
   const blockA = rows.filter((r) => (r.block ?? "").toUpperCase() === "A");
   const blockB = rows.filter((r) => (r.block ?? "").toUpperCase() === "B");
 
@@ -61,8 +61,8 @@ export default async function StandingsPage() {
     <div className="space-y-6">
       <h1 className="section-title text-3xl md:text-4xl font-bold mb-6 mt-12">STANDINGS</h1>
 
-      <BlockTable title={`${LEAGUE_TITLE} Aブロック`} rows={blockA} />
-      <BlockTable title={`${LEAGUE_TITLE} Bブロック`} rows={blockB} />
+      <BlockTable title={`${leagueTitle} Aブロック`} rows={blockA} />
+      <BlockTable title={`${leagueTitle} Bブロック`} rows={blockB} />
 
       {updatedAt && (
         <p className="text-xs text-slate-500">更新日：{updatedAt}</p>

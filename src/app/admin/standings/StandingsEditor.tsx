@@ -30,8 +30,10 @@ type EditorRowVM = {
 
 export default function StandingsEditor({
   initialRows,
+  initialLeagueTitle,
 }: {
   initialRows: StandingsRowInput[];
+  initialLeagueTitle: string;
 }) {
   const idPrefix = useId();
   // useState の seq だと同一イベントループ内の連続呼び出しで古い値を
@@ -50,6 +52,7 @@ export default function StandingsEditor({
       sort_order: r.sort_order,
     }))
   );
+  const [leagueTitle, setLeagueTitle] = useState(initialLeagueTitle);
   const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -75,7 +78,7 @@ export default function StandingsEditor({
         diff: n(r.diff),
         sort_order: r.sort_order,
       }));
-      const result = await saveStandings(payload);
+      const result = await saveStandings(payload, leagueTitle);
       setMessage(
         result.ok
           ? { kind: "ok", text: "保存しました。公開ページに反映済みです。" }
@@ -178,6 +181,15 @@ export default function StandingsEditor({
         ↑↓で行を並べ替えると順位は自動で振り直されます（同順位にしたいときだけ順位の数字を手で直してください）。
         保存すると公式サイトにすぐ反映されます。
       </p>
+      <label className="block">
+        <span className="text-sm font-semibold text-slate-600">大会名（公開ページの見出しに表示されます。年度が変わったらここを書き換えてください）</span>
+        <input
+          value={leagueTitle}
+          onChange={(e) => setLeagueTitle(e.target.value)}
+          maxLength={60}
+          className="mt-1 w-full rounded border border-slate-300 px-3 py-2"
+        />
+      </label>
       {blockTable("A")}
       {blockTable("B")}
       {message && (
