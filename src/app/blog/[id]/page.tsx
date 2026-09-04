@@ -7,7 +7,7 @@ import InstagramFollowCard from "@/components/InstagramFollowCard";
 import Link from "next/link";
 import { fetchPostById, fetchAdjacentPosts, fetchLatestPosts } from "@/lib/posts";
 import { fetchPlayers } from "@/lib/microcms";
-import { findPlayerForTitle, RETIREMENT_TAG } from "@/lib/post-player";
+import { findPlayerForTitle } from "@/lib/post-player";
 import PlayerMiniCard from "@/components/PlayerMiniCard";
 import PostNav from "@/components/PostNav";
 import BlogCard, { toBlogCardItem } from "@/components/BlogCard";
@@ -50,7 +50,6 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
   ]);
   const player = findPlayerForTitle(item.title, players);
   const others = latest.filter((p) => p.id !== item.id).slice(0, 3);
-  const isRetirement = item.tags.includes(RETIREMENT_TAG);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -143,23 +142,9 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
             <ShareButtons path={`/blog/${item.id}`} title={item.title} />
           </div>
 
-          {/* 回遊導線: 登場選手 → 引退ブログ一覧 → 前後の記事 */}
+          {/* 回遊導線: 登場選手 → 前後の記事 */}
           <div className="mt-8 md:mt-12 space-y-8">
             {player && <PlayerMiniCard player={player} />}
-
-            {isRetirement && (
-              <Link
-                href={`/blog?tag=${encodeURIComponent(RETIREMENT_TAG)}`}
-                className="group flex items-center justify-between rounded-xl bg-slate-900 px-5 py-4 text-white transition-colors hover:bg-slate-800"
-              >
-                <span>
-                  <span className="block text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-300">Series</span>
-                  <span className="block text-lg font-bold">{RETIREMENT_TAG} をまとめて読む</span>
-                </span>
-                <span className="text-emerald-300 group-hover:translate-x-1 transition-transform">→</span>
-              </Link>
-            )}
-
             <PostNav prev={adjacent.prev} next={adjacent.next} />
           </div>
         </div>
