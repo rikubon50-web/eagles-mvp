@@ -5,7 +5,12 @@ import { mcmsImg, optimizeBodyImages } from "@/lib/image-url";
 import ShareButtons from "@/app/blog/ShareButtons";
 import InstagramFollowCard from "@/components/InstagramFollowCard";
 import Link from "next/link";
-import { fetchPostById } from "@/lib/posts";
+import { fetchPostById, fetchAdjacentPosts, fetchLatestPosts } from "@/lib/posts";
+import { fetchPlayers } from "@/lib/microcms";
+import { findPlayerForTitle, RETIREMENT_TAG } from "@/lib/post-player";
+import PlayerMiniCard from "@/components/PlayerMiniCard";
+import PostNav from "@/components/PostNav";
+import BlogCard, { toBlogCardItem } from "@/components/BlogCard";
 import { notFound } from "next/navigation";
 import LikeButton from "../LikeButton";
 import ViewTracker from "../ViewTracker";
@@ -36,6 +41,16 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function BlogDetailPage({ params }: { params: { id: string } }) {
   const item = await fetchPostById(params.id);
   if (!item) return notFound();
+
+  // 回遊導線用のデータ。どれか1つが失敗しても記事本体は表示する
+  const [players, adjacent, latest] = await Promise.all([
+    fetchPlayers().catch(() => []),
+    fetchAdjacentPosts(item.publishedAt).catch(() => ({ prev: null, next: null })),
+    fetchLatestPosts(4).catch(() => []),
+  ]);
+  const player = findPlayerForTitle(item.title, players);
+  const others = latest.filter((p) => p.id !== item.id).slice(0, 3);
+  const isRetirement = item.tags.includes(RETIREMENT_TAG);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -123,13 +138,57 @@ export default async function BlogDetailPage({ params }: { params: { id: string 
           </div>
           <ViewTracker postId={item.id} />
 
-          {/* 拡散導線: 共有ボタン → Instagramフォロー */}
-          <div className="mt-8 md:mt-12 space-y-6">
+          {/* 拡散導線: 共有ボタン */}
+          <div className="mt-8 md:mt-12">
             <ShareButtons path={`/blog/${item.id}`} title={item.title} />
-            <InstagramFollowCard />
           </div>
 
-          <div className="mt-6 pt-4 md:mt-12 md:pt-8 border-t border-slate-200">
+          {/* 回遊導線: 登場選手 → 引退ブログ一覧 → 前後の記事 */}
+          <div className="mt-8 md:mt-12 space-y-8">
+            {player && <PlayerMiniCard player={player} />}
+
+            {isRetirement && (
+              <Link
+                href={`/blog?tag=${encodeURIComponent(RETIREMENT_TAG)}`}
+                className="group flex items-center justify-between rounded-xl bg-slate-900 px-5 py-4 text-white transition-colors hover:bg-slate-800"
+              >
+                <span>
+                  <span className="block text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-300">Series</span>
+                  <span className="block text-lg font-bold">{RETIREMENT_TAG} をまとめて読む</span>
+                </span>
+                <span className="text-emerald-300 group-hover:translate-x-1 transition-transform">→</span>
+              </Link>
+            )}
+
+            <PostNav prev={adjacent.prev} next={adjacent.next} />
+          </div>
+        </div>
+      </div>
+
+      {/* ほかの記事 */}
+      {others.length > 0 && (
+        <div className={`${fullWidth} bg-slate-50 py-10 md:py-16`}>
+          <div className={innerCls}>
+            <div className="mb-4 md:mb-6 flex items-end justify-between">
+              <h2 className="section-title text-xl md:text-3xl font-bold">MORE BLOG</h2>
+              <Link href="/blog" className="text-sm font-bold text-[#0f6536] hover:underline">
+                すべて見る
+              </Link>
+            </div>
+            <div className="grid gap-0 max-md:divide-y max-md:divide-slate-200 md:grid-cols-3 md:gap-6">
+              {others.map((p) => (
+                <BlogCard key={p.id} item={toBlogCardItem(p)} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Instagramフォロー → 一覧へ */}
+      <div className="py-10 md:py-16">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <InstagramFollowCard />
+          <div className="pt-4 md:pt-8 border-t border-slate-200">
             <Link href="/blog" className="button-32">
               ブログ一覧へ戻る
             </Link>

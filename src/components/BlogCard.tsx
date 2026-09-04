@@ -18,6 +18,25 @@ export type BlogCardItem = {
   likeCount?: number;
 };
 
+// PostSummary（Supabase）→ カード用の形。各ページで同じ変換を繰り返さないための共通ヘルパー
+export function toBlogCardItem(p: {
+  id: string;
+  title: string;
+  thumbnailUrl: string | null;
+  publishedAt: string;
+  tags: string[];
+  likeCount: number;
+}): BlogCardItem {
+  return {
+    id: p.id,
+    title: p.title,
+    thumbnail: p.thumbnailUrl ? { url: p.thumbnailUrl, width: 1280, height: 720 } : undefined,
+    publishedAt: p.publishedAt,
+    tags: p.tags,
+    likeCount: p.likeCount,
+  };
+}
+
 export default function BlogCard({ item }: { item: BlogCardItem }) {
   const href = `/blog/${item.id}`;
   return (

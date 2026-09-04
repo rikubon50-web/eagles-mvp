@@ -4,6 +4,8 @@ import { fetchPostsPage, collectTags } from "@/lib/posts";
 import BlogFilterList from "@/components/BlogFilterList";
 import BlogCard, { type BlogCardItem } from "@/components/BlogCard";
 import Pagination from "@/components/Pagination";
+import Link from "next/link";
+import { RETIREMENT_TAG } from "@/lib/post-player";
 
 export const revalidate = 300;
 
@@ -54,6 +56,32 @@ export default async function BlogListPage({
   return (
     <div className="space-y-4 md:space-y-8">
       <h1 className="section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 mt-6 md:mt-12">BLOG</h1>
+
+      {/* 引退ブログ特集バナー（タグが存在し、かつ絞り込み中でないときだけ） */}
+      {tags.includes(RETIREMENT_TAG) && tag !== RETIREMENT_TAG && !q && (
+        <Link
+          href={`/blog?tag=${encodeURIComponent(RETIREMENT_TAG)}`}
+          className="group relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-900 px-5 py-5 text-white md:px-8 md:py-6"
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#0f6536] opacity-60 blur-2xl"
+          />
+          <span className="relative">
+            <span className="block text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-300">Special</span>
+            <span
+              className="block text-2xl md:text-3xl font-bold tracking-wider"
+              style={{ fontFamily: "var(--font-heading), ui-sans-serif, system-ui, sans-serif" }}
+            >
+              {RETIREMENT_TAG}
+            </span>
+            <span className="mt-1 block text-sm text-slate-300">4年生が綴る、最後のシーズンへの想い</span>
+          </span>
+          <span className="relative shrink-0 rounded-full border border-emerald-300/60 px-4 py-2 text-sm font-bold text-emerald-200 transition-colors group-hover:bg-emerald-300 group-hover:text-slate-900">
+            まとめて読む
+          </span>
+        </Link>
+      )}
 
       <BlogFilterList tags={tags} q={q ?? ""} tag={tag ?? null} />
 

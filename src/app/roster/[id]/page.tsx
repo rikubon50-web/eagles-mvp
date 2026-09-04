@@ -5,6 +5,10 @@ import Link from "next/link";
 import { fetchPlayers } from "@/lib/microcms";
 import { cohortLabel, cohortOf } from "@/lib/cohort";
 import PlayerGallery from "@/components/PlayerGallery";
+import PlayerStrip from "@/components/PlayerStrip";
+import BlogCard, { toBlogCardItem } from "@/components/BlogCard";
+import { fetchPublishedSummaries } from "@/lib/posts";
+import { postsMentioning } from "@/lib/post-player";
 
 export const revalidate = 300;
 
@@ -31,6 +35,14 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
   if (!player) return notFound();
 
   const isCoach = player.role === "C";
+
+  // 回遊導線: この選手が登場するブログ（タイトル判定）と、同じ期のメンバー（コーチは他のコーチ）
+  const allPosts = await fetchPublishedSummaries().catch(() => []);
+  const playerPosts = postsMentioning(player.name, allPosts).slice(0, 6);
+  const myCohort = cohortOf(player);
+  const peers = (list as typeof player[]).filter(
+    (p) => p.id !== player.id && (isCoach ? p.role === "C" : p.role !== "C" && cohortOf(p) === myCohort)
+  );
   // 長文(コーチ歴/実績)を「年」「【…】」「実績の区切り」で複数行に分割して見やすくする
   const splitEntries = (s: string) =>
     s
@@ -174,6 +186,36 @@ export default async function PlayerDetailPage({ params }: { params: { id: strin
             )}
           </div>
         </div>
+
+        {/* この選手のブログ */}
+        {playerPosts.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-slate-200">
+            <div className="mb-4 md:mb-6 flex items-end justify-between">
+              <div className="flex items-baseline gap-3">
+                <h2 className="section-title text-xl md:text-3xl font-bold">BLOG</h2>
+                <span className="text-sm font-bold text-slate-500">{player.name}の記事</span>
+              </div>
+              <Link href="/blog" className="text-sm font-bold text-[#0f6536] hover:underline">
+                すべて見る
+              </Link>
+            </div>
+            <div className="grid gap-0 max-md:divide-y max-md:divide-slate-200 md:grid-cols-3 md:gap-6">
+              {playerPosts.map((p) => (
+                <BlogCard key={p.id} item={toBlogCardItem(p)} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 同じ期のメンバー */}
+        {peers.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-slate-200">
+            <PlayerStrip
+              players={peers}
+              heading={isCoach ? "ほかのコーチ" : myCohort !== null ? `同じ${cohortLabel(myCohort)}のメンバー` : "ほかのメンバー"}
+            />
+          </div>
+        )}
 
         <div className="mt-12 pt-8 border-t border-slate-200">
           <Link href="/roster" className="button-32">

@@ -126,6 +126,33 @@ export async function fetchLatestPosts(limit: number): Promise<PostSummary[]> {
   return (data ?? []).map(toSummary);
 }
 
+// 記事ページの前後ナビ用。prev = 1つ古い記事、next = 1つ新しい記事
+export async function fetchAdjacentPosts(
+  publishedAt: string
+): Promise<{ prev: PostSummary | null; next: PostSummary | null }> {
+  const supabase = createSupabasePublic();
+  const run = async (select: string) =>
+    Promise.all([
+      supabase.from("posts").select(select).eq("status", "published")
+        .lt("published_at", publishedAt).order("published_at", { ascending: false }).limit(1),
+      supabase.from("posts").select(select).eq("status", "published")
+        .gt("published_at", publishedAt).order("published_at", { ascending: true }).limit(1),
+    ]);
+  let [older, newer] = await run(SUMMARY_SELECT);
+  if (isMissingCountColumns(older.error ?? newer.error)) [older, newer] = await run(SUMMARY_SELECT_LEGACY);
+  if (older.error) throw older.error;
+  if (newer.error) throw newer.error;
+  return {
+    prev: older.data?.[0] ? toSummary(older.data[0]) : null,
+    next: newer.data?.[0] ? toSummary(newer.data[0]) : null,
+  };
+}
+
+// ロスター詳細の「◯◯のブログ」用。タイトル判定はサーバー側で行うため本文なしの一覧をまとめて取る
+export async function fetchPublishedSummaries(limit = 200): Promise<PostSummary[]> {
+  return fetchLatestPosts(limit);
+}
+
 // sitemap 用: 公開済み全記事の id / updatedAt を取得（1000件ずつページング）
 export async function fetchAllPostIds(): Promise<{ id: string; updatedAt: string }[]> {
   const supabase = createSupabasePublic();
