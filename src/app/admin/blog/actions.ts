@@ -1,5 +1,5 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/auth";
 import { postInputSchema } from "@/lib/posts-domain";
@@ -63,6 +63,7 @@ export async function savePost(input: SaveInput):
     // 既に公開済みの記事は下書き保存であってもライブ記事を直接書き換えるため再検証が必要
     if (input.publish || cur.status === "published") {
       revalidatePath("/blog");
+      revalidateTag("posts");
       revalidatePath(`/blog/${id}`);
       revalidatePath("/");
     }
@@ -83,6 +84,7 @@ export async function savePost(input: SaveInput):
     }
     if (input.publish) {
       revalidatePath("/blog");
+      revalidateTag("posts");
       revalidatePath(`/blog/${id}`);
       revalidatePath("/");
     }
@@ -107,6 +109,7 @@ export async function deletePost(id: string): Promise<{ ok: boolean; error?: str
     return { ok: false, error: "削除に失敗しました" };
   }
   revalidatePath("/blog");
+  revalidateTag("posts");
   revalidatePath(`/blog/${id}`);
   revalidatePath("/");
   return { ok: true };

@@ -2,6 +2,8 @@
 import { Oswald, Shippori_Mincho } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import PageViewTracker from "@/components/PageViewTracker";
+import TopLoader from "@/components/TopLoader";
+import { Suspense } from "react";
 
 const oswald = Oswald({
   weight: ["500", "600", "700"],
@@ -90,6 +92,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja" className={`${mincho.variable} ${oswald.variable}`}>
       <body className="min-h-screen bg-slate-50 text-slate-900">
+        {/* ページ切り替え中の進捗バー（useSearchParams を使うため Suspense で包む） */}
+        <Suspense fallback={null}>
+          <TopLoader />
+        </Suspense>
         <Header />
 
         <main className="pt-0 px-6 mx-auto w-full max-w-6xl lg:max-w-7xl xl:max-w-[95rem] 2xl:max-w-[100rem]">

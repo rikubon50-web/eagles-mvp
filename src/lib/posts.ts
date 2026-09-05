@@ -1,5 +1,12 @@
+import { unstable_cache } from "next/cache";
 import { createSupabasePublic } from "@/lib/supabase/public";
 import { pageWindow } from "@/lib/posts-domain";
+
+// /blog は searchParams を使うため毎リクエスト動的描画になり、一覧クエリが都度走って
+// TTFB が 0.8〜1.1 秒になっていた。一覧とタグはデータ側を5分キャッシュし、
+// 投稿の保存/削除時は revalidateTag("posts") で即時更新する（admin/blog/actions.ts）。
+const POSTS_TAG = "posts";
+const CACHE_SECONDS = 300;
 
 export type Post = {
   id: string;
@@ -59,7 +66,7 @@ function toSummary(r: any): PostSummary {
 }
 
 // 取得失敗時は throw し、ISR が前回成功ページを維持する（フェーズ1と同方針）
-export async function fetchPostsPage(opts: { page: number; q?: string; tag?: string }) {
+async function fetchPostsPageUncached(opts: { page: number; q?: string; tag?: string }) {
   try {
     return await fetchPostsPageWith(SUMMARY_SELECT, opts);
   } catch (e) {
@@ -67,6 +74,11 @@ export async function fetchPostsPage(opts: { page: number; q?: string; tag?: str
     throw e;
   }
 }
+
+export const fetchPostsPage = unstable_cache(fetchPostsPageUncached, ["posts-page"], {
+  tags: [POSTS_TAG],
+  revalidate: CACHE_SECONDS,
+});
 
 async function fetchPostsPageWith(
   select: string,
@@ -175,7 +187,7 @@ export async function fetchAllPostIds(): Promise<{ id: string; updatedAt: string
   return results;
 }
 
-export async function collectTags(): Promise<string[]> {
+async function collectTagsUncached(): Promise<string[]> {
   const supabase = createSupabasePublic();
   const { data, error } = await supabase
     .from("posts").select("tags").eq("status", "published")
@@ -185,3 +197,8 @@ export async function collectTags(): Promise<string[]> {
   (data ?? []).forEach((r: any) => (r.tags ?? []).forEach((t: string) => set.add(t)));
   return [...set];
 }
+
+export const collectTags = unstable_cache(collectTagsUncached, ["posts-tags"], {
+  tags: [POSTS_TAG],
+  revalidate: CACHE_SECONDS,
+});
