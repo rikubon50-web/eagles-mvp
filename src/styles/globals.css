@@ -465,3 +465,10 @@
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* トップのヒーロー画像フェード（JS不要。HeroImage.tsx から利用） */
+@keyframes hero-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-hero-in { animation: hero-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
