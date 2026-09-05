@@ -7,7 +7,12 @@ import StandingsBoard from "@/components/StandingsBoard";
 const OUR_UNIVERSITY = "青山学院大学";
 
 export default async function StandingsSection() {
-  const standingsData = await fetchStandings();
+  // 取得失敗時は「-」表示にしてトップ全体を巻き込まない
+  const standingsData = await fetchStandings().catch(() => ({
+    rows: [] as Awaited<ReturnType<typeof fetchStandings>>["rows"],
+    updatedAt: null,
+    leagueTitle: "",
+  }));
   const ours = standingsData.rows.find((r) => r.university.trim() === OUR_UNIVERSITY);
   const rankLabel = ours && ours.rank !== "0" ? ours.rank : "-";
   return (

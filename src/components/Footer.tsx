@@ -25,7 +25,7 @@ export default function Footer() {
 
         <div className="footer__brand">
           <Image
-            src="/img/logo.png"
+            src="/img/logo-sm.webp"
             alt="EAGLES"
             width={120}
             height={60}

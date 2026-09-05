@@ -85,7 +85,7 @@ export default async function Home() {
 
       {/* Attraction — parallax + text slide-in */}
       <Attraction
-        backgroundImgUrl="/img/IMG_8307.JPG"
+        backgroundImgUrl="/img/IMG_8307.webp"
         slogan={"ALL\nBOX\nMEMBER"}
         body={`EAGLESに関わるすべての人が同じゴールを目指すための合言葉。
 

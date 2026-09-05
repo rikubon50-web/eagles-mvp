@@ -53,7 +53,12 @@ function BlockTable({ title, rows }: { title: string; rows: Record<string, strin
 }
 
 export default async function StandingsPage() {
-  const { rows, updatedAt, leagueTitle } = await fetchStandings();
+  // 取得失敗時は空の表（見出しは出す）にして 500 にしない
+  const { rows, updatedAt, leagueTitle } = await fetchStandings().catch(() => ({
+    rows: [] as Awaited<ReturnType<typeof fetchStandings>>["rows"],
+    updatedAt: null,
+    leagueTitle: LEAGUE_TITLE,
+  }));
   const blockA = rows.filter((r) => (r.block ?? "").toUpperCase() === "A");
   const blockB = rows.filter((r) => (r.block ?? "").toUpperCase() === "B");
 

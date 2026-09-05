@@ -20,7 +20,7 @@ export default function SupportCorporate() {
           className="relative h-[48vh] md:h-[60vh] flex items-center"
           style={{
             backgroundImage:
-              "url('/img/IMG_8218.png')",
+              "url('/img/IMG_8218.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

@@ -6,13 +6,14 @@ import { fetchAllPostIds } from "@/lib/posts";
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // どれか1つの取得が失敗しても sitemap 全体を 500 にせず、取れた分だけ返す
   const [news, blogs, players, live, upcoming, archive] = await Promise.all([
-    fetchNewsList(),
-    fetchAllPostIds(),
-    fetchPlayers(),
-    fetchGamesLive(),
-    fetchGamesUpcoming(),
-    fetchGamesArchive(),
+    fetchNewsList().catch(() => []),
+    fetchAllPostIds().catch(() => []),
+    fetchPlayers().catch(() => []),
+    fetchGamesLive().catch(() => []),
+    fetchGamesUpcoming().catch(() => []),
+    fetchGamesArchive().catch(() => []),
   ]);
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -52,7 +53,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // live は upcoming/archive の両クエリから除外されるため、sitemap では明示的に合流させる
-  const gamePages: MetadataRoute.Sitemap = [...live, ...upcoming, ...archive].map((game) => ({
+  // 備考(text)の無い試合は詳細ページが 404 になるため sitemap に載せない
+  const gamePages: MetadataRoute.Sitemap = [...live, ...upcoming, ...archive].filter((g) => g.text).map((game) => ({
     url: `${BASE_URL}/games/${game.id}`,
     lastModified: game.startAt,
     changeFrequency: "yearly",

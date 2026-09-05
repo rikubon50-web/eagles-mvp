@@ -5,7 +5,7 @@ import Link from "next/link";
 const DISPLAY_COUNT = 3;
 
 export default async function BlogSection() {
-  const posts = await fetchLatestPosts(DISPLAY_COUNT);
+  const posts = await fetchLatestPosts(DISPLAY_COUNT).catch(() => []);
   const blogs: BlogCardItem[] = posts.map((p) => ({
     id: p.id,
     title: p.title,

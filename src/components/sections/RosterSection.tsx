@@ -3,7 +3,7 @@ import PlayerCard from "@/components/PlayerCard";
 import Link from "next/link";
 
 export default async function RosterSection({ dark = false }: { dark?: boolean }) {
-  const players = await fetchPlayers();
+  const players = await fetchPlayers().catch(() => []);
   return (
     <section>
       <h2 className={`section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${dark ? "text-white" : ""}`}>ROSTER</h2>

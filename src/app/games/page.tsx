@@ -18,10 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default async function GamesListPage() {
+  // 一部の取得が失敗しても、取れた区分だけで表示する（500 にしない）
   const [live, upcoming, archive] = await Promise.all([
-    fetchGamesLive(),
-    fetchGamesUpcoming(),
-    fetchGamesArchive(),
+    fetchGamesLive().catch(() => []),
+    fetchGamesUpcoming().catch(() => []),
+    fetchGamesArchive().catch(() => []),
   ]);
 
   return (

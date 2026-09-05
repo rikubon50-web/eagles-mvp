@@ -24,7 +24,7 @@ export default function Header() {
         <div className="header__logo">
           <Link href="/" aria-label="EAGLES Home">
             <Image
-              src="/img/logo.png"
+              src="/img/logo-sm.webp"
               alt="EAGLES"
               width={100}
               height={100}

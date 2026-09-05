@@ -17,11 +17,11 @@ function NavCard({ post, dir }: { post: PostSummary; dir: "prev" | "next" }) {
         {post.thumbnailUrl ? (
           <Image src={mcmsImg(post.thumbnailUrl, 240)} alt="" fill sizes="80px" className="object-cover" />
         ) : (
-          <Image src="/img/logo.png" alt="" fill sizes="80px" className="object-contain p-2 opacity-90" />
+          <Image src="/img/logo-sm.webp" alt="" fill sizes="80px" className="object-contain p-2 opacity-90" />
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
           {isPrev ? "← 前の記事" : "次の記事 →"}
         </p>
         <p className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug text-slate-900 group-hover:text-emerald-700">

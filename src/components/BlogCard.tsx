@@ -59,7 +59,7 @@ export default function BlogCard({ item }: { item: BlogCardItem }) {
           // 画像なし記事はチームロゴ入りプレースホルダ（テキストのみの引退ブログ等）
           <div className="flex h-full w-full items-center justify-center bg-slate-900">
             <Image
-              src="/img/logo.png"
+              src="/img/logo-sm.webp"
               alt=""
               width={120}
               height={74}

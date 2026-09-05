@@ -3,7 +3,7 @@ import NewsTicker from "@/components/NewsTicker";
 import type { News } from "@/lib/microcms";
 
 export default async function NewsTickerSection() {
-  const news = await fetchNewsList();
+  const news = await fetchNewsList().catch(() => []);
   const tickerItems = news.slice(0, 20).map((n: News) => ({
     id: n.id,
     title: n.title,

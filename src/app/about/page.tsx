@@ -14,7 +14,8 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const res = await fetchAbout();
+  // 取得失敗時は本文なし（見出しと導線だけ）で表示し、500 にしない
+  const res = await fetchAbout().catch(() => null);
   // microCMS: about could be an object or a list response with { contents: [...] }
   const about = (res as any)?.contents?.[0] ?? (res as any) ?? null;
   return (

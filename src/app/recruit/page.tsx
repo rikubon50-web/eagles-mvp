@@ -74,7 +74,7 @@ export default async function ShinkanPage() {
       {/* 1. Hero */}
       <div className={`${fullWidth} relative min-h-[80vh] flex items-center overflow-hidden`}>
         <Image
-          src="/img/IMG_8307.JPG"
+          src="/img/IMG_8307.webp"
           alt="EAGLES Lacrosse"
           fill
           className="object-cover"

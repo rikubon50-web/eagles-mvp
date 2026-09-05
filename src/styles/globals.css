@@ -307,19 +307,9 @@
 }
 .animate-ticker { animation: ticker 30s linear infinite; }
 
-@font-face {
-  font-family: "AbashiriMincho";
-  src:  url("/fonts/AbashiriMincho.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-:root {
-  --font-abashiri: "AbashiriMincho", sans-serif;
-}
-
+/* --font-abashiri は layout.tsx の next/font（Shippori Mincho）が html に定義する */
 .font-abashiri {
-  font-family: var(--font-abashiri);
+  font-family: var(--font-abashiri), "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 @keyframes shine {

@@ -13,7 +13,8 @@ export const metadata = {
 };
 
 export default async function RosterPage() {
-  const players = await fetchPlayers();
+  // 取得失敗時は空一覧（下の空状態メッセージ）にして 500 にしない
+  const players = await fetchPlayers().catch(() => []);
   const fy = fiscalYear(new Date());
 
   // ロールで学生（PL/MG/TR/AS）とコーチ（C）に分割

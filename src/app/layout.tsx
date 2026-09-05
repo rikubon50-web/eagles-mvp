@@ -1,6 +1,5 @@
 // src/app/layout.tsx
-import localFont from "next/font/local";
-import { Oswald } from "next/font/google";
+import { Oswald, Shippori_Mincho } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import PageViewTracker from "@/components/PageViewTracker";
 
@@ -11,11 +10,12 @@ const oswald = Oswald({
   display: "swap",
 });
 
-const abashiri = localFont({
-  // NOTE: path is relative to this file. Public dir is at project root.
-  src: "../../public/fonts/AbashiriMincho.ttf",
+// 理念文（トップの ALL BOX MEMBER）用の明朝。以前は20MBのローカルTTF（網走明朝）を
+// 全ページで先読みしていたため、Google Fonts の unicode-range 分割配信に置き換えた
+// （使う文字の断片だけ数十KBずつ読まれる）。トップ下部でしか使わないので preload しない。
+const mincho = Shippori_Mincho({
   weight: "400",
-  style: "normal",
+  preload: false,
   variable: "--font-abashiri",
   display: "swap",
 });
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={`${abashiri.variable} ${oswald.variable}`}>
+    <html lang="ja" className={`${mincho.variable} ${oswald.variable}`}>
       <body className="min-h-screen bg-slate-50 text-slate-900">
         <Header />
 

@@ -18,8 +18,11 @@ export function mcmsImgJpeg(url: string, w: number): string {
 
 /** 記事本文HTML内の microCMS 画像srcに幅パラメータを付与する（表示時に適用） */
 export function optimizeBodyImages(html: string, w = 1200): string {
-  return html.replace(
+  const resized = html.replace(
     /src="(https:\/\/images\.microcms-assets\.io\/[^"?]+)(\?[^"]*)?"/g,
     (_m, base) => `src="${base}?w=${w}&q=75&fm=webp"`
   );
+  // 本文中の全画像を遅延読み込みにする（Supabase Storage の画像は変換配信が無いので、
+  // 少なくとも画面外の画像を初回ロードから外す）
+  return resized.replace(/<img\b(?![^>]*\bloading=)/g, '<img loading="lazy" decoding="async"');
 }

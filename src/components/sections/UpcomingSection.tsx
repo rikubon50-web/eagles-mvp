@@ -3,17 +3,17 @@ import GameCard from "@/components/GameCard";
 import Link from "next/link";
 
 export default async function UpcomingSection() {
-  // どちらかが失敗したら throw し、ISR が前回成功ページを維持する（既存方針のまま）
+  // 取得失敗時は空にしてトップ全体を 500 にしない（空なら下の RECENT RESULT へ）
   const [live, upcoming] = await Promise.all([
-    fetchGamesLive(),
-    fetchGamesUpcoming(),
+    fetchGamesLive().catch(() => []),
+    fetchGamesUpcoming().catch(() => []),
   ]);
   // live があれば最上部に出し、見出しも「試合速報」へ切り替える
   let games = [...live, ...upcoming];
   let heading = live.length > 0 ? "試合速報" : "UPCOMING";
   // live も予定も無いときは直近の「終了した」試合を1件表示して空白を避ける
   if (games.length === 0) {
-    const archive = await fetchGamesArchive();
+    const archive = await fetchGamesArchive().catch(() => []);
     const finished = archive.find((g) => g.status === "finished");
     if (finished) {
       games = [finished];

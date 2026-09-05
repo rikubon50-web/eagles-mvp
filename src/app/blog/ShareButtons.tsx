@@ -1,13 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link2, Check, Share2 } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aoyamaeagles.com";
 
 // 記事の共有ボタン。スマホはOSの共有シート（LINE・Instagram等へ直接）、
 // PCはLINE / X / リンクコピー。URLは絶対URLで組み立てる。
 export default function ShareButtons({ path, title }: { path: string; title: string }) {
   const [copied, setCopied] = useState(false);
-  const url = `https://aoyamaeagles.com${path}`;
+  // navigator.share の有無はマウント後に判定する。描画中に判定するとSSR(false)と
+  // スマホ(true)で出力が食い違い、全記事でハイドレーションエラーになる
+  const [canNativeShare, setCanNativeShare] = useState(false);
+  useEffect(() => {
+    setCanNativeShare(typeof navigator.share === "function");
+  }, []);
+  const url = `${SITE_URL}${path}`;
   const text = `${title}｜青山学院大学男子ラクロス部 EAGLES`;
 
   const nativeShare = async () => {
@@ -28,7 +36,6 @@ export default function ShareButtons({ path, title }: { path: string; title: str
     }
   };
 
-  const canNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
   const btn =
     "inline-flex items-center gap-1.5 rounded-full border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:border-emerald-600 hover:text-emerald-700 transition-colors";
 
@@ -70,7 +77,7 @@ export default function ShareButtons({ path, title }: { path: string; title: str
 // 一覧カード用のコンパクトな共有ボタン（スマホ=OS共有シート／PC=リンクコピー）
 export function ShareIconButton({ path, title }: { path: string; title: string }) {
   const [copied, setCopied] = useState(false);
-  const url = `https://aoyamaeagles.com${path}`;
+  const url = `${SITE_URL}${path}`;
   const text = `${title}｜青山学院大学男子ラクロス部 EAGLES`;
 
   const onClick = async () => {

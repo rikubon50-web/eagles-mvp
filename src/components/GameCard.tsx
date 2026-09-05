@@ -136,14 +136,17 @@ export default function GameCard({ game, compact = false }: { game: GameView; co
         {game.title}／{game.venue}
       </p>
 
-      <div className="text-center">
-        <Link
-          href={`/games/${game.id}`}
-          className="inline-block border border-slate-800 rounded px-4 py-1.5 text-xs font-bold text-slate-900"
-        >
-          {status === "finished" ? "ゲームレポートを見る" : "ゲーム案内を見る"}
-        </Link>
-      </div>
+      {/* 詳細ページは備考(text)が無いと404になるため、備考がある試合だけCTAを出す */}
+      {game.text && (
+        <div className="text-center">
+          <Link
+            href={`/games/${game.id}`}
+            className="inline-block border border-slate-800 rounded px-4 py-1.5 text-xs font-bold text-slate-900"
+          >
+            {status === "finished" ? "ゲームレポートを見る" : "ゲーム案内を見る"}
+          </Link>
+        </div>
+      )}
     </div>
   );
 
@@ -225,15 +228,17 @@ export default function GameCard({ game, compact = false }: { game: GameView; co
         {game.title}／{game.venue}
       </p>
 
-      {/* フッター行：ステータス別CTA */}
-      <div className="text-center">
-        <Link
-          href={`/games/${game.id}`}
-          className="inline-block rounded-md border border-slate-300 px-5 py-2 text-sm font-bold text-slate-900 hover:border-emerald-600 hover:text-emerald-700"
-        >
-          {status === "finished" ? "ゲームレポートを見る" : "ゲーム案内を見る"}
-        </Link>
-      </div>
+      {/* フッター行：ステータス別CTA（備考がある試合のみ。無いと詳細が404） */}
+      {game.text && (
+        <div className="text-center">
+          <Link
+            href={`/games/${game.id}`}
+            className="inline-block rounded-md border border-slate-300 px-5 py-2 text-sm font-bold text-slate-900 hover:border-emerald-600 hover:text-emerald-700"
+          >
+            {status === "finished" ? "ゲームレポートを見る" : "ゲーム案内を見る"}
+          </Link>
+        </div>
+      )}
     </div>
   );
 

@@ -34,7 +34,7 @@ type GameRow = {
 };
 
 const HOME_TEAM_NAME = "青山学院大学";
-const HOME_TEAM_LOGO = { url: "/img/logo.png", width: 977, height: 599 };
+const HOME_TEAM_LOGO = { url: "/img/logo-sm.webp", width: 400, height: 245 };
 
 const GAME_SELECT =
   "id,title,start_at,venue,opponent,status,our_score,opp_score,note,opponent_logo_url";

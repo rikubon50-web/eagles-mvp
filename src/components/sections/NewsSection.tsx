@@ -3,7 +3,7 @@ import NewsCard from "@/components/NewsCard";
 import Link from "next/link";
 
 export default async function NewsSection({ dark = false }: { dark?: boolean }) {
-  const news = await fetchNewsList();
+  const news = await fetchNewsList().catch(() => []);
   return (
     <section>
       <h2 className={`section-title text-2xl md:text-4xl font-bold mb-4 md:mb-6 ${dark ? "text-white" : ""}`}>NEWS</h2>

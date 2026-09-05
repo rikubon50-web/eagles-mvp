@@ -16,7 +16,7 @@ export default function NestPage() {
           className="relative h-[52vh] md:h-[64vh] w-full bg-center bg-cover"
           style={{
             backgroundImage:
-              "url('/img/IMG_8993.png')",
+              "url('/img/IMG_8993.webp')",
           }}
         >
           <div className="absolute inset-0 bg-black/45" />
